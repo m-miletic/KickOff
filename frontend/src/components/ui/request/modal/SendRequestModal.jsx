@@ -1,0 +1,70 @@
+import React, { useState } from 'react'
+import { RoleChangeForm } from '../form/RoleChangeForm';
+
+export const SendRequestModal = ({ setIsRequestModalOpen, role, requesterId }) => {
+  const [requestType, setRequestType] = useState("");
+  let requestTypeList = [];
+  let roles = ["TEAM_REPRESENTATIVE", "TOURNAMENT_ORGANIZER"];
+
+  if (role === 'USER') {
+    requestTypeList = ['ROLE_CHANGE']
+  } else if (role === 'TEAM_REPRESENTATIVE') {
+    requestTypeList = ['ROLE_CHANGE', 'TEAM_REGISTRATION'];
+  } else if (role === 'TOURNAMENT_ORGANIZER') {
+    requestTypeList = ['ROLE_CHANGE', 'TOURNAMENT_CREATION'];
+  }
+
+  const handleReqTypeChange = (e) => {
+    setRequestType(e.target.value);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex justify-center items-center">
+      <div className="relative p-4 w-[400px] sm:w-[450px] md:w-[450px] lg:w-[500px] xl:w-[550px] 2xlw-[600px]">
+        <div className="relative bg-white rounded-lg shadow-sm">
+          
+          <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-200">
+            <h1 className='text-base'>Send Request</h1>
+            <button onClick={() => setIsRequestModalOpen(false)}  type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center  " data-modal-hide="default-modal">
+              <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+              </svg>
+              <span className="sr-only">Close modal</span>
+            </button>
+          </div>
+
+          <div className='flex items-center px-5 py-3 text-xs'>
+            <div className='w-32'>Request Type</div>
+            <select
+              id="requestType"
+              name='requestType'
+              className='text-xs w-64 h-8 px-2 py-1 border border-gray-300 rounded'
+              onChange={handleReqTypeChange}
+              value={requestType}
+            >
+            <option value={""} disabled>-- Select type --</option>
+            {requestTypeList.map((type, index) => (
+              <option key={index} value={type}>{type}</option>
+            ))}
+            </select>
+          </div>
+
+          
+          {requestType === "ROLE_CHANGE" && (
+            <div className='flex items-center px-5 py-3 text-xs'>
+              <RoleChangeForm role={role} requesterId={requesterId} setIsRequestModalOpen={setIsRequestModalOpen}/>
+            </div>
+          )}
+
+          {requestType === "TOURNAMENT_ENROLLMENT" && (
+            <div>
+              Tournament Enrollment
+            </div>
+          )}
+
+          
+        </div>
+      </div>
+    </div>
+  )
+}

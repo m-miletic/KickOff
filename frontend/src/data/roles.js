@@ -1,0 +1,6 @@
+export const ROLES = [
+  "TEAM_REPRESENTATIVE",
+  "TOURNAMENT_ORGANIZER",
+  "USER",
+  "ALL"
+]
