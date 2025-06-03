@@ -1,5 +1,6 @@
 package com.kick_off.kick_off.configuration;
 
+import com.kick_off.kick_off.model.Role;
 import com.kick_off.kick_off.service.authentication.UserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +10,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,30 +27,45 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
+    private final AuthEntryPoint unauthorizedHandler;
     private final JwtAuthFilter jwtAuthFilter;
 
-    public SecurityConfig(UserDetailsService userDetailsService, JwtAuthFilter jwtAuthFilter) {
+    public SecurityConfig(UserDetailsService userDetailsService, AuthEntryPoint unauthorizedHandler, JwtAuthFilter jwtAuthFilter) {
         this.userDetailsService = userDetailsService;
+        this.unauthorizedHandler = unauthorizedHandler;
         this.jwtAuthFilter = jwtAuthFilter;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
-                // bez headers-a linije koda imam localhost refused to connect error
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http
+                .csrf(csrf -> csrf.disable())
                 .headers(HeadersConfigurer::disable)
-                .cors(c -> c.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(request -> request
-                        .requestMatchers("**").permitAll()
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .exceptionHandling(excepetionhandling ->
+                        excepetionhandling.authenticationEntryPoint(unauthorizedHandler)
                 )
-
-                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(sessionManagement ->
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .authorizeHttpRequests(authorizeRequests ->
+                        authorizeRequests
+                                .requestMatchers("/h2-console/**").permitAll()
+                                .requestMatchers("/auth/register", "/auth/login", "/api/tournaments").permitAll()
+                                .requestMatchers("/api/users", "/api/users/role-change", "/api/teams").hasRole(Role.ADMIN.name())
+                                .requestMatchers("/api/tournaments/enroll-team").hasRole(Role.TOURNAMENT_ORGANIZER.name())
+                                .requestMatchers("/api/request/role-change", "/api/requests/by-requester").hasAnyRole(Role.USER.name(), Role.TOURNAMENT_ORGANIZER.name(), Role.TEAM_REPRESENTATIVE.name())
+                                .requestMatchers("/api/requests/team-creation").hasRole(Role.TEAM_REPRESENTATIVE.name())
+                                .requestMatchers("/api/requests/by-approver").hasAnyRole(Role.TEAM_REPRESENTATIVE.name(), Role.TOURNAMENT_ORGANIZER.name(), Role.ADMIN.name())
+                                .anyRequest().authenticated()
+                );
 
-        return httpSecurity.build();
+        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
     }
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();

@@ -1,15 +1,19 @@
 import apiClient from "./apis/apiClient";
 
 export const fetchAllTeams = async ( filters ) => {
+  const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.get("/teams", {
       params: {
         ...filters
+      },
+      headers: {
+        Authorization: `Bearer ${jwt}`
       }
     });
     return response;
   } catch (error) {
-    console.error("TeamService(original) Error: ", error);
+    console.error("team service error: ", error);
     throw new Error("There was a problem while fetching team entities.");
   }
 };

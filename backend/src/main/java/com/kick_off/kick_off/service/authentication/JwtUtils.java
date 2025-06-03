@@ -1,3 +1,4 @@
+/*
 package com.kick_off.kick_off.service.authentication;
 
 import com.kick_off.kick_off.model.authentication.User;
@@ -12,10 +13,13 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
+
 @Service
 public class JwtUtils {
     private SecretKey key;
-    private static final Long EXPIRATION_TIME = 86400000L; // 24 hours
+    private static final long ACCESS_TOKEN_EXPIRATION = 60 * 1000;      // 1 minutes
+    private static final long REFRESH_TOKEN_EXPIRATION = 7 * 24 * 60 * 60 * 1000; // 7 days
+
 
     public JwtUtils() {
         // ---- !? secretString !? ----
@@ -29,7 +33,7 @@ public class JwtUtils {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername()) // identifies the user
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
                 .claim("role", userDetails.getRole())
                 .claim("userId", userDetails.getId())
                 .signWith(key, SignatureAlgorithm.HS256) // sign token with secret key
@@ -42,7 +46,7 @@ public class JwtUtils {
                 .setClaims(claims) // Embeds the extra claims (if any) into the token payload.
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
                 .signWith(key)
                 .compact();
     }
@@ -70,3 +74,4 @@ public class JwtUtils {
         return extractClaims(token, Claims::getExpiration).before(new Date());
     }
 }
+*/

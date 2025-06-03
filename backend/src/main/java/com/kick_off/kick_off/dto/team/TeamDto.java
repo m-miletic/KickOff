@@ -1,6 +1,5 @@
 package com.kick_off.kick_off.dto.team;
 
-import com.kick_off.kick_off.dto.novo.UserDto;
 import lombok.*;
 
 @Getter

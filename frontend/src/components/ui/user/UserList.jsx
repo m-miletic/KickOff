@@ -9,9 +9,15 @@ import { DropdownButton } from "../../common/dropdown/DropdownButton";
 import { DeleteUserModal } from "./modal/DeleteUserModal";
 import Pagination from "../../common/navigation/Pagination";
 import PreviewUserModal from "./modal/PreviewUserModal";
+import { jwtDecode } from "jwt-decode";
 
 
 const UserList = () => {
+  const jwt = localStorage.getItem('token');
+  let decodedJwt = null;
+  if (jwt != null ) {
+    decodedJwt = jwtDecode(jwt);
+  };
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [filter, setFilter] = useState({
     role: "USER",
@@ -25,7 +31,7 @@ const UserList = () => {
 
   const { users, setUsers } = useFetchUsers(filter);
 
-  const handleDropdown = () => {
+  const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
@@ -45,7 +51,6 @@ const UserList = () => {
     }));
   };
 
-
   const handlePreviewUSer = (user) => {
     setSelectedUser(user);
     setIsPreviewModalOpen(true);
@@ -60,9 +65,9 @@ const UserList = () => {
     <div>
 
       <DropdownButton
-        toggleDropdown={() => handleDropdown()}
-        text={filter.role}
-        isOpen={isDropdownOpen}
+        title={filter.role}
+        isDropdownOpen={isDropdownOpen}
+        toggleDropdown={toggleDropdown}
       />
 
       {isDropdownOpen && (

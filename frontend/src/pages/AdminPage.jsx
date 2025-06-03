@@ -21,6 +21,8 @@ const AdminPage = () => {
     decodedJwt = jwtDecode(jwt);
   };
 
+  console.log("jwtDecode: ", decodedJwt);
+
   // test
   const [hide, setHide] = useState(false);
   useRequestLisVisibilityOnResize(setHide);

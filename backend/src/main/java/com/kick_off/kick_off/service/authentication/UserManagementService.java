@@ -1,20 +1,20 @@
 package com.kick_off.kick_off.service.authentication;
 
+import com.kick_off.kick_off.configuration.JwtUtil;
 import com.kick_off.kick_off.dto.RequestResponse;
+import com.kick_off.kick_off.dto.auth.LoginRequestDto;
+import com.kick_off.kick_off.dto.auth.LoginResponseDto;
 import com.kick_off.kick_off.dto.novo.UserDto;
 import com.kick_off.kick_off.model.Role;
 import com.kick_off.kick_off.model.authentication.User;
 import com.kick_off.kick_off.repository.authentication.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -25,44 +25,48 @@ public class UserManagementService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final JwtUtils jwtUtils;
+    private final JwtUtil jwtUtil;
 
-    public UserManagementService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
+    public UserManagementService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
-        this.jwtUtils = jwtUtils;
+        this.jwtUtil = jwtUtil;
     }
 
     public RequestResponse register(RequestResponse registrationRequest) {
         RequestResponse response = new RequestResponse();
         try {
             if (userRepository.existsByEmail(registrationRequest.getEmail())) {
-                response.setStatusCode(409);
+                response.setStatusCode(HttpStatus.CONFLICT.value());
                 response.setMessage("User with this email already exists.");
+
+                return response;
             } else {
                 User newUser = new User();
                 newUser.setEmail(registrationRequest.getEmail());
                 newUser.setRole(Role.valueOf("USER"));
                 newUser.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-                // savedUser za razliku od newUser bi triba imat ID
-                // koristi se u if-u za provjeru da li je user spremljen u bazu
+
                 User savedUser = userRepository.save(newUser);
-                if (savedUser.getId() > 0) {
-                    response.setUser(savedUser);
+                if (savedUser.getId() != null) {
+                    response.setUser(savedUser);  // mapirat u DTO - ne vracat bas sve od User-a
                     response.setMessage("User saved successfully");
                     response.setStatusCode(200);
                 }
             }
         } catch (Exception e) {
-            response.setStatusCode(500);
+            System.out.println("Error while registering user: " + e);
+            response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             response.setError(e.getMessage());
         }
+
         return response;
     }
 
-    public RequestResponse login(RequestResponse loginRequest) {
-        RequestResponse response = new RequestResponse();
+    public LoginResponseDto login(LoginRequestDto loginRequest) {
+
+        LoginResponseDto response = new LoginResponseDto();
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -70,62 +74,30 @@ public class UserManagementService {
                             loginRequest.getPassword()
                     )
             );
-            User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
-            String jwt = jwtUtils.generateToken(user);
-            String refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
+            User user = userRepository.findByEmail(loginRequest.getEmail())
+                    .orElseThrow(() -> new EntityNotFoundException("User with email: " + loginRequest.getEmail() + " not found."));
 
-            response.setStatusCode(200);
+            String jwt = jwtUtil.generateToken(user);
+
             response.setToken(jwt);
-/*            response.setEmail(user.getEmail());*/
-            response.setRefreshToken(refreshToken);
-/*            response.setRole(user.getRole()); // OK ?*/
-            response.setExpirationTime("24Hrs"); // probat s kracim vremenom
             response.setMessage("Successfully logged in");
+            response.setStatusCode(HttpStatus.OK.value());
+
+            // nece bacit EntityNotFoundException iako ga ne nade nego ce bacit BadCredentialsException - vidit kod za jwt !
+        } catch (BadCredentialsException e) {
+            response.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+            response.setMessage("Invalid email or password.");
+        } catch (EntityNotFoundException e) {
+            response.setStatusCode(HttpStatus.NOT_FOUND.value());
+            response.setMessage("User not found.");
         } catch (Exception e) {
-            response.setStatusCode(500);
-            response.setMessage(e.getMessage());
+            response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage("Unexpected error occurred.");
         }
+
         return response;
     }
 
-    @Transactional
-    public Boolean logout(HttpServletRequest request, HttpServletResponse response) {
-        /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("authentication: " + authentication);
-        if(authentication != null && authentication.isAuthenticated()) {
-            new SecurityContextLogoutHandler().logout(request, response, authentication);
-            String token = request.getHeader("Authorization");
-            if(token != null && token.startsWith("Bearer ")) {
-                token = token.substring(7);
-            } else {
-                throw new RuntimeException("Refresh token does not exist");
-            }
-        }*/
-
-        return true;
-
-    }
-
-    public RequestResponse refreshToken(RequestResponse refreshTokenRequest) {
-        RequestResponse response = new RequestResponse();
-        try {
-            String email = jwtUtils.extractUsername(refreshTokenRequest.getToken());
-            User user = userRepository.findByEmail(email).orElseThrow();
-
-            if (jwtUtils.isTokenValid(refreshTokenRequest.getToken(),user)) {
-                String newJwt = jwtUtils.generateToken(user);
-                response.setStatusCode(200);
-                response.setToken(newJwt);
-                response.setRefreshToken(refreshTokenRequest.getToken());
-                response.setExpirationTime("24Hrs");
-                response.setMessage("Successfully refreshed the token");
-            }
-        } catch (Exception e) {
-            response.setStatusCode(500);
-            response.setMessage(e.getMessage());
-        }
-        return response;
-    }
 
     public RequestResponse getAllUsers() {
         RequestResponse response = new RequestResponse();

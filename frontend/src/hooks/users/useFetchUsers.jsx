@@ -11,10 +11,9 @@ const useFetchUsers = (filter) => {
     const getUsers = async () => {
       try {
         const response = await fetchUsers(filter);
-        console.log("response: ", response);
         setUsers(response.data);
       } catch (error) {
-        console.log("Error in useFetchUsers -> couldn't fetch users");
+        console.log("error: ", error);
       }
     }
     getUsers();

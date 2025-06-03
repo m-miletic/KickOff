@@ -9,16 +9,12 @@ const EnrollTournamentModal = ({ setIsModalOpen, selectedTournament: tournament,
     tournamentId: tournament.id,
   });
 
-  console.log("TEST - ", tournament.userEnrolled)
-
   const handleEnrollButtonClick = async () => {
     try {
       const response = await createEnrollTeamRequest(requestObject);
-      console.log("response -> ", response);
       setIsModalOpen(false);
     } catch (error) {
-      console.log("error.response.data.message: ", error.response.data.message)
-      setErrorMessage(error.response.data.message);
+      setErrorMessage(error);
     }
   };
 

@@ -7,7 +7,7 @@ import { updateRequest } from '../../../../service/requestService';
 import { enrollTeam } from '../../../../service/tournamentService';
 import { changeUserRole } from '../../../../service/usersService';
 
-export const RequestModal = ({ selectedRequest, setSelectedRequest, setIsModalOpen, setRequests, decodedJwt }) => {
+export const RequestDetailsModal = ({ selectedRequest, setSelectedRequest, setIsModalOpen, setRequests, decodedJwt }) => {
   const requContext = useContext(RequestContext);
   const [isProceedButtonClicked, setIsProceedButtonClicked] = useState(false);
 
@@ -27,9 +27,7 @@ export const RequestModal = ({ selectedRequest, setSelectedRequest, setIsModalOp
     )
   };
 
-
   const [errorMessage, setErrorMessage] = useState(null);
-
 
   // prvo omogucit da se kreira request za enroll team
   const handleEnrollTeam = async ( statusValue ) => {
@@ -48,14 +46,10 @@ export const RequestModal = ({ selectedRequest, setSelectedRequest, setIsModalOp
         )
       );
       setIsModalOpen(false);
-    } catch (error) {
+    } catch (error) {s
       setErrorMessage(error.response.data.message);
     }
   };
-
-
-
-
 
   const handleRoleChange = async ( statusValue ) => {
     const updatedObject = {
@@ -66,9 +60,11 @@ export const RequestModal = ({ selectedRequest, setSelectedRequest, setIsModalOp
     }
     try {
       const resposne = await changeUserRole(updatedObject);
-      return resposne;
+      console.log("response: ", resposne);
+      setRequests(resposne);
+      setIsModalOpen(false);
     } catch (error) {
-      console.log("error: ", error);
+      setErrorMessage(error);
     }
   };
 
@@ -96,7 +92,6 @@ export const RequestModal = ({ selectedRequest, setSelectedRequest, setIsModalOp
               <p className='text-red-400'>{errorMessage}</p>
             )}
           </div>
-
 
           {/* 1 slucaj -> kada requester pregledaje svoje requestove - 2 slucaj -> kada approver pregledaje requesterove requestove */}
           {selectedRequest.requester.id === decodedJwt.userId ? (

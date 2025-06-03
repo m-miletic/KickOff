@@ -2,10 +2,11 @@ import React, { useState, useContext } from 'react'
 import { REQUEST_TIME_CREATED, REQUEST_STATUS } from '../../../data/requestFilters';
 import { DropdownButton } from '../../common/dropdown/DropdownButton';
 import { useFetchRequests } from '../../../hooks/requestHook';
-import { RequestModal } from './modal/RequestModal';
+import { RequestDetailsModal } from './modal/RequestDetailsModal';
 import Pagination from '../../common/navigation/Pagination';
 import { RequestContext } from "../../../context/RequestContext";
 import { ActiveComponentContext } from '../../../context/ActiveComponentContext';
+import DropdownContent from '../../common/dropdown/DropdownContent';
 
 const RequestList = ({ decodedJwt }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,21 +24,23 @@ const RequestList = ({ decodedJwt }) => {
     pageSize: 6
   });
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState({
-    timeCreated: false,
-    status: false
-  });
+  const [isStatusDropdownOpen, setIsStatusOpen] = useState(false);
+  const [isTimeCreatedDropdownOpen, setIsTimeCreatedDropdownOpen] = useState(false);
 
-  const handleSelectFilter = (type, filter) => {
-    setSelectedFilters((prev) => ({
-      ...prev,
-      [type]: filter,
+  const toggleStatusDropdown = () => {
+    setIsStatusOpen(!isStatusDropdownOpen);
+  };
+
+  const toggleTimeCreatedDropdown = () => {
+    setIsTimeCreatedDropdownOpen(!isTimeCreatedDropdownOpen);
+  };
+
+  const handleSetSelectedFilter = ( filterType, value ) => {
+    setSelectedFilters((prevValues) => ({
+      ...prevValues,
+      [filterType]: value,
     }));
-    
-    setIsDropdownOpen((prev) => ({
-      ...prev,
-      [type]: false,
-    }));
+    filterType === 'status' ? setIsStatusOpen(false) : filterType === 'timeCreated' && setIsTimeCreatedDropdownOpen(false)
   };
 
   const showRequestModal = (selectedReq) => {
@@ -47,33 +50,42 @@ const RequestList = ({ decodedJwt }) => {
 
   const { requests, setRequests, error } = useFetchRequests(selectedFilters, activeComponent);
 
-  console.log("REQUESTS: ", requests);
-
-  console.log(decodedJwt.role)
-
   return (
     <div className={`text-white text-[12px] sm:text-xs xl:text-base`}>
 
       <div className='flex justify-between pb-4 space-x-1'>
 
-        <div className={`ml-2 ${isModalOpen && 'opacity-20'}`}>
+        <div>
           <DropdownButton
-            items={REQUEST_TIME_CREATED}
-            onSelect={handleSelectFilter}
-            type={"timeCreated"}
-            title={selectedFilters.timeCreated}
-          />
-        </div>
-
-        <div className={`mr-10 sm:mr-12 xl:mr-[74px] ${isModalOpen && 'opacity-20'}`}>
-          <DropdownButton
-            items={REQUEST_STATUS}
-            onSelect={handleSelectFilter}
-            type={"status"}
             title={selectedFilters.status}
+            isDropdownOpen={isStatusDropdownOpen}
+            toggleDropdown={toggleStatusDropdown}
           />
+
+          {isStatusDropdownOpen && (
+            <DropdownContent
+              values={REQUEST_STATUS}
+              filterType={'status'}
+              onSelect={handleSetSelectedFilter}
+            />
+          )}
         </div>
 
+        <div>
+          <DropdownButton
+            title={selectedFilters.timeCreated}
+            isDropdownOpen={isTimeCreatedDropdownOpen}
+            toggleDropdown={toggleTimeCreatedDropdown}
+          />
+
+          {isTimeCreatedDropdownOpen && (
+            <DropdownContent
+              values={REQUEST_TIME_CREATED}
+              filterType={'timeCreated'}
+              onSelect={handleSetSelectedFilter}
+            />
+          )}
+        </div>
       </div>
 
       <table id="default-table" className={`${isModalOpen && 'opacity-20'}`}>
@@ -90,7 +102,7 @@ const RequestList = ({ decodedJwt }) => {
             <th data-type="date" data-format="YYYY/DD/MM">
               <span className="flex items-center px-2">
                 Time of request
-                <svg onClick={() => handleSelectFilter('sortDirection', selectedFilters.sortDirection === 'ASC' ? 'DESC' : 'ASC')} className="cursor-pointer w-4 h-4 ms-1 2xl:w-5 2xl:h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <svg onClick={() => handleSetSelectedFilter('sortDirection', selectedFilters.sortDirection === 'ASC' ? 'DESC' : 'ASC')} className="cursor-pointer w-4 h-4 ms-1 2xl:w-5 2xl:h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m8 15 4 4 4-4m0-6-4-4-4 4"/>
                 </svg>
               </span>
@@ -132,12 +144,12 @@ const RequestList = ({ decodedJwt }) => {
       </table>
 
       <div className='text-center mt-2'>
-        <Pagination totalPages={totalPages} selectedFilters={selectedFilters} handleSelectFilter={handleSelectFilter} />
+        <Pagination totalPages={totalPages} selectedFilters={selectedFilters} handleSelectFilter={handleSetSelectedFilter} />
       </div>
 
       {isModalOpen && (
         <div>
-          <RequestModal selectedRequest={selectedRequest} setSelectedRequest={setSelectedRequest} setIsModalOpen={setIsModalOpen} setRequests={setRequests} decodedJwt={decodedJwt} />
+          <RequestDetailsModal selectedRequest={selectedRequest} setSelectedRequest={setSelectedRequest} setIsModalOpen={setIsModalOpen} setRequests={setRequests} decodedJwt={decodedJwt} />
         </div>
       )}
 

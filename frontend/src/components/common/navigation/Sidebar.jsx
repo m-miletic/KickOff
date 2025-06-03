@@ -11,8 +11,6 @@ const Sidebar = () => {
 
   const { activeComponent, setActiveComponent } = useContext(ActiveComponentContext);
 
-  console.log("Sidebar: ", activeComponent);
-
   useSidebarVisibilityOnResize(setIsSidebarOpen, setError);
 
   const toggleSidebar = () => {
@@ -27,7 +25,7 @@ const Sidebar = () => {
   };
 
 
-  console.log("active cimponent: ", activeComponent)
+  console.log("active component: ", activeComponent)
 
   return (
     <div>

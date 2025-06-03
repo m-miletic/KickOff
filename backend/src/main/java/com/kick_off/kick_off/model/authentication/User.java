@@ -1,6 +1,5 @@
 package com.kick_off.kick_off.model.authentication;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.kick_off.kick_off.model.Request;
 import com.kick_off.kick_off.model.Role;
 import jakarta.persistence.*;
@@ -9,8 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -35,7 +34,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override

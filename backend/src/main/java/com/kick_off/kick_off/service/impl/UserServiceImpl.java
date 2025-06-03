@@ -9,14 +9,12 @@ import com.kick_off.kick_off.dto.tournament.TournamentDto;
 import com.kick_off.kick_off.model.Request;
 import com.kick_off.kick_off.model.Role;
 import com.kick_off.kick_off.model.Status;
-import com.kick_off.kick_off.model.Tournament;
 import com.kick_off.kick_off.model.authentication.User;
 import com.kick_off.kick_off.repository.RequestRepository;
 import com.kick_off.kick_off.repository.TeamRepository;
 import com.kick_off.kick_off.repository.TournamentRepository;
 import com.kick_off.kick_off.repository.authentication.UserRepository;
 import com.kick_off.kick_off.service.UserService;
-import com.kick_off.kick_off.service.authentication.JwtUtils;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -26,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -114,7 +113,12 @@ public class UserServiceImpl implements UserService {
         Role updatedRole = request.getNewRole();
         Status updatedStatus = request.getStatus();
 
+        // safety check - to su jedine role koje korisnik moze zatrazit
+        List<Role> allowedRoles = List.of(Role.TEAM_REPRESENTATIVE, Role.TOURNAMENT_ORGANIZER);
+        if (!allowedRoles.contains(updatedRole)) {
 
+            throw new IllegalArgumentException("Invalid or unauthorized role assignment: " + updatedRole);
+        }
 
         User user = userRepository.findById(requesterId)
                 .orElseThrow(() -> new EntityNotFoundException("User with id " + requesterId + " not found."));
@@ -128,5 +132,11 @@ public class UserServiceImpl implements UserService {
         req.setRequestFulfilled(true);
         req.setStatus(updatedStatus);
         requestRepository.save(req);
+    }
+
+    @Override
+    public User findByRole(Role role) {
+        return userRepository.findByRole(role)
+                .orElseThrow(() -> new RuntimeException("User with role: " + role + " not found."));
     }
 }

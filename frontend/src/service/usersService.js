@@ -1,16 +1,19 @@
 import apiClient from "./apis/apiClient";
 
 export const fetchUsers = async (filter) => {
+  const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.get('/users', {
       params: {
         ...filter
+      },
+      headers: {
+        Authorization: `Bearer ${jwt}`
       }
     });
-    console.log(response.data);
-    return response;
+    return response.data;
   } catch (error) {
-    console.log("Error in usersService -> couldn't fetch users");
+    console.log("Error in usersService -> ", error);
     throw error;
   }
 };
@@ -29,11 +32,19 @@ export const deleteUser = async ( filter, id ) => {
 };
 
 export const changeUserRole = async ( updateObject ) => {
+  const jwt = localStorage.getItem('token');
   try {
-    const response = await apiClient.patch('/users/role-change', updateObject);
-    return response;
+    const response = await apiClient.patch('/users/role-change',
+      updateObject,
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`
+        }
+      }
+    );
+    return response.data.data;
   } catch (error) {
     console.log("error: ", error);
-    throw error;
+    throw error.response.data.message;
   }
 };

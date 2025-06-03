@@ -38,55 +38,8 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public RequestDto createRequest(CreateRequestDto request) {
-        System.out.println("RequestType: " + request.getRequestType());
-        Long requesterId = request.getRequesterId();
-        RequestType requestType = request.getRequestType();
-
-        Request newRequest = new Request();
-
-        if(request.getMessage() != null && !request.getMessage().isEmpty()) {
-            newRequest.setMessage(request.getMessage());
-        } else {
-            switch (request.getRequestType().toString()) {
-                case "TOURNAMENT_ENROLLMENT" -> newRequest.setMessage("I want to participate in tournament!");
-                case "ROLE_CHANGE" -> newRequest.setMessage("I would like to change my role!");
-                case "TEAM_REGISTRATION" -> newRequest.setMessage("I would like to register a new team!");
-            }
-        }
-
-        User requester = userRepository.findById(requesterId)
-                .orElseThrow(() -> new EntityNotFoundException("User with id: " + requesterId + " not found."));
-
-        // ovisno o request type-u dodat approver-a
-        // case 1 ako je request type za - promjenu role, registracija tima, kreiranje turnira onda ce approver obavezno bit admin
-        // case 2 inace je onaj koji se posalje u http requestu
-
-        User approver = new User();
-
-        if (requestType.equals(RequestType.TOURNAMENT_ENROLLMENT)) {
-            Long approverId = request.getApproverId();
-            approver = userRepository.findById(approverId)
-                    .orElseThrow(() -> new EntityNotFoundException("User with id: " + approverId + " not found."));
-        } else {
-            approver = userRepository.findByRole(Role.ADMIN)
-                    .orElseThrow(() -> new EntityNotFoundException("User with role: " + Role.ADMIN + " not found."));
-        }
-
-        newRequest.setRequester(requester);
-        newRequest.setApprover(approver);
-        newRequest.setTimeCreated(LocalDateTime.now());
-        newRequest.setStatus(Status.PENDING);
-        newRequest.setRequestType(request.getRequestType());
-        newRequest.setRequestFulfilled(request.getRequestFulfilled());
-        requestRepository.save(newRequest);
-        RequestDto requestDto = modelMapper.map(newRequest, RequestDto.class);
-        return requestDto;
-
-    }
-
-    @Override
     public void createRoleChangeRequest(CreateRoleChangeRequestDto request) {
+        // requester == team_representative
         Long requesterId = request.getRequesterId();
         Role desiredRole = request.getDesiredRole();
 
@@ -95,6 +48,21 @@ public class RequestServiceImpl implements RequestService {
 
         User approver = userRepository.findByRole(Role.ADMIN)
                 .orElseThrow(() -> new EntityNotFoundException("User with role " + Role.ADMIN + " not found"));
+
+        boolean representsTeam = teamRepository.existsByRepresentative(requester);
+        if (representsTeam) {
+            throw new RuntimeException("Can't change a role while still representing a team.");
+        }
+
+        boolean hostsTournament = tournamentRepository.existsByOrganizer(requester);
+        if (hostsTournament) {
+            throw new RuntimeException("Can't change a role while hosting a tournament");
+        }
+
+        boolean alreadyHasPendingReq = requestRepository.existsByRequester_IdAndRequestTypeAndStatus(requesterId, RequestType.ROLE_CHANGE, Status.PENDING);
+        if (alreadyHasPendingReq) {
+            throw new RuntimeException("Role change request already pending");
+        }
 
         Request newRequest = new Request();
         newRequest.setDesiredRole(desiredRole);
@@ -152,6 +120,38 @@ public class RequestServiceImpl implements RequestService {
             newRequest.setRequestType(RequestType.TOURNAMENT_ENROLLMENT);
             newRequest.setMessage("I want to enroll my team to your tournament");
             requestRepository.save(newRequest);
+        }
+    }
+
+    @Override
+    public Request createTeamRegistrationRequest(TeamRegistrationRequestDto request) {
+        Long requesterId = request.getTeamRepresentativeId();
+        String desiredTeamName = request.getTeamName();
+
+        User representative = userRepository.findById(requesterId)
+                        .orElseThrow(() -> new EntityNotFoundException("User(requester) with id: " + requesterId + " not found."));
+
+        User approver = userRepository.findByRole(Role.ADMIN)
+                .orElseThrow(() -> new EntityNotFoundException("User with role: " + Role.ADMIN + " not found."));
+
+        boolean alreadyRepresentsTeam = teamRepository.existsByRepresentative(representative);
+
+        boolean teamNameExists = teamRepository.existsByTeamName(desiredTeamName);
+
+        if(alreadyRepresentsTeam) {
+            throw new RuntimeException("You already represent a team.");
+        } else if (teamNameExists) {
+            throw new RuntimeException("Team with this name already exists");
+        } else {
+            Request newRequest = new Request();
+            newRequest.setRequester(representative);
+            newRequest.setApprover(approver);
+            newRequest.setTimeCreated(LocalDateTime.now());
+            newRequest.setStatus(Status.PENDING);
+            newRequest.setRequestType(RequestType.TEAM_REGISTRATION);
+            newRequest.setMessage("I would like to register a team");
+
+            return requestRepository.save(newRequest);
         }
     }
 
@@ -253,6 +253,17 @@ public class RequestServiceImpl implements RequestService {
                 .requests(requestsDto)
                 .totalPages(totalPages)
                 .build();
+    }
+
+    @Override
+    public List<RequestDto> getRequestsByApproverId(Long approverId) {
+        List<Request> requests = requestRepository.findAllByApprover_Id(approverId);
+        List<RequestDto> requestDtos = requests
+                .stream()
+                .map(r ->
+                        modelMapper.map(r, RequestDto.class)).toList();
+
+        return requestDtos;
     }
 
 

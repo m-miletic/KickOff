@@ -25,11 +25,13 @@ export const createTournament = async ( tournamentObject ) => {
 }
 
 export const enrollTeam = async (enrollTeamObj) => {
+  console.log("Tu sam");
   try {
     const response = await apiClient.post(`/tournaments/enroll-team`, enrollTeamObj);
     return response;
   } catch (error) {
-    throw error; 
+    console.log("a odavde mozda: ", error)
+    throw error.response.data.message; 
   }
 }
 

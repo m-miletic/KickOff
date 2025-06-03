@@ -11,5 +11,4 @@ import lombok.ToString;
 public class CreateEnrollTeamRequestDto {
     private Long teamRepresentativeId;
     private Long tournamentId;
-    private RequestType requestType;
 }

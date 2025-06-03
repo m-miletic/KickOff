@@ -16,6 +16,8 @@ export const RoleChangeForm = ({ role, requesterId, setIsRequestModalOpen }) => 
     roles = ["TEAM_REPRESENTATIVE"]
   }
 
+  const [errorMessage, setErrorMessage] = useState('');
+
   const handleSelectRole = (e) => {
     setRequestObject((prevValues) => ({
       ...prevValues,
@@ -30,8 +32,7 @@ export const RoleChangeForm = ({ role, requesterId, setIsRequestModalOpen }) => 
       setIsRequestModalOpen(false);
       return response;
     } catch (error) {
-      console.log("error: ", error);
-      throw error;
+      setErrorMessage(error);
     }
   };
 
@@ -60,8 +61,9 @@ export const RoleChangeForm = ({ role, requesterId, setIsRequestModalOpen }) => 
         </div>
       </div>
 
-      <div className="pt-7">
-        <button onClick={handleSendRequest} className="bg-blue-600 px-2 py-1.5 rounded-lg text-white hover:bg-blue-700 cursor-pointer">Send</button>
+      <div className="py-3 flex items-center text-xs">
+        <div className="w-32"><button onClick={handleSendRequest} className="bg-blue-600 px-2 py-1.5 rounded-lg text-white hover:bg-blue-700 cursor-pointer">Send</button></div>
+        <div className="w-64 text-center text-red-600">{errorMessage}</div>
       </div>
 
     </div>

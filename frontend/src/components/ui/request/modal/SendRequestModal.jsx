@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { RoleChangeForm } from '../form/RoleChangeForm';
+import RegisterTeamForm from '../form/RegisterTeamForm';
 
 export const SendRequestModal = ({ setIsRequestModalOpen, role, requesterId }) => {
   const [requestType, setRequestType] = useState("");
@@ -55,6 +56,13 @@ export const SendRequestModal = ({ setIsRequestModalOpen, role, requesterId }) =
               <RoleChangeForm role={role} requesterId={requesterId} setIsRequestModalOpen={setIsRequestModalOpen}/>
             </div>
           )}
+
+          {requestType === "TEAM_REGISTRATION" && (
+            <div>
+              <RegisterTeamForm requesterId={requesterId} setIsRequestModalOpen={setIsRequestModalOpen} />
+            </div>
+          )}
+
 
           {requestType === "TOURNAMENT_ENROLLMENT" && (
             <div>

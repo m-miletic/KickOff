@@ -1,5 +1,6 @@
 package com.kick_off.kick_off.repository;
 
+import com.kick_off.kick_off.dto.request.RequestDto;
 import com.kick_off.kick_off.model.Request;
 import com.kick_off.kick_off.model.RequestType;
 import com.kick_off.kick_off.model.Status;
@@ -28,10 +29,14 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     Page<Request> findAllByStatusAndApprover_Id(Status status, Long approverId, Pageable pageable);
     Page<Request> findAllByApprover_Id(Long approverId, Pageable pageable);
 
+    List<Request> findAllByApprover_Id(Long approverId);
+
     void deleteByRequester_Id(Long userId);
 
     Optional<Request> findByRequester_IdAndApprover_Id(Long requesterId, Long approverId);
 
     List<Request> findAllByRequester_IdAndRequestTypeAndStatusNot(Long requesterId, RequestType requestType, Status status);
+
+    boolean existsByRequester_IdAndRequestTypeAndStatus(Long requesterId, RequestType requestType, Status status);
 
 }

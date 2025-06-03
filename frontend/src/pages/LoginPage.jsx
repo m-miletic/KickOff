@@ -21,10 +21,6 @@ const LoginPage = () => {
         const decodedToken = jwtDecode(userData.token);
         const loggedUserRole = decodedToken.role;
 
-
-        console.log("loggedUserRole: ", loggedUserRole);
-
-
         if(loggedUserRole === 'ADMIN') {
           navigate('/admin');  
         } else if (loggedUserRole === 'TEAM_REPRESENTATIVE') {

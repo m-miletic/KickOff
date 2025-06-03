@@ -3,10 +3,12 @@ import { RxCaretDown } from "react-icons/rx";
 import { RxCaretUp } from "react-icons/rx";
 import { CiLogout } from "react-icons/ci";
 import { ActiveComponentContext } from '../../context/ActiveComponentContext';
+import { useNavigate } from 'react-router-dom';
 
 const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
   const [isUserProfileDropdownOpen, setIsUserProfileDropdownOpen] = useState(false);
   const { setActiveComponent } = useContext(ActiveComponentContext);
+  const nav = useNavigate();
 
   const handleSendRequestClick = () => {
     handleIsRequestModalOpen();
@@ -15,6 +17,11 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
 
   const handleIsUserProfileDropdownOpen = () => {
     setIsUserProfileDropdownOpen(!isUserProfileDropdownOpen);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    nav("/login");
   };
 
   return (
@@ -61,7 +68,7 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
           </div>
 
           <div className='flex items-center cursor-pointer hover:bg-[#005571] rounded-md px-2 py-1'>
-            <div>Logout</div>
+            <div onClick={handleLogout}>Logout</div>
             <div className='text-base ml-1'><CiLogout /></div>
           </div>
 

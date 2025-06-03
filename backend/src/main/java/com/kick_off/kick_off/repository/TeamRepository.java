@@ -14,6 +14,8 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 
     boolean existsByRepresentative(User representative);
 
+    boolean existsByTeamName(String teamName);
+
     Optional<Team> findTeamByRepresentative_Id(Long id);
 
     @Query("SELECT t FROM Team t JOIN t.tournaments tournament WHERE tournament.tournamentName = :tournamentName")

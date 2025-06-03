@@ -7,18 +7,16 @@ export const useFetchRequests = ( selectedFilters, activeComponent ) => {
   const [requests, setRequests] = useState([]);
   const [error, setError] = useState(null);
 
-  // console.log("selectedFilters: ", selectedFilters);
-
   useEffect(() => {
     const getRequests = async () => {
       let response;
       try {
         if(activeComponent === "recievedRequests") {
           response = await fetchRequestsByApprover(selectedFilters);
-          setRequests(response.data.requests);
+          setRequests(response);
         } else if (activeComponent === "sentRequests") {
           response = await fetchRequestsByRequester(selectedFilters);
-          setRequests(response.data.requests);
+          setRequests(response);
         }
       } catch (error) {
         setError(error);

@@ -1,6 +1,8 @@
 package com.kick_off.kick_off.controller;
 
 import com.kick_off.kick_off.dto.RequestResponse;
+import com.kick_off.kick_off.dto.auth.LoginRequestDto;
+import com.kick_off.kick_off.dto.auth.LoginResponseDto;
 import com.kick_off.kick_off.dto.novo.UserDto;
 import com.kick_off.kick_off.model.authentication.User;
 import com.kick_off.kick_off.service.authentication.UserManagementService;
@@ -24,18 +26,8 @@ public class UserManagementController {
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<RequestResponse> login(@RequestBody RequestResponse loginData) {
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginData) {
         return ResponseEntity.ok(userManagementService.login(loginData));
-    }
-
-    @PostMapping("/auth/logout")
-    public ResponseEntity<Boolean> logout(HttpServletRequest request, HttpServletResponse response) {
-        return ResponseEntity.ok(userManagementService.logout(request, response));
-    }
-
-    @PostMapping("/auth/refresh")
-    public ResponseEntity<RequestResponse> refreshToken(@RequestBody RequestResponse refreshRequest) {
-        return ResponseEntity.ok(userManagementService.refreshToken(refreshRequest));
     }
 
     @GetMapping("/admin/get-all-users")
