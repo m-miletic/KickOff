@@ -6,6 +6,7 @@ class UserService {
   static async login(email, password) {
     try{
       const response = await axios.post(`${UserService.BASE_URL}/auth/login`, {email, password});
+      console.log("Login response: ", response);
       return response.data;
     }catch(err){
       throw err;
@@ -18,6 +19,18 @@ class UserService {
       return response.data;
     } catch (err) {
         throw err;
+    }
+  };
+
+  static async logout(refreshToken) {
+    console.log("refreshToken: ", refreshToken);
+    try {
+      const response = await axios.delete(`${UserService.BASE_URL}/auth/logout`, {
+        data: {refreshToken}
+      });
+      console.log("Delete response: ", response);
+    } catch (error) {
+      throw error;
     }
   };
 

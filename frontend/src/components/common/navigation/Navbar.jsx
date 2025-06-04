@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 /* import image from '../assets/logo-white.png'; */
 import { Link } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import { useCollapseSidebarOnResize } from "../../../hooks/useCollapseSidebarOnResize";
 import { SendRequestModal } from "../../ui/request/modal/SendRequestModal";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -9,8 +8,9 @@ import { IoClose } from "react-icons/io5";
 import { NAVBAR_ITEMS } from "../../../data/navbarItems";
 import UserProfileDropdown from "../UserProfileDropdown";
 import { ActiveComponentContext } from "../../../context/ActiveComponentContext";
+import { LoggedUserContext } from "../../../context/LoggedUserContext";
 
-const Navbar = ({ decodedJwt }) => {
+const Navbar = () => {
   const [isSideBarActive, setIsSideBarActive] = useState(false);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const { activeComponent, setActiveComponent } = useContext(ActiveComponentContext);
@@ -18,7 +18,7 @@ const Navbar = ({ decodedJwt }) => {
 
   useCollapseSidebarOnResize(setIsSideBarActive); 
 
-  console.log("NAVBAR decoded jwt " , decodedJwt);
+  const { decodedJwt, jwt, loading } = useContext(LoggedUserContext);
 
   const toggleSidebar = () => {
     setIsSideBarActive(!isSideBarActive);

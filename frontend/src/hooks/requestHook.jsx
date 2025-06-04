@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 
-import { enrollTeam } from "../service/tournamentService";
 import { fetchRequestsByApprover, fetchRequestsByRequester } from "../service/requestService";
 
 export const useFetchRequests = ( selectedFilters, activeComponent ) => {
   const [requests, setRequests] = useState([]);
   const [error, setError] = useState(null);
+  const [totalPages, setTotalPages] = useState(null);
+
 
   useEffect(() => {
     const getRequests = async () => {
@@ -13,19 +14,22 @@ export const useFetchRequests = ( selectedFilters, activeComponent ) => {
       try {
         if(activeComponent === "recievedRequests") {
           response = await fetchRequestsByApprover(selectedFilters);
-          setRequests(response);
+          setRequests(response.requests);
+          setTotalPages(response.totalPages);
         } else if (activeComponent === "sentRequests") {
           response = await fetchRequestsByRequester(selectedFilters);
-          setRequests(response);
+          setRequests(response.requests);
+          setTotalPages(response.totalPages);
         }
       } catch (error) {
         setError(error);
       }
-    }
+    };
+
     getRequests();
   }, [selectedFilters, activeComponent]);
 
-  return { requests, setRequests, error };
+  return { requests, setRequests, totalPages, error };
 };
 
 

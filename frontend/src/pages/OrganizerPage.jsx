@@ -1,31 +1,30 @@
 import React, { useContext } from "react";
 import Navbar from "../components/common/navigation/Navbar";
 import RequestList from "../components/ui/request/RequestList";
-import { jwtDecode } from "jwt-decode";
 import { RequestProvider } from "../context/RequestContext";
 import { ActiveComponentContext } from "../context/ActiveComponentContext";
+import { LoggedUserContext } from "../context/LoggedUserContext";
 
 const OrganizerPage = () => {
   const { activeComponent } = useContext(ActiveComponentContext);
+  const { decodedJwt, jwt, loading} = useContext(LoggedUserContext);
 
-  const jwt = localStorage.getItem('token');
-  let decodedJwt = null;
-  if (jwt != null ) {
-    decodedJwt = jwtDecode(jwt);
-  };
+  if (loading) {
+    return(
+      <div>Loading...</div>
+    );
+  }
 
   return(
     <div>
-      <Navbar decodedJwt={decodedJwt}/>
-      
-      { (activeComponent === "sentRequests" || activeComponent === "recievedRequests") && 
+      <Navbar />
+      {(activeComponent === "sentRequests" || activeComponent === "recievedRequests") && 
         <div className="flex justify-center text-white mt-20">
           <RequestProvider>
             <RequestList decodedJwt={decodedJwt} />
           </RequestProvider>
         </div>
       }
-
     </div>
   );
 }

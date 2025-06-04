@@ -1,19 +1,15 @@
-import React, { useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import Navbar from "../components/common/navigation/Navbar";
-import { ActiveComponentContext } from "../context/ActiveComponentContext";
-import { RequestProvider } from "../context/RequestContext";
-import RequestList from "../components/ui/request/RequestList";
-import TeamRepresentativeTournamentList from "../components/ui/tournaments/TeamRepresentativeTournamentList";
+import Standings from "../components/ui/Standings";
 import { apiAuthClient } from "../service/apis/apiClient";
 import { LoggedUserContext } from "../context/LoggedUserContext";
 
-const TeamRepresentativePage = () => {
-  const { activeComponent } = useContext(ActiveComponentContext);
+const UserPage = () => {
   const { decodedJwt, jwt, loading } = useContext(LoggedUserContext);
 
-  console.log("TeamRepresentativePage decodedJwt - ", decodedJwt);
+  console.log("UserPage: ", decodedJwt);
 
-  // ovo ce mi tribat za svaki page tako da ce ovo bit custom hook
+
   useEffect(() => {
     const verifyUserRole = async () => {
       console.log("verifyUserRole - executed")
@@ -24,12 +20,15 @@ const TeamRepresentativePage = () => {
           }
         });
         const actualRole = response.data.role;
+
         if (decodedJwt.role !== actualRole) {
           localStorage.removeItem('token');
           localStorage.removeItem('refreshToken');
           window.location.href = "/login";
         }
       } catch (error) {
+        console.log("decodedjwt odavdlen: ", decodedJwt)
+        console.log("Error verifying user role: ", error);
         // If the request fails (e.g. 401), logout anyway
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
@@ -50,22 +49,9 @@ const TeamRepresentativePage = () => {
   return(
     <div>
       <Navbar />
-      <h1 className="text-white flex items-center justify-center mt-20">
-        Team Representative Page - Home
-      </h1>
-      {(activeComponent === "sentRequests" || activeComponent === "recievedRequests") && 
-        <div className="flex justify-center text-white mt-20">
-          <RequestProvider>
-            <RequestList decodedJwt={decodedJwt} />
-          </RequestProvider>
-        </div>
-      }
-      {activeComponent === "Tournaments" && 
-        <div className="flex justify-center">
-          <TeamRepresentativeTournamentList />
-        </div>
-      }
+      <div className="flex justify-center pt-32"><Standings /></div>
     </div>
   );
-}
-export default TeamRepresentativePage;
+
+};
+export default UserPage;

@@ -2,19 +2,21 @@ package com.kick_off.kick_off.service.authentication;
 
 import com.kick_off.kick_off.configuration.JwtUtil;
 import com.kick_off.kick_off.dto.RequestResponse;
-import com.kick_off.kick_off.dto.auth.LoginRequestDto;
-import com.kick_off.kick_off.dto.auth.LoginResponseDto;
+import com.kick_off.kick_off.dto.auth.*;
 import com.kick_off.kick_off.dto.novo.UserDto;
 import com.kick_off.kick_off.model.Role;
+import com.kick_off.kick_off.model.authentication.RefreshToken;
 import com.kick_off.kick_off.model.authentication.User;
 import com.kick_off.kick_off.repository.authentication.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -26,12 +28,16 @@ public class UserManagementService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenServiceImpl refreshTokenService;
+    private final ModelMapper modelMapper;
 
-    public UserManagementService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+    public UserManagementService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtUtil jwtUtil, RefreshTokenServiceImpl refreshTokenService, ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
+        this.refreshTokenService = refreshTokenService;
+        this.modelMapper = modelMapper;
     }
 
     public RequestResponse register(RequestResponse registrationRequest) {
@@ -65,8 +71,8 @@ public class UserManagementService {
     }
 
     public LoginResponseDto login(LoginRequestDto loginRequest) {
-
         LoginResponseDto response = new LoginResponseDto();
+
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -79,7 +85,13 @@ public class UserManagementService {
 
             String jwt = jwtUtil.generateToken(user);
 
-            response.setToken(jwt);
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+
+            RefreshTokenDto refreshTokenDto = modelMapper.map(refreshToken, RefreshTokenDto.class);
+
+
+            response.setAccessToken(jwt);
+            response.setRefreshToken(refreshTokenDto);
             response.setMessage("Successfully logged in");
             response.setStatusCode(HttpStatus.OK.value());
 
@@ -97,7 +109,6 @@ public class UserManagementService {
 
         return response;
     }
-
 
     public RequestResponse getAllUsers() {
         RequestResponse response = new RequestResponse();
@@ -159,20 +170,6 @@ public class UserManagementService {
             response.setUser(savedUser);
             response.setStatusCode(200);
             response.setMessage("User updated successfully");
-        } catch (Exception e) {
-            response.setStatusCode(500);
-            response.setMessage(e.getMessage());
-        }
-        return response;
-    }
-
-    public RequestResponse getCurrentlyLoggedUser(String email) {
-        RequestResponse response = new RequestResponse();
-        try {
-            UserDetails user = userRepository.findByEmail(email).orElseThrow();
-            response.setUserDetails(user);
-            response.setStatusCode(200);
-            response.setMessage("User information retrieved successfully");
         } catch (Exception e) {
             response.setStatusCode(500);
             response.setMessage(e.getMessage());

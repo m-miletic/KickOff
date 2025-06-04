@@ -9,7 +9,7 @@ export const fetchAllTournaments = async ( filters ) => {
     });
     return response.data;
   } catch (error) {
-    throw new Error("There was a problem while trying to send GET request for fetching tournaments.");
+    throw error;
   }
 };
 

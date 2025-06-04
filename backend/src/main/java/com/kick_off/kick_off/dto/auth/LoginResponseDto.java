@@ -1,5 +1,6 @@
 package com.kick_off.kick_off.dto.auth;
 
+import com.kick_off.kick_off.model.authentication.RefreshToken;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -10,6 +11,7 @@ import lombok.ToString;
 public class LoginResponseDto {
 
     private String message;
-    private String token;
+    private String accessToken;
     private int statusCode;
+    private RefreshTokenDto refreshToken;
 }

@@ -25,10 +25,9 @@ export const fetchTeamsByTournament = async ( filters ) => {
         ...filters
       }
     });
-    return response;
+    return response.data;
   } catch (error) {
-    console.error("TeamService(original) Error: ", error);
-    throw new Error("There was a problem while fetching team entities.");
+    throw error;
   }
 };
 

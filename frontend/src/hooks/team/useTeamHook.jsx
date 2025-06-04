@@ -42,7 +42,6 @@ export const useFetchTeamsByTournament = ( filters ) => {
         setTeams(response.data);
         setError(null);
       } catch (error) {
-        console.error("useFetchTeamsHook Error -> Couldn't fetch teams");
         setError(error);
       } finally {
         setLoading(false);

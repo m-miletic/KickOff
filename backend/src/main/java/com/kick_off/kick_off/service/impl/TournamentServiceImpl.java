@@ -2,11 +2,9 @@ package com.kick_off.kick_off.service.impl;
 
 import com.kick_off.kick_off.dto.request.RequestDto;
 import com.kick_off.kick_off.dto.team.EnrollTeamDto;
-import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.dto.tournament.CreateTournamentDto;
-import com.kick_off.kick_off.dto.tournament.GetTournamentsForTeamRepresentativeDto;
-import com.kick_off.kick_off.dto.tournament.TournamentDto;
-import com.kick_off.kick_off.dto.tournament.requestParams.TournamentFilterParamsDto;
+import com.kick_off.kick_off.dto.tournament.sig.GetTournamentsDto;
+import com.kick_off.kick_off.dto.tournament.sig.TournamentDto;
 import com.kick_off.kick_off.model.Request;
 import com.kick_off.kick_off.model.Status;
 import com.kick_off.kick_off.model.Team;
@@ -22,7 +20,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TournamentServiceImpl implements TournamentService {
@@ -41,21 +38,22 @@ public class TournamentServiceImpl implements TournamentService {
         this.teamRepository = teamRepository;
     }
 
+
     @Override
-    public List<TournamentDto> getTournaments(GetTournamentsForTeamRepresentativeDto filters) {
+    public List<TournamentDto> getTournaments(GetTournamentsDto filters) {
         Long teamRepresentativeId = filters.getTeamRepresentativeId();
 
         List<Tournament> tournaments = tournamentRepository.findAll();
 
         List<TournamentDto> tournamentDtos = tournaments.stream()
                 .map(tournament -> {
+                    if (teamRepresentativeId != null ) {
                         boolean isTeamEnrolledToTournament = tournament.getTeams().stream()
                                 .anyMatch(team -> team.getRepresentative().getId().equals(teamRepresentativeId));
-
+                    }
                         TournamentDto tournamentDto = modelMapper.map(tournament, TournamentDto.class);
 
                         return tournamentDto;
-
                 }).toList();
 
         return tournamentDtos;

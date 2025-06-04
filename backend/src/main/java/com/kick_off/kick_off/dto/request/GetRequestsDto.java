@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class RequestFilterParamsDto {
+public class GetRequestsDto {
 
     private Long userId;
     private String status = "PENDING";

@@ -1,18 +1,13 @@
 package com.kick_off.kick_off.controller;
 
 import com.kick_off.kick_off.dto.request.RequestDto;
-import com.kick_off.kick_off.dto.request.RequestListDto;
 import com.kick_off.kick_off.dto.team.EnrollTeamDto;
-import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.dto.tournament.CreateTournamentDto;
-import com.kick_off.kick_off.dto.tournament.GetTournamentsForTeamRepresentativeDto;
-import com.kick_off.kick_off.dto.tournament.TournamentDto;
-import com.kick_off.kick_off.dto.tournament.requestParams.TournamentFilterParamsDto;
-import com.kick_off.kick_off.model.authentication.User;
+import com.kick_off.kick_off.dto.tournament.sig.GetTournamentsDto;
+import com.kick_off.kick_off.dto.tournament.sig.TournamentDto;
 import com.kick_off.kick_off.response.ApiResponse;
 import com.kick_off.kick_off.service.TeamService;
 import com.kick_off.kick_off.service.TournamentService;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,11 +26,12 @@ public class TournamentController {
         this.teamService = teamService;
     }
 
+    // isti endpoint se poziva ako gost s /home dohvaca turnire i ako team_representative dohvaca turnire ... ok?
     @GetMapping
-    public ResponseEntity<ApiResponse<List<TournamentDto>>> fetchAllTournaments(@ModelAttribute GetTournamentsForTeamRepresentativeDto filterParams) {
-        System.out.println("filterParams: " + filterParams);
+    public ResponseEntity<ApiResponse<List<TournamentDto>>> fetchAllTournaments(@ModelAttribute GetTournamentsDto request) {
+        System.out.println("request: " + request.toString());
         try {
-            List<TournamentDto> tournaments = tournamentService.getTournaments(filterParams);
+            List<TournamentDto> tournaments = tournamentService.getTournaments(request);
             return ResponseEntity.ok(ApiResponse.<List<TournamentDto>>builder()
                     .message("Successfully retrieved tournaments")
                     .success(true)

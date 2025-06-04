@@ -14,12 +14,12 @@ export const useFetchTournaments = ( filters ) => {
         setTournaments(response.data);
         setError(null);
       } catch (error) {
-        console.log("There was an error while fetching tournaments: ", error);
         setError(error);
       } finally {
         setLoading(false);
       }
-    } 
+    };
+    
     getTournaments();
   }, [filters]);
 

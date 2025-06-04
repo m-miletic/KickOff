@@ -7,7 +7,9 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class GetTournamentsForTeamRepresentativeDto {
-    private Long teamRepresentativeId;
+public class TournamentFilterParamsDto {
+
     private int pageSize;
+    private Long teamRepresentativeId;
+    private Long tournamentId;
 }

@@ -4,6 +4,7 @@ import { RxCaretUp } from "react-icons/rx";
 import { CiLogout } from "react-icons/ci";
 import { ActiveComponentContext } from '../../context/ActiveComponentContext';
 import { useNavigate } from 'react-router-dom';
+import UserService from '../../service/UserService';
 
 const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
   const [isUserProfileDropdownOpen, setIsUserProfileDropdownOpen] = useState(false);
@@ -21,6 +22,8 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    UserService.logout(localStorage.getItem('refreshToken'));
+    localStorage.removeItem('refreshToken');
     nav("/login");
   };
 

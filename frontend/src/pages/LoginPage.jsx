@@ -1,34 +1,39 @@
 import React, { useContext, useState } from "react";
 import UserService from "../service/UserService.js";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext.jsx";
 import image from '../assets/register-background.jpg'
 import { jwtDecode } from "jwt-decode";
+import { LoggedUserContext } from "../context/LoggedUserContext.jsx";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { refreshAuthState } = useContext(AuthContext); 
   let navigate = useNavigate();
+
+  const { setTokenFromLogin } = useContext(LoggedUserContext);
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
       const userData = await UserService.login(email, password);
-      if (userData.token) {
-        localStorage.setItem('token', userData.token);
-        const decodedToken = jwtDecode(userData.token);
+      if (userData.accessToken) {
+        localStorage.setItem('token', userData.accessToken);
+        localStorage.setItem('refreshToken', userData.refreshToken.token);
+
+        setTokenFromLogin(userData.accessToken);
+
+        const decodedToken = jwtDecode(userData.accessToken);
         const loggedUserRole = decodedToken.role;
 
         if(loggedUserRole === 'ADMIN') {
           navigate('/admin');  
         } else if (loggedUserRole === 'TEAM_REPRESENTATIVE') {
-          navigate('/representative'); 
+          navigate('/representative');
         } else if (loggedUserRole === 'TOURNAMENT_ORGANIZER') {
           navigate('/organizer');
         } else if (loggedUserRole === 'USER') {
-          navigate('/home')
+          navigate('/user')
         }
       } else {
         setError(userData.message);
@@ -85,6 +90,11 @@ const LoginPage = () => {
               <span><a href="/signup" className="cursor-pointer hover:underline hover:text-blue-500">Don't have an account? Sign up</a></span>
             </div>
           </form>
+
+          <div className="py-2">
+            <span><a href="/home" className="cursor-pointer hover:underline hover:text-blue-500">Back to homepage</a></span>
+          </div>
+
         </div>
         <img className="w-[450px] object-cover md:rounded-tr-2xl md:rounded-br-2xl lg:block hidden" src={image} alt="" />
       </div>

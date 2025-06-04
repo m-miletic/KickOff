@@ -4,7 +4,6 @@ import com.kick_off.kick_off.dto.team.CreateTeamDto;
 import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.dto.team.requestParams.TeamFilterParamsDto;
 import com.kick_off.kick_off.dto.team.TeamListDto;
-import com.kick_off.kick_off.dto.tournament.TournamentDto;
 import com.kick_off.kick_off.model.Team;
 import com.kick_off.kick_off.response.ApiResponse;
 import com.kick_off.kick_off.service.TeamService;
@@ -32,9 +31,25 @@ public class TeamController {
     }
 
     @GetMapping("/by-tournament")
-    public ResponseEntity<List<TeamDto>> getTeamsByTournament(@RequestParam String tournamentName) {
-        System.out.println("Tournament name: " + tournamentName);
-        return new ResponseEntity<>(teamService.findTeamByTournament(tournamentName), HttpStatus.OK);
+    public ResponseEntity<ApiResponse<List<TeamDto>>> getTeamsByTournament(@RequestParam String tournamentName) {
+        try {
+            List<TeamDto> teams = teamService.findTeamByTournament(tournamentName);
+            ApiResponse<List<TeamDto>> response = ApiResponse.<List<TeamDto>>builder()
+                    .message("Successfully retrieved teams enrolled in tournament: " + tournamentName)
+                    .data(teams)
+                    .success(true)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            ApiResponse<List<TeamDto>> errorResponse = ApiResponse.<List<TeamDto>>builder()
+                    .message(e.getMessage())
+                    .data(null)
+                    .success(false)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(errorResponse);
+        }
     }
 
     @GetMapping("/{id}")

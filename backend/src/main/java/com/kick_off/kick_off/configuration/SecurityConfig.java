@@ -1,7 +1,7 @@
 package com.kick_off.kick_off.configuration;
 
 import com.kick_off.kick_off.model.Role;
-import com.kick_off.kick_off.service.authentication.UserDetailsService;
+import com.kick_off.kick_off.service.authentication.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,12 +26,12 @@ import java.util.Arrays;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
     private final AuthEntryPoint unauthorizedHandler;
     private final JwtAuthFilter jwtAuthFilter;
 
-    public SecurityConfig(UserDetailsService userDetailsService, AuthEntryPoint unauthorizedHandler, JwtAuthFilter jwtAuthFilter) {
-        this.userDetailsService = userDetailsService;
+    public SecurityConfig(UserDetailsServiceImpl userDetailsServiceImpl, AuthEntryPoint unauthorizedHandler, JwtAuthFilter jwtAuthFilter) {
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
         this.unauthorizedHandler = unauthorizedHandler;
         this.jwtAuthFilter = jwtAuthFilter;
     }
@@ -52,9 +52,10 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/h2-console/**").permitAll()
-                                .requestMatchers("/auth/register", "/auth/login", "/api/tournaments").permitAll()
-                                .requestMatchers("/api/users", "/api/users/role-change", "/api/teams").hasRole(Role.ADMIN.name())
+                                .requestMatchers("/h2-console/**", "/auth/register", "/auth/login", "/api/tournaments", "/auth/refresh-token", "/users/me/**", "/auth/logout", "/api/teams",
+                                    "/api/teams/by-tournament"
+                                ).permitAll()
+                                .requestMatchers("/api/users", "/api/users/role-change").hasRole(Role.ADMIN.name())
                                 .requestMatchers("/api/tournaments/enroll-team").hasRole(Role.TOURNAMENT_ORGANIZER.name())
                                 .requestMatchers("/api/request/role-change", "/api/requests/by-requester").hasAnyRole(Role.USER.name(), Role.TOURNAMENT_ORGANIZER.name(), Role.TEAM_REPRESENTATIVE.name())
                                 .requestMatchers("/api/requests/team-creation").hasRole(Role.TEAM_REPRESENTATIVE.name())
@@ -69,7 +70,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+        daoAuthenticationProvider.setUserDetailsService(userDetailsServiceImpl);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         return daoAuthenticationProvider;
     }

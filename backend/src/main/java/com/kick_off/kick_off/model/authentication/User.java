@@ -3,10 +3,7 @@ package com.kick_off.kick_off.model.authentication;
 import com.kick_off.kick_off.model.Request;
 import com.kick_off.kick_off.model.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +15,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "email")}) // db level validation
 public class User implements UserDetails {
     @Id

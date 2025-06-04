@@ -1,8 +1,7 @@
 package com.kick_off.kick_off.dto.novo;
 
 import com.kick_off.kick_off.dto.team.TeamDto;
-import com.kick_off.kick_off.dto.tournament.TournamentDto;
-import com.kick_off.kick_off.model.Tournament;
+import com.kick_off.kick_off.dto.tournament.sig.TournamentDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,4 +19,10 @@ public class UserDto {
     private Integer reqCount;
     private TeamDto team;
     private TournamentDto tournament;
+
+    public UserDto(Long id, String email, String role) {
+        this.id = id;
+        this.email = email;
+        this.role = role;
+    }
 }

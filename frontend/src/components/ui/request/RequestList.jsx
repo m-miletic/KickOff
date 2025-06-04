@@ -4,14 +4,13 @@ import { DropdownButton } from '../../common/dropdown/DropdownButton';
 import { useFetchRequests } from '../../../hooks/requestHook';
 import { RequestDetailsModal } from './modal/RequestDetailsModal';
 import Pagination from '../../common/navigation/Pagination';
-import { RequestContext } from "../../../context/RequestContext";
 import { ActiveComponentContext } from '../../../context/ActiveComponentContext';
 import DropdownContent from '../../common/dropdown/DropdownContent';
 
 const RequestList = ({ decodedJwt }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState([]);
-  const { totalPages } = useContext(RequestContext);
+/*   const { totalPages } = useContext(RequestContext); */
 
   const { activeComponent } = useContext(ActiveComponentContext);
 
@@ -21,7 +20,7 @@ const RequestList = ({ decodedJwt }) => {
     timeCreated: 'Last 7 days',
     sortDirection: 'DESC',
     pageNumber: 1,
-    pageSize: 6
+    pageSize: 2
   });
 
   const [isStatusDropdownOpen, setIsStatusOpen] = useState(false);
@@ -48,7 +47,7 @@ const RequestList = ({ decodedJwt }) => {
     setIsModalOpen(true);
   };
 
-  const { requests, setRequests, error } = useFetchRequests(selectedFilters, activeComponent);
+  const { requests, setRequests, totalPages, error } = useFetchRequests(selectedFilters, activeComponent);
 
   return (
     <div className={`text-white text-[12px] sm:text-xs xl:text-base`}>

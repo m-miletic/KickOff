@@ -16,8 +16,8 @@ public interface RequestService {
 
     Request createTeamRegistrationRequest(TeamRegistrationRequestDto request);
 
-    RequestListDto getRequestsByApproverId(RequestFilterParamsDto requestFilterParamsDto);
-    RequestListDto getRequestsByRequesterId(RequestFilterParamsDto requestFilterParamsDto);
+    RequestListDto getRequestsByApproverId(GetRequestsDto getRequestsDto);
+    RequestListDto getRequestsByRequesterId(GetRequestsDto getRequestsDto);
 
     List<RequestDto> getRequestsByApproverId(Long approverId);
 

@@ -168,7 +168,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public RequestListDto getRequestsByApproverId(RequestFilterParamsDto filters) {
+    public RequestListDto getRequestsByApproverId(GetRequestsDto filters) {
         Page<Request> pageRequests;
 
         Sort.Direction direction = filters.getSortDirection().equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
@@ -199,6 +199,8 @@ public class RequestServiceImpl implements RequestService {
         long totalRequests = pageRequests.getTotalElements();
         long totalPages = calculateTotalPages(totalRequests, filters.getPageSize());
 
+
+
         List<RequestDto> requestsDto = new ArrayList<>();
         requestsDto = pageRequests
                 .stream()
@@ -212,7 +214,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public RequestListDto getRequestsByRequesterId(RequestFilterParamsDto filters) {
+    public RequestListDto getRequestsByRequesterId(GetRequestsDto filters) {
         Page<Request> pageRequests;
 
         Sort.Direction direction = filters.getSortDirection().equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;

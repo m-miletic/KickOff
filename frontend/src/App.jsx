@@ -6,12 +6,13 @@ import TeamPage from "./pages/TeamPage";
 import OrganizerPage from "./pages/OrganizerPage";
 import TeamRepresentativePage from "./pages/TeamRepresentativePage";
 import AdminPage from "./pages/AdminPage";
-import HomePage from "./pages/Homepage";
+import HomePage from "./pages/HomePage";
 
 import { AuthProvider } from "./context/AuthContext";
 import { ActiveComponentProvider } from "./context/ActiveComponentContext";
 import { ActiveModalProvider } from "./context/ActiveModalContext";
 import { LoggedUserProvider } from "./context/LoggedUserContext";
+import UserPage from "./pages/UserPage";
 
 const App = () => {
   return (
@@ -22,6 +23,13 @@ const App = () => {
             <Routes>
               <Route path="/home" element={ <ActiveComponentProvider> <HomePage /> </ActiveComponentProvider> } />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/user" element={
+                  <ActiveModalProvider>
+                    <ActiveComponentProvider>
+                      <UserPage />
+                    </ActiveComponentProvider>
+                  </ActiveModalProvider>
+                } />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/teams/:id" element={<TeamPage />} />
               <Route path="/organizer" element={

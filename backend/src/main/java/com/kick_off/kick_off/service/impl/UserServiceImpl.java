@@ -5,7 +5,7 @@ import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.dto.novo.UserDto;
 import com.kick_off.kick_off.dto.novo.UserFilterParamsDto;
 import com.kick_off.kick_off.dto.novo.UserListDto;
-import com.kick_off.kick_off.dto.tournament.TournamentDto;
+import com.kick_off.kick_off.dto.tournament.sig.TournamentDto;
 import com.kick_off.kick_off.model.Request;
 import com.kick_off.kick_off.model.Role;
 import com.kick_off.kick_off.model.Status;
@@ -15,6 +15,7 @@ import com.kick_off.kick_off.repository.TeamRepository;
 import com.kick_off.kick_off.repository.TournamentRepository;
 import com.kick_off.kick_off.repository.authentication.UserRepository;
 import com.kick_off.kick_off.service.UserService;
+import com.kick_off.kick_off.service.authentication.RefreshTokenServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -24,7 +25,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,13 +34,15 @@ public class UserServiceImpl implements UserService {
     private final RequestRepository requestRepository;
     private final TeamRepository teamRepository;
     private final TournamentRepository tournamentRepository;
+    private final RefreshTokenServiceImpl refreshTokenService;
 
-    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, RequestRepository requestRepository, TeamRepository teamRepository, TournamentRepository tournamentRepository) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, RequestRepository requestRepository, TeamRepository teamRepository, TournamentRepository tournamentRepository, RefreshTokenServiceImpl refreshTokenService) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.requestRepository = requestRepository;
         this.teamRepository = teamRepository;
         this.tournamentRepository = tournamentRepository;
+        this.refreshTokenService = refreshTokenService;
     }
 
     private long calculateTotalPages(long totalUsers, int pageSize) {
@@ -106,6 +108,7 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Transactional
     @Override
     public void updateUsersRole(RoleChangeRequestDto request) {
         Long requesterId = request.getRequesterId();
@@ -132,6 +135,8 @@ public class UserServiceImpl implements UserService {
         req.setRequestFulfilled(true);
         req.setStatus(updatedStatus);
         requestRepository.save(req);
+
+        refreshTokenService.deleteByUserId(requesterId);
     }
 
     @Override

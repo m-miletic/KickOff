@@ -1,35 +1,56 @@
 import React, { useState } from "react";
-import { useFetchTeams, useFetchTeamsByTournament } from "../../hooks/team/useTeamHook";
+import { useFetchTeamsByTournament } from "../../hooks/team/useTeamHook";
 import { DropdownButton } from "../common/dropdown/DropdownButton";
 import { useFetchTournaments } from "../../hooks/tournaments/useFetchTournaments";
+import DropdownContent from "../common/dropdown/DropdownContent";
 
 const Standings = () => {
-  const [filters, setFilters] = useState({
-    tournamentName: '',
+  const [filterTeams, setFilterTeams] = useState({
+    tournamentName: 'Select tournament',
     pageSize: 20 // max broj ekipa u ligi je 20, u standings-u  ne zelim paginaciju nego prikazati tablicu sa svim timovima lige
   });
   // jel ok koristit isti filters objekt za dohvacanje timova i turnira?
-  const { teams, loading, error } = useFetchTeamsByTournament(filters);
-  const { tournaments } = useFetchTournaments(filters); 
-  const dropdownItems = tournaments.map(t => ({
-    label: t.tournamentName,
-    value: t.id
+  const { teams, loading, error } = useFetchTeamsByTournament(filterTeams);
+  const { tournaments } = useFetchTournaments(); 
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  // potrebno jer ne izgleda svaki response isto na ovaj nacin dropdownContent alko primi uvik isti format tocno zna sta displayat
+  // isto je formatiran REQUEST_STATUS i REQUEST_TIME_CREATED
+  const dropdownItems = tournaments.map(tournament => ({
+    label: tournament.tournamentName,
+    value: tournament.id
   }));
 
-/*   console.log("filters: ", filters); */
-
   const handleSelectFilter = ( type, value ) => {
-    setFilters((prevValues) => ({
+    setFilterTeams((prevValues) => ({
       ...prevValues,
       [type]: value
     }));
+    setIsDropdownOpen(false);
   };
 
   return (
     <div className="text-white overflow-x-scroll sm:overflow-hidden bg-[#04111a] rounded-lg px-4 py-6">
       
       <div className="mb-2">
-        <DropdownButton items={dropdownItems} onSelect={handleSelectFilter} type={'tournamentName'} title={'Tournaments'}/>
+        <DropdownButton
+          title={filterTeams.tournamentName}
+          isDropdownOpen={isDropdownOpen}
+          toggleDropdown={toggleDropdown}
+        />
+
+        {isDropdownOpen  && (
+          <DropdownContent 
+            values={dropdownItems}
+            filterType={'tournamentName'}
+            onSelect={handleSelectFilter}
+          />
+        )}
       </div>
 
       {loading && (

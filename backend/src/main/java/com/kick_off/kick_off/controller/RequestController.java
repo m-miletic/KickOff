@@ -21,9 +21,9 @@ public class RequestController {
     }
 
     @GetMapping("/by-approver")
-    public ResponseEntity<ApiResponse<RequestListDto>> fetchRequestsByApproverId(@ModelAttribute RequestFilterParamsDto filters) {
+    public ResponseEntity<ApiResponse<RequestListDto>> fetchRequestsByApproverId(@ModelAttribute GetRequestsDto request) {
         try {
-            RequestListDto requests = requestService.getRequestsByApproverId(filters);
+            RequestListDto requests = requestService.getRequestsByApproverId(request);
             ApiResponse<RequestListDto> response = ApiResponse.<RequestListDto>builder()
                     .message("Successfully retrieved all requests by approver.")
                     .data(requests)
@@ -43,7 +43,7 @@ public class RequestController {
     }
 
     @GetMapping("/by-requester")
-    public ResponseEntity<ApiResponse<RequestListDto>> fetchRequestsByRequesterId(@ModelAttribute RequestFilterParamsDto filters) {
+    public ResponseEntity<ApiResponse<RequestListDto>> fetchRequestsByRequesterId(@ModelAttribute GetRequestsDto filters) {
         try {
             RequestListDto requests = requestService.getRequestsByRequesterId(filters);
             ApiResponse<RequestListDto> response = ApiResponse.<RequestListDto>builder()

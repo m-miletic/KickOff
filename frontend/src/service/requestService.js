@@ -11,8 +11,7 @@ export const fetchRequestsByApprover = async ( selectedFilters ) => {
         Authorization: `Bearer ${jwt}`
       }
     });
-    console.log("response: ", response);
-    return response.data.data.requests;
+    return response.data.data;
   } catch (error) {
     throw error;
   }
