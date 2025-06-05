@@ -6,28 +6,17 @@ import TeamList from "../components/ui/team/TeamList";
 import UserList from "../components/ui/user/UserList";
 import { ActiveComponentContext } from "../context/ActiveComponentContext";
 import RequestList from "../components/ui/request/RequestList";
-import { useNavigate } from "react-router-dom";
-import UserService from "../service/UserService";
 import { LoggedUserContext } from "../context/LoggedUserContext";
+import { useHandleLogout } from "../hooks/useHandleLogout";
 
 const AdminPage = () => {
   const { activeComponent } = useContext(ActiveComponentContext);
   const { decodedJwt, jwt, loading } = useContext(LoggedUserContext);
-  const nav = useNavigate();
 
-  console.log("AdminPage: ", decodedJwt);
-
-  // test
   const [hide, setHide] = useState(false);
-  useRequestLisVisibilityOnResize(setHide);
 
-  // samo za test - vidit kako ovo odradit kako triba
-  if(activeComponent === 'logout') {
-    localStorage.removeItem('token');
-    UserService.logout(localStorage.getItem('refreshToken'));
-    localStorage.removeItem('refreshToken');
-    nav('/login');
-  }
+  useRequestLisVisibilityOnResize(setHide);
+  useHandleLogout(activeComponent);
 
   return(
     <RequestProvider>

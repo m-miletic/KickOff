@@ -15,6 +15,21 @@ INSERT INTO tournaments (tournament_name, details, start_date, end_date, organiz
 
 INSERT INTO teams (team_name, representative_id) VALUES ('HNK Hajduk Split', 2);
 INSERT INTO teams (team_name, representative_id) VALUES ('HNK Dinamo Zagreb', 3);
+INSERT INTO teams (team_name) VALUES ('Slaven Belupo');
+INSERT INTO teams (team_name) VALUES ('Slaven Belupo');
+INSERT INTO teams (team_name) VALUES ('Slaven Belupo');
+INSERT INTO teams (team_name) VALUES ('Slaven Belupo');
+INSERT INTO teams (team_name) VALUES ('Slaven Belupo');
+
+
+INSERT INTO players (first_name, team_id) VALUES ('Marko', 1);
+INSERT INTO players (first_name, team_id) VALUES ('Filip', 1);
+INSERT INTO players (first_name, team_id) VALUES ('Niko', 1);
+
+INSERT INTO matches (name) VALUES ('mec');
+
+INSERT INTO team_match (team_id, match_id) VALUES (1, 1);
+INSERT INTO team_match (team_id, match_id) VALUES (2, 1);
 
 INSERT INTO team_tournament (team_id, tournament_id) VALUES (1, 1);
 INSERT INTO team_tournament (team_id, tournament_id) VALUES (2, 1);

@@ -26,7 +26,7 @@ export const useFetchTeams = ( filters ) => {
     getTeams();
   }, [filters]);
 
-  return { teams, loading, error };
+  return { teams, setTeams, loading, error };
 };
 
 export const useFetchTeamsByTournament = ( filters ) => {

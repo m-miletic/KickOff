@@ -11,10 +11,9 @@ export const fetchAllTeams = async ( filters ) => {
         Authorization: `Bearer ${jwt}`
       }
     });
-    return response;
+    return response.data;
   } catch (error) {
-    console.error("team service error: ", error);
-    throw new Error("There was a problem while fetching team entities.");
+    throw error;
   }
 };
 
@@ -31,16 +30,17 @@ export const fetchTeamsByTournament = async ( filters ) => {
   }
 };
 
-export const deleteTeamById = async ( filter, id ) => {
+export const deleteTeamById = async ( id ) => {
+  const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.delete(`/teams/${id}`, {
-      params: {
-        ...filter
+      headers: {
+        Authorization: `Bearer ${jwt}`
       }
     });
     return response;
   } catch (error) {
-    throw new Error("TeamService Error -> Couldn't fetch teams");
+    throw error;
   }
 }
 

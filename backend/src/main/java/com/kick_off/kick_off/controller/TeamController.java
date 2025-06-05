@@ -25,9 +25,25 @@ public class TeamController {
     }
 
     @GetMapping
-    public ResponseEntity<TeamListDto> fetchAllTeams(@ModelAttribute TeamFilterParamsDto filters) {
-        System.out.println("filters: " + filters);
-        return new ResponseEntity<>(teamService.getTeams(filters), HttpStatus.OK);
+    public ResponseEntity<ApiResponse<TeamListDto>> fetchAllTeams(@ModelAttribute TeamFilterParamsDto filters) {
+        try {
+            TeamListDto teams = teamService.getTeams(filters);
+            ApiResponse<TeamListDto> response = ApiResponse.<TeamListDto>builder()
+                    .message("Successfully fetched teams.")
+                    .data(teams)
+                    .success(true)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            ApiResponse<TeamListDto> errorResponse = ApiResponse.<TeamListDto>builder()
+                    .message(e.getMessage())
+                    .data(null)
+                    .success(false)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(errorResponse);
+        }
     }
 
     @GetMapping("/by-tournament")
@@ -50,14 +66,6 @@ public class TeamController {
 
             return ResponseEntity.status(HttpStatus.OK).body(errorResponse);
         }
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Team> fetchTeamById(@PathVariable("id") Long id) {
-        Optional<Team> team = teamService.getTeamById(id);
-        return team
-                .map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
@@ -84,15 +92,37 @@ public class TeamController {
         }
     }
 
-
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<TeamListDto> deleteTeam(@ModelAttribute TeamFilterParamsDto filter, @PathVariable Long id) {
-        System.out.println("deleteTeam: " + filter.toString());
-        teamService.deleteTeam(id);
-        return new ResponseEntity<>(teamService.getTeams(filter), HttpStatus.OK);
+    public ResponseEntity<ApiResponse<Void>> deleteTeam(@PathVariable Long id) {
+        System.out.println("Reached ");
+
+        try {
+            teamService.deleteTeam(id);
+            ApiResponse<Void> response = ApiResponse.<Void>builder()
+                    .message("Team with id: " + id + " successfully deleted.")
+                    .data(null)
+                    .success(true)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            ApiResponse<Void> errorResponse = ApiResponse.<Void>builder()
+                    .message(e.getMessage())
+                    .data(null)
+                    .success(false)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Team> fetchTeamById(@PathVariable("id") Long id) {
+        Optional<Team> team = teamService.getTeamById(id);
+        return team
+                .map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 
 
 }

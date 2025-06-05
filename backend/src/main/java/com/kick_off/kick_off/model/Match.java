@@ -22,7 +22,7 @@ public class Match {
     private LocalDate matchDate;
 
     @ManyToMany(mappedBy = "matches")
-    private List<Team> matchTeams;
+    private List<Team> teams;
 
     @ManyToOne
     @JoinColumn(name = "tournament_id")

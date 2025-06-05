@@ -1,17 +1,19 @@
 import React from 'react'
 import { IoMdClose } from "react-icons/io";
 import { PiWarningCircleLight } from "react-icons/pi";
-import { deleteTeamById } from '../../../../service/teamService';
+import { deleteTeamById, fetchAllTeams } from '../../../../service/teamService';
 
-export const DeleteTeamModal = ({ setIsModalOpen, selectedTeam, setTeams, filter }) => {
+export const DeleteTeamModal = ({ setIsModalOpen, selectedTeam, setTeams, filters }) => {
 
   const handleDelete = async () => {
     try {
-      const response = await deleteTeamById(filter, selectedTeam.id);
-      setTeams(response.data);
+      const deleteResponse = await deleteTeamById(selectedTeam.id);
+      console.log("deleteResponse: ", deleteResponse);
+      const reFetchResponse = await fetchAllTeams(filters);
+      setTeams(reFetchResponse.data);
       setIsModalOpen(false);
     } catch (error) {
-      console.error("Error deleting user:", error);
+      error;
     }
   };
 

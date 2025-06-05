@@ -38,7 +38,8 @@ public class Team {
     @Column(name = "photo_url")
     private String photoUrl;
 
-    @OneToMany(mappedBy = "team")
+    // brisanjem tema brisu se svi njegovi igraci pomocu cascade = {CascadeType.REMOVE} - vidit jos ocu jel to zelin
+    @OneToMany(mappedBy = "team", cascade = {CascadeType.REMOVE}, orphanRemoval = true) // orphan mi omogucava da iz team-a izbrisem player-a
     private List<Player> players;
 
     @ManyToMany(mappedBy = "teams")

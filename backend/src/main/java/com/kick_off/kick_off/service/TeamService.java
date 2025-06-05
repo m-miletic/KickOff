@@ -15,7 +15,7 @@ public interface TeamService {
 
     TeamDto createTeam(CreateTeamDto teamDto);
 
-    TeamDto deleteTeam(Long id);
+    void deleteTeam(Long id);
 
     List<TeamDto> findTeamByTournament(String tournamentName);
 

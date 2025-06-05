@@ -88,7 +88,7 @@ const TeamList = () => {
 
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-50 backdrop-blur-sm bg-black/30">
-          <DeleteTeamModal setIsModalOpen={setIsDeleteModalOpen} selectedTeam={selectedTeam} setTeams={setTeams} filter={filters} />
+          <DeleteTeamModal setIsModalOpen={setIsDeleteModalOpen} selectedTeam={selectedTeam} setTeams={setTeams} filters={filters} />
         </div>
       )}
 
@@ -98,7 +98,5 @@ const TeamList = () => {
 
     </div>    
   );
-
-
 }
 export default TeamList;

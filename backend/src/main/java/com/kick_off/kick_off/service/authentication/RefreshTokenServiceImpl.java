@@ -63,8 +63,6 @@ public class RefreshTokenServiceImpl {
 
     @Transactional
     public void deleteByToken(String token) {
-        System.out.println("I'm in service");
-        System.out.println("token=" + token);
         refreshTokenRepository.deleteByToken(token);
     }
 }

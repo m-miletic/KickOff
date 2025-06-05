@@ -48,7 +48,6 @@ public class UserManagementController {
 
     @DeleteMapping("/auth/logout")
     public ResponseEntity<String> logout(@RequestBody TokenRefreshRequestDto request) {
-        System.out.println("I'm in controller!");
         refreshTokenService.deleteByToken(request.getRefreshToken());
         return ResponseEntity.status(HttpStatus.OK).body("Logout successful. Refresh token deleted.");
     }

@@ -8,6 +8,8 @@ import lombok.Setter;
 @Setter
 @Table(name = "players")
 public class Player {
+
+    // dok jos testiram nek bude Integer nedamise popunjavat sva polja a int je primitiv tip i nemoze bit null
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -17,19 +19,17 @@ public class Player {
     @Column(name = "last_name")
     private String lastName;
     @Column(name = "age")
-    private int age;
+    private Integer age;
     @Column(name = "height")
-    private int height;
+    private Integer height;
     @Column(name = "foot")
     private String foot;
     @Column(name = "player_position")
     private String position;
-    @Column(name = "jersey_number")
-    private int jerseyNumber;
     @Column(name = "goals")
-    private int goals;
+    private Integer goals;
     @Column(name = "assists")
-    private int assists;
+    private Integer assists;
     @Column(name = "photo_url")
     private String photoUrl;
 
@@ -47,7 +47,6 @@ public class Player {
                 ", height=" + height +
                 ", foot='" + foot + '\'' +
                 ", position='" + position + '\'' +
-                ", jerseyNumber=" + jerseyNumber +
                 ", goals=" + goals +
                 ", assists=" + assists +
                 ", photoUrl='" + photoUrl + '\'' +

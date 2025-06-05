@@ -11,8 +11,6 @@ const TeamRepresentativePage = () => {
   const { activeComponent } = useContext(ActiveComponentContext);
   const { decodedJwt, jwt, loading } = useContext(LoggedUserContext);
 
-  console.log("TeamRepresentativePage decodedJwt - ", decodedJwt);
-
   // ovo ce mi tribat za svaki page tako da ce ovo bit custom hook
   useEffect(() => {
     const verifyUserRole = async () => {
@@ -41,7 +39,7 @@ const TeamRepresentativePage = () => {
 
     const interval = setInterval(() => {
       verifyUserRole();
-    }, 10000);
+    }, 10000); // 10 sekundi u testnoj fazi - kasnije stavit npr svako 6 ili 12 sati
 
     return () => clearInterval(interval);
 

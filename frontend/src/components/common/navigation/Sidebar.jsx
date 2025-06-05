@@ -4,6 +4,8 @@ import { BREAKPOINTS } from "../../../data/breakpoints";
 import { ITEMS } from "../../../data/adminSidebarItems";
 import { useSidebarVisibilityOnResize } from "../../../hooks/useSidebarVisibilityOnResize";
 import { ActiveComponentContext } from "../../../context/ActiveComponentContext";
+import { RxHamburgerMenu } from "react-icons/rx";
+import { IoMdClose } from "react-icons/io";
 
 const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -24,15 +26,12 @@ const Sidebar = () => {
     };
   };
 
-
-  console.log("active component: ", activeComponent)
+  console.log("active Component: ", activeComponent);
 
   return (
     <div>
       <button onClick={toggleSidebar} type="button" className={`text-white relative top-5 left-4 ${window.innerWidth > BREAKPOINTS.SM || (window.innerWidth < BREAKPOINTS.SM && isSidebarOpen) ? 'hidden' : ''}`}>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`size-6 `}>
-          <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-        </svg>
+        <RxHamburgerMenu className="h-5 w-5 ml-2 mt-1" />
       </button>
 
       <aside id="logo-sidebar" className={`h-screen sticky w-52 ${!isSidebarOpen && 'hidden'} md:w-56 xl:w-64`} aria-label="Sidebar">
@@ -41,9 +40,7 @@ const Sidebar = () => {
           <ul className="space-y-2 text-2xs md:text-xs xl:text-base">
             <li>
               <button onClick={toggleSidebar} type="button" className={`m-1 ml-3 pt-1 ${(isSidebarOpen && window.innerWidth > BREAKPOINTS.SM) ? 'hidden' : ''}`}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
+                <IoMdClose className="h-5 w-5" />
               </button>
             </li>
             <li className="pb-2.5"></li>
