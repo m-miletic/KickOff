@@ -21,8 +21,13 @@ public class Match {
     @Column(name = "match_date")
     private LocalDate matchDate;
 
-    @ManyToMany(mappedBy = "matches")
-    private List<Team> teams;
+    @ManyToOne
+    @JoinColumn(name = "home_team_id")
+    private Team homeTeam;
+
+    @ManyToOne
+    @JoinColumn(name = "away_team_id")
+    private Team awayTeam;
 
     @ManyToOne
     @JoinColumn(name = "tournament_id")

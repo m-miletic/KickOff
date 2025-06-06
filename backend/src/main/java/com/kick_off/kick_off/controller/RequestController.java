@@ -110,6 +110,7 @@ public class RequestController {
 
     @PostMapping("/team-creation")
     public ResponseEntity<ApiResponse<Request>> createTeamRegistrationRequest(@RequestBody TeamRegistrationRequestDto request) {
+        System.out.println("request - " + request.toString());
         try {
             Request r = requestService.createTeamRegistrationRequest(request);
             ApiResponse<Request> response = ApiResponse.<Request>builder()
@@ -130,11 +131,25 @@ public class RequestController {
         }
     }
 
-    @PutMapping("/{requestId}")
-    public ResponseEntity<?> updateRequest(@RequestBody UpdateRequestDto request, @PathVariable Long requestId) {
-        System.out.println("UpdateRequestDto: " + request.toString());
-        return new ResponseEntity<>(requestService.updateRequest(request, requestId), HttpStatus.OK);
+    @PutMapping
+    public ResponseEntity<ApiResponse<Void>> updateRequest(@RequestBody UpdateRequestStatusDto request) {
+        try {
+            requestService.updateRequest(request);
+            ApiResponse<Void> response = ApiResponse.<Void>builder()
+                    .message("Request status updated.")
+                    .data(null)
+                    .success(true)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            ApiResponse<Void> errorResponse = ApiResponse.<Void>builder()
+                    .message(e.getMessage())
+                    .data(null)
+                    .success(false)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(errorResponse);
+        }
     }
-
-
 }

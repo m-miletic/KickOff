@@ -49,18 +49,21 @@ public class UserController {
     ResponseEntity<ApiResponse<UserListDto>> deleteUserById(@ModelAttribute UserFilterParamsDto filters, @PathVariable Long id) {
         try {
             userService.deleteUser(id);
-            UserListDto users = userService.getUsers(filters);
-            return ResponseEntity.ok(ApiResponse.<UserListDto>builder()
+            ApiResponse<UserListDto> response = ApiResponse.<UserListDto>builder()
                     .message("User deleted successfully.")
-                    .success(true)
-                    .data(users)
-                    .build());
-        } catch (IllegalStateException e) {
-            return ResponseEntity.badRequest().body(ApiResponse.<UserListDto>builder() // vidit oce proc s bad request
-                    .message(e.getMessage())
-                    .success(false)
                     .data(userService.getUsers(filters))
-                    .build());
+                    .success(true)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (IllegalStateException e) {
+            ApiResponse<UserListDto> errorResponse = ApiResponse.<UserListDto>builder()
+                    .message(e.getMessage())
+                    .data(null)
+                    .success(false)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(errorResponse);
         }
     }
 

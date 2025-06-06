@@ -24,7 +24,7 @@ public interface RequestService {
 
     RequestDto getRequestById(Long id);
 
-    Request updateRequest(UpdateRequestDto request, Long id);
+    void updateRequest(UpdateRequestStatusDto request);
 
 
 }

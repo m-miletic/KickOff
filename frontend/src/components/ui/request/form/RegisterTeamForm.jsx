@@ -9,10 +9,10 @@ const RegisterTeamForm = ({ requesterId, setIsRequestModalOpen }) => {
     coach: ""
   });
 
-  const [errorMessage, setErrorMessage] = useState("");
+/*   const [errorMessage, setErrorMessage] = useState(""); */
 
 
-  const handleSendRequest = async () => {
+/*   const handleSendRequest = async () => {
     try {
       const response = await createTeamRegistrationRequest(teamObject);
       console.log("response: ", response);
@@ -28,7 +28,7 @@ const RegisterTeamForm = ({ requesterId, setIsRequestModalOpen }) => {
       [e.target.name]: e.target.value
     }));
   };
-
+ */
   return(
     <div>
 
@@ -54,10 +54,10 @@ const RegisterTeamForm = ({ requesterId, setIsRequestModalOpen }) => {
         />
       </div>
 
-      <div className="px-4 py-3 flex items-center text-xs">
+{/*       <div className="px-4 py-3 flex items-center text-xs">
         <div className="w-32"><button onClick={handleSendRequest} className="bg-blue-600 px-2 py-1.5 rounded-lg text-white hover:bg-blue-700 cursor-pointer">Send</button></div>
         <div className="w-64 text-center text-red-600">{errorMessage}</div>
-      </div>
+      </div> */}
 
     </div>
   );

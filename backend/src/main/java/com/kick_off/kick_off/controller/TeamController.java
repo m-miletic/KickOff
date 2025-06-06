@@ -70,7 +70,6 @@ public class TeamController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<TeamDto>> createTeam(@RequestBody CreateTeamDto team) {
-        System.out.println("CreateTeamDto: "+  team.toString());
         try {
             TeamDto createdTeam = teamService.createTeam(team);
             ApiResponse<TeamDto> response = ApiResponse.<TeamDto>builder()
@@ -94,8 +93,6 @@ public class TeamController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteTeam(@PathVariable Long id) {
-        System.out.println("Reached ");
-
         try {
             teamService.deleteTeam(id);
             ApiResponse<Void> response = ApiResponse.<Void>builder()

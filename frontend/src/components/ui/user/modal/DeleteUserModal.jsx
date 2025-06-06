@@ -16,7 +16,7 @@ export const DeleteUserModal = ({ setIsModalOpen, selectedUser, setUsers, filter
         setErrorMessage(response.message)
       }
     } catch (error) {
-      console.error("Error deleting user:", error);
+      throw error;
     }
   };
 

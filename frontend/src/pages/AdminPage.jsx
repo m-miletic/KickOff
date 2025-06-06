@@ -8,6 +8,7 @@ import { ActiveComponentContext } from "../context/ActiveComponentContext";
 import RequestList from "../components/ui/request/RequestList";
 import { LoggedUserContext } from "../context/LoggedUserContext";
 import { useHandleLogout } from "../hooks/useHandleLogout";
+import AdminTournamentList from "../components/ui/tournaments/AdminTournamentList";
 
 const AdminPage = () => {
   const { activeComponent } = useContext(ActiveComponentContext);

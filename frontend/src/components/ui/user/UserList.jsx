@@ -72,7 +72,8 @@ const UserList = () => {
 
       {isDropdownOpen && (
         <DropdownContent
-          value={ROLES}
+          values={ROLES}
+          filterType={'role'}
           onSelect={handleSelectFilter}
         />
       )}

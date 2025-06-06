@@ -12,7 +12,6 @@ const Standings = () => {
   // jel ok koristit isti filters objekt za dohvacanje timova i turnira?
   const { teams, loading, error } = useFetchTeamsByTournament(filterTeams);
   const { tournaments } = useFetchTournaments(); 
-
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -21,7 +20,7 @@ const Standings = () => {
 
   // potrebno jer ne izgleda svaki response isto na ovaj nacin dropdownContent alko primi uvik isti format tocno zna sta displayat
   // isto je formatiran REQUEST_STATUS i REQUEST_TIME_CREATED
-  const dropdownItems = tournaments.map(tournament => ({
+  const dropdownItems = tournaments.tournamentsList.map(tournament => ({
     label: tournament.tournamentName,
     value: tournament.id
   }));

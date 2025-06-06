@@ -6,6 +6,8 @@ const Pagination = ({ totalPages, selectedFilters, handleSelectFilter }) => {
   const [nextPage, setNextPage] = useState();
   const [navigationNumbers, setNavigationNumbers] = useState([]);
 
+  console.log("Pagination total pages: ", totalPages);
+
   const pagesArray = (start, stop, step) => {
     return Array.from(
       { length: (stop - start) / step + 1 },

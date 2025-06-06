@@ -5,6 +5,7 @@ import com.kick_off.kick_off.dto.team.EnrollTeamDto;
 import com.kick_off.kick_off.dto.tournament.CreateTournamentDto;
 import com.kick_off.kick_off.dto.tournament.sig.GetTournamentsDto;
 import com.kick_off.kick_off.dto.tournament.sig.TournamentDto;
+import com.kick_off.kick_off.dto.tournament.sig.TournamentListDto;
 import com.kick_off.kick_off.response.ApiResponse;
 import com.kick_off.kick_off.service.TeamService;
 import com.kick_off.kick_off.service.TournamentService;
@@ -28,21 +29,24 @@ public class TournamentController {
 
     // isti endpoint se poziva ako gost s /home dohvaca turnire i ako team_representative dohvaca turnire ... ok?
     @GetMapping
-    public ResponseEntity<ApiResponse<List<TournamentDto>>> fetchAllTournaments(@ModelAttribute GetTournamentsDto request) {
-        System.out.println("request: " + request.toString());
+    public ResponseEntity<ApiResponse<TournamentListDto>> fetchAllTournaments(@ModelAttribute GetTournamentsDto request) {
         try {
-            List<TournamentDto> tournaments = tournamentService.getTournaments(request);
-            return ResponseEntity.ok(ApiResponse.<List<TournamentDto>>builder()
-                    .message("Successfully retrieved tournaments")
-                    .success(true)
+            TournamentListDto tournaments = tournamentService.getTournaments(request);
+            ApiResponse<TournamentListDto> response = ApiResponse.<TournamentListDto>builder()
+                    .message("Successfully retrieved tournaments.")
                     .data(tournaments)
-                    .build());
+                    .success(true)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (IllegalStateException e) {
-            return ResponseEntity.badRequest().body(ApiResponse.<List<TournamentDto>>builder()
+            ApiResponse<TournamentListDto> errorResponse = ApiResponse.<TournamentListDto>builder()
                     .message(e.getMessage())
-                    .success(false)
                     .data(null)
-                    .build());
+                    .success(false)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(errorResponse);
         }
     }
 
@@ -87,10 +91,6 @@ public class TournamentController {
                     .success(false)
                     .data(null)
                     .build();
-
-            System.out.println("IllegalStateException e: " + e.getMessage());
-
-            System.out.println("Error response: " + errorResponse.toString());
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }

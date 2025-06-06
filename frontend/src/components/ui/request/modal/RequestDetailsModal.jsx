@@ -11,7 +11,7 @@ export const RequestDetailsModal = ({ selectedRequest, setSelectedRequest, setIs
   const requContext = useContext(RequestContext);
   const [isProceedButtonClicked, setIsProceedButtonClicked] = useState(false);
 
-  const handleRequestChange = (value) => {
+/*   const handleRequestChange = (value) => {
     requContext.setTotalPendingRequests(prevCount => prevCount - 1);
     setIsModalOpen(false);
     const updatedSelectedRequest = {
@@ -26,6 +26,8 @@ export const RequestDetailsModal = ({ selectedRequest, setSelectedRequest, setIs
       )
     )
   };
+ */
+  console.log("selectedRequest: ", selectedRequest);
 
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -52,19 +54,33 @@ export const RequestDetailsModal = ({ selectedRequest, setSelectedRequest, setIs
   };
 
   const handleRoleChange = async ( statusValue ) => {
-    const updatedObject = {
+    const roleChangeObject = {
       requesterId: selectedRequest.requester.id,
       requestId: selectedRequest.id,
       status: statusValue,
       newRole: selectedRequest.desiredRole
     }
     try {
-      const resposne = await changeUserRole(updatedObject);
+      const resposne = await changeUserRole(roleChangeObject);
       console.log("response: ", resposne);
       setRequests(resposne);
       setIsModalOpen(false);
     } catch (error) {
       setErrorMessage(error);
+    }
+  };
+
+  const handleRegisterTeam = async ( statusValue ) => {
+    const registerTeamObject = {
+      requestId: selectedRequest.id,
+      status: statusValue
+    }
+    try {
+      const response = await updateRequest(registerTeamObject);
+      console.log("response -> ", response);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.log("error -  ", error);
     }
   };
 
@@ -77,6 +93,7 @@ export const RequestDetailsModal = ({ selectedRequest, setSelectedRequest, setIs
             <div className="text-base md:text-lg 2xl:text-xl font-semibold text-gray-900 ">
               <span>Request Details</span>
             </div>
+
             <div>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -155,6 +172,13 @@ export const RequestDetailsModal = ({ selectedRequest, setSelectedRequest, setIs
                     <div className='flex items-center space-x-1'>
                       <div><button onClick={() => handleEnrollTeam("APPROVED")} className='bg-blue-500 px-2 py-1 rounded-xl'>Accept team enrollment</button></div>
                       <div><button onClick={() => handleEnrollTeam("DECLINED")} className='bg-red-500 px-2 py-1 rounded-xl'>Decline team enrollment</button></div>
+                    </div>
+                  )}
+
+                  {selectedRequest.requestType === "TEAM_REGISTRATION" && (
+                    <div className='flex items-center space-x-1'>
+                      <div><button onClick={() => handleRegisterTeam("APPROVED")} className='bg-blue-500 px-2 py-1 rounded-xl'>Accept team registration</button></div>
+                      <div><button onClick={() => handleRegisterTeam("DECLINED")} className='bg-red-500 px-2 py-1 rounded-xl'>Decline team registration</button></div>
                     </div>
                   )}
 

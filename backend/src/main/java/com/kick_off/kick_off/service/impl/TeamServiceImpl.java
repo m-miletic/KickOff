@@ -4,13 +4,9 @@ import com.kick_off.kick_off.dto.team.CreateTeamDto;
 import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.dto.team.requestParams.TeamFilterParamsDto;
 import com.kick_off.kick_off.dto.team.TeamListDto;
-import com.kick_off.kick_off.model.Match;
-import com.kick_off.kick_off.model.Request;
-import com.kick_off.kick_off.model.Team;
+import com.kick_off.kick_off.model.*;
 import com.kick_off.kick_off.model.authentication.User;
-import com.kick_off.kick_off.repository.MatchRepository;
-import com.kick_off.kick_off.repository.RequestRepository;
-import com.kick_off.kick_off.repository.TeamRepository;
+import com.kick_off.kick_off.repository.*;
 import com.kick_off.kick_off.repository.authentication.UserRepository;
 import com.kick_off.kick_off.service.TeamService;
 import jakarta.persistence.EntityNotFoundException;
@@ -32,13 +28,17 @@ public class TeamServiceImpl implements TeamService {
     private final RequestRepository requestRepository;
     private final UserRepository userRepository;
     private final MatchRepository matchRepository;
+    private final PlayerRepository playerRepository;
+    private final TournamentRepository tournamentRepository;
 
-    public TeamServiceImpl(TeamRepository teamRepository, ModelMapper modelMapper, RequestRepository requestRepository, UserRepository userRepository, MatchRepository matchRepository) {
+    public TeamServiceImpl(TeamRepository teamRepository, ModelMapper modelMapper, RequestRepository requestRepository, UserRepository userRepository, MatchRepository matchRepository, PlayerRepository playerRepository, TournamentRepository tournamentRepository) {
         this.teamRepository = teamRepository;
         this.modelMapper = modelMapper;
         this.requestRepository = requestRepository;
         this.userRepository = userRepository;
         this.matchRepository = matchRepository;
+        this.playerRepository = playerRepository;
+        this.tournamentRepository = tournamentRepository;
     }
 
     private long calculateTotalPages(long totalTeams, int pageSize) {
@@ -85,7 +85,6 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public TeamDto createTeam(CreateTeamDto teamDto) {
-        System.out.println("CreateTeamDto: " + teamDto);
         Long requestId = teamDto.getRequestId();
         Request updatedRequest = requestRepository.findById(requestId)
                 .orElseThrow(() -> new EntityNotFoundException("Request with id: " + requestId + " not found."));
@@ -112,18 +111,25 @@ public class TeamServiceImpl implements TeamService {
     }
 
 
-
     @Override
     public void deleteTeam(Long id) {
         Team team = teamRepository.findById(id)
                         .orElseThrow(() -> new EntityNotFoundException("Team with id: " + " not found."));
 
-        // triba bi rucno uklonit tim iz svakog turnira prije nego ga izbrisem
-        team.getTournaments().forEach(tournament -> tournament.getTeams().remove(team));
-        // valjalo bi izbrisat i match-eve ako izbrisem tim ... onda i protivnickom timu izbrisat meceve u kojem se nalazia taj klub kojeg brisem
-        List<Match> teamsMatches = team.getMatches();
-        teamsMatches.forEach(match -> matchRepository.delete(match));
-        teamRepository.deleteById(id);
+        // dohvatit sve igrace koji su u tom team-u - NE brisat ih nego im samo setirat team na null
+        List<Player> players = playerRepository.findAllByTeam_Id(id);
+        for (Player player : players) {
+            player.setTeam(null);
+            playerRepository.save(player);
+        }
+        // team tournament je many na many pa je potrebno rucno uklonit team iz liste timova u turnir entitetu
+        List<Tournament> tournaments = tournamentRepository.findByTeams_Id(team.getId());
+        for (Tournament tournament : tournaments) {
+            tournament.getTeams().remove(team);
+            tournamentRepository.save(tournament);
+        }
+
+        teamRepository.delete(team);
     }
 
     @Override

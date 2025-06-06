@@ -11,6 +11,7 @@ export const fetchRequestsByApprover = async ( selectedFilters ) => {
         Authorization: `Bearer ${jwt}`
       }
     });
+    console.log("fetchRequestsByApprover response: ", response);
     return response.data.data;
   } catch (error) {
     throw error;
@@ -28,7 +29,8 @@ export const fetchRequestsByRequester = async ( selectedFilters ) => {
         Authorization: `Bearer ${jwt}`
       }
     });
-    return response.data.data.requests;
+    console.log("fetchRequestsByRequester response: ", response);
+    return response.data.data;
   } catch (error) {
     console.log("error", error)
     throw error;
@@ -48,14 +50,18 @@ export const fetchAllRequestsByUserId = async ( selectedFilters, userId ) => {
   }
 }
 
-export const updateRequest = async ( updatedRequest, requestId ) => {
+export const updateRequest = async ( updateObject ) => {
+  const jwt = localStorage.getItem('token');
   try {
-    const response = await apiClient.put(`/requests/${requestId}`, updatedRequest);
-    console.log("updated request: ", updateRequest);
+    const response = await apiClient.put(`/requests`, updateObject, {
+      headers: {
+        Authorization: `Bearer ${jwt}`
+      }
+    });
     console.log("response: ", response);
     return response;
   } catch (error) {
-    throw new Error("Service -> Error fetching data: ", error.message);
+    throw error;
   }
 }
 

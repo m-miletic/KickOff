@@ -7,8 +7,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class UpdateRequestDto {
+public class UpdateRequestStatusDto {
 
+    private Long requestId;
     private String status;
-    private Boolean requestFulfilled;
 }

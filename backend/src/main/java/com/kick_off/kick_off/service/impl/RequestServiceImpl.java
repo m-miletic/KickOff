@@ -126,7 +126,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public Request createTeamRegistrationRequest(TeamRegistrationRequestDto request) {
         Long requesterId = request.getTeamRepresentativeId();
-        String desiredTeamName = request.getTeamName();
+        /*String desiredTeamName = request.getTeamName();*/
 
         User representative = userRepository.findById(requesterId)
                         .orElseThrow(() -> new EntityNotFoundException("User(requester) with id: " + requesterId + " not found."));
@@ -136,13 +136,13 @@ public class RequestServiceImpl implements RequestService {
 
         boolean alreadyRepresentsTeam = teamRepository.existsByRepresentative(representative);
 
-        boolean teamNameExists = teamRepository.existsByTeamName(desiredTeamName);
+        /*boolean teamNameExists = teamRepository.existsByTeamName(desiredTeamName);*/
 
         if(alreadyRepresentsTeam) {
             throw new RuntimeException("You already represent a team.");
-        } else if (teamNameExists) {
+        } /*else if (teamNameExists) {
             throw new RuntimeException("Team with this name already exists");
-        } else {
+        }*/ else {
             Request newRequest = new Request();
             newRequest.setRequester(representative);
             newRequest.setApprover(approver);
@@ -278,12 +278,18 @@ public class RequestServiceImpl implements RequestService {
 
 
     @Override
-    public Request updateRequest(UpdateRequestDto request, Long id) {
-        Request requestUpdate = requestRepository.findById(id).orElseThrow();
-        requestUpdate.setStatus(Status.valueOf(request.getStatus()));
-        requestUpdate.setRequestFulfilled(request.getRequestFulfilled());
+    public void updateRequest(UpdateRequestStatusDto request) {
+        Long requestId = request.getRequestId();
+        Status status = Status.valueOf(request.getStatus());
 
-        return requestRepository.save(requestUpdate);
+        Request r = requestRepository.findById(requestId)
+                .orElseThrow(() -> new EntityNotFoundException("Request with id: " + requestId + " not found."));
+
+        r.setStatus(status);
+        if (status.equals(Status.DECLINED)) {
+            r.setRequestFulfilled(true);
+        };
+        requestRepository.save(r);
     }
 
 

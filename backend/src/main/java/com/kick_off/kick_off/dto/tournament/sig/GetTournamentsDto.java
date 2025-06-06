@@ -8,5 +8,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class GetTournamentsDto {
+
     private Long teamRepresentativeId;
+    private int pageNumber = 1;
+    private int pageSize = 3;
 }

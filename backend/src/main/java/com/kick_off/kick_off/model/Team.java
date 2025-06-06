@@ -45,13 +45,12 @@ public class Team {
     @ManyToMany(mappedBy = "teams")
     private List<Tournament> tournaments;
 
-    @ManyToMany
-    @JoinTable(
-            name = "team_match",
-            joinColumns = @JoinColumn(name = "team_id"),
-            inverseJoinColumns = @JoinColumn(name = "match_id")
-    )
-    private List<Match> matches;
+    // ako ne bi koristia orphanRemoval i probam preko Team-a izbrisat match samo ce ga detach-at nece ga izbrisat iz db
+    @OneToMany(mappedBy = "homeTeam", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Match> homeMatches;
+
+    @OneToMany(mappedBy = "awayTeam", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Match> awayMatches;
 
     @OneToOne
     private User representative;

@@ -45,8 +45,13 @@ export const deleteTeamById = async ( id ) => {
 }
 
 export const createTeam = async (teamObject) => {
+  const jwt = localStorage.getItem('token');
   try {
-    const response = await apiClient.post(`/teams`, teamObject);
+    const response = await apiClient.post(`/teams`, teamObject, {
+      headers: {
+        Authorization: `Bearer ${jwt}`
+      }
+    });
     return response;
   } catch (error) {
     throw new Error("There was a problem while trying to send a POST request for creating a team.");

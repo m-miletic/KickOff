@@ -3,6 +3,8 @@ package com.kick_off.kick_off.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+
 @Entity
 @Getter
 @Setter
@@ -50,7 +52,6 @@ public class Player {
                 ", goals=" + goals +
                 ", assists=" + assists +
                 ", photoUrl='" + photoUrl + '\'' +
-                ", team=" + team +
                 '}';
     }
 }

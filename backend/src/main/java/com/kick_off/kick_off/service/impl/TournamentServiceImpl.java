@@ -5,6 +5,7 @@ import com.kick_off.kick_off.dto.team.EnrollTeamDto;
 import com.kick_off.kick_off.dto.tournament.CreateTournamentDto;
 import com.kick_off.kick_off.dto.tournament.sig.GetTournamentsDto;
 import com.kick_off.kick_off.dto.tournament.sig.TournamentDto;
+import com.kick_off.kick_off.dto.tournament.sig.TournamentListDto;
 import com.kick_off.kick_off.model.Request;
 import com.kick_off.kick_off.model.Status;
 import com.kick_off.kick_off.model.Team;
@@ -17,6 +18,8 @@ import com.kick_off.kick_off.repository.authentication.UserRepository;
 import com.kick_off.kick_off.service.TournamentService;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,25 +41,41 @@ public class TournamentServiceImpl implements TournamentService {
         this.teamRepository = teamRepository;
     }
 
+    private long calculateTotalPages(long totalElements, int pageSize) {
+        long totalPages = 0;
+        long reminder = 0;
+        totalPages = totalElements / pageSize;
+        reminder = totalElements % pageSize;
+        if(reminder > 0) {
+            totalPages += 1;
+        }
+        return totalPages;
+    }
+
 
     @Override
-    public List<TournamentDto> getTournaments(GetTournamentsDto filters) {
-        Long teamRepresentativeId = filters.getTeamRepresentativeId();
+    public TournamentListDto getTournaments(GetTournamentsDto request) {
 
-        List<Tournament> tournaments = tournamentRepository.findAll();
+        Page<Tournament> pageTournaments;
+        PageRequest pageRequest = PageRequest.of(request.getPageNumber() - 1, request.getPageSize());
+        pageTournaments = tournamentRepository.findAll(pageRequest);
 
-        List<TournamentDto> tournamentDtos = tournaments.stream()
+        long totalTournaments = pageTournaments.getTotalElements();
+        long totalPages = calculateTotalPages(totalTournaments, request.getPageSize());
+
+        List<TournamentDto> tournamentDtos = pageTournaments
+                .stream()
                 .map(tournament -> {
-                    if (teamRepresentativeId != null ) {
-                        boolean isTeamEnrolledToTournament = tournament.getTeams().stream()
-                                .anyMatch(team -> team.getRepresentative().getId().equals(teamRepresentativeId));
-                    }
-                        TournamentDto tournamentDto = modelMapper.map(tournament, TournamentDto.class);
-
-                        return tournamentDto;
+                  TournamentDto tournamentDto = modelMapper.map(tournament, TournamentDto.class);
+                  return tournamentDto;
                 }).toList();
 
-        return tournamentDtos;
+        TournamentListDto tournamentListDto = TournamentListDto.builder()
+                .tournamentsList(tournamentDtos)
+                .totalPages(totalPages)
+                .build();
+
+        return tournamentListDto;
     }
 
 

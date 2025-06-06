@@ -11,6 +11,7 @@ export const fetchUsers = async (filter) => {
         Authorization: `Bearer ${jwt}`
       }
     });
+    console.log("response - ", response);
     return response.data;
   } catch (error) {
     console.log("Error in usersService -> ", error);
@@ -19,12 +20,17 @@ export const fetchUsers = async (filter) => {
 };
 
 export const deleteUser = async ( filter, id ) => {
+  const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.delete(`/users/${id}`, {
       params: {
         ...filter
+      },
+      headers: {
+        Authorization: `Bearer ${jwt}`
       }
     });
+    console.log("response: ", response);
     return response.data;
   } catch (error) {
     return error;

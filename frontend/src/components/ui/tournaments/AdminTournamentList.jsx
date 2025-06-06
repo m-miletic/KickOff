@@ -6,15 +6,18 @@ import { FaEdit } from "react-icons/fa";
 import PreviewTournamentModal from './modal/PreviewTournamentModal';
 import DeleteTournamentModal from './modal/DeleteTournamentModal';
 import { ActiveModalContext } from '../../../context/ActiveModalContext';
+import Pagination from '../../common/navigation/Pagination';
 
 const AdminTournamentList = () => {
   const [filters, setFilters] = useState({
-    pageNumber: 1
+    pageNumber: 1,
+    pageSize: 3
   });
   const [selectedTournament, setSelectedTournament] = useState();
   const { isPreviewModalOpen, setIsPreviewModalOpen, isEditModalOpen, setIsEditModalOpen, isDeleteModalOpen, setIsDeleteModalOpen } = useContext(ActiveModalContext);
+  const { tournaments , setTournaments, error, loading } = useFetchTournaments(filters);
 
-  const { tournaments = [], setTournaments, error, loading } = useFetchTournaments(filters);
+  console.log("tournaments: ", tournaments);
 
   const handlePreviewTournament = (tournament) => {
     setSelectedTournament(tournament);
@@ -26,6 +29,13 @@ const AdminTournamentList = () => {
     setIsDeleteModalOpen(true);
   };
 
+  const handleSelectFilter = (type, value) => {
+    setFilters((prevValues) => ({
+      ...prevValues,
+      [type]: value
+    }));
+  };
+
   return (  
     <div className='w-[325px] text-2xs text-white'>
         
@@ -35,7 +45,7 @@ const AdminTournamentList = () => {
         </div>
 
         <div className='p-2'>
-          {tournaments.map((tournament, index) => {
+          {tournaments.tournamentsList.map((tournament, index) => {
             return(
               <div key={index} className='flex justify-between items-center'>
 
@@ -62,6 +72,10 @@ const AdminTournamentList = () => {
               </div>
             );
           })}
+        </div>
+
+        <div className='text-center mt-5'>
+          <Pagination totalPages={tournaments.totalPages} selectedFilters={filters} handleSelectFilter={handleSelectFilter} />
         </div>
 
         {isPreviewModalOpen && (

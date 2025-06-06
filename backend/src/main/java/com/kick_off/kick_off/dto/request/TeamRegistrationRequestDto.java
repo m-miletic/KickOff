@@ -11,6 +11,4 @@ import lombok.ToString;
 public class TeamRegistrationRequestDto {
 
     private Long teamRepresentativeId;
-    private String teamName;
-    private String coach;
 }

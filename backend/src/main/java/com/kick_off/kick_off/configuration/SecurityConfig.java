@@ -55,9 +55,9 @@ public class SecurityConfig {
                                 .requestMatchers("/h2-console/**", "/auth/register", "/auth/login", "/api/tournaments", "/auth/refresh-token", "/users/me/**", "/auth/logout", "/api/teams",
                                     "/api/teams/by-tournament"
                                 ).permitAll()
-                                .requestMatchers("/api/users", "/api/users/role-change", "/api/teams/**").hasRole(Role.ADMIN.name())
+                                .requestMatchers("/api/users/**", "/api/users/role-change", "/api/teams/**").hasRole(Role.ADMIN.name())
                                 .requestMatchers("/api/tournaments/enroll-team").hasRole(Role.TOURNAMENT_ORGANIZER.name())
-                                .requestMatchers("/api/request/role-change", "/api/requests/by-requester").hasAnyRole(Role.USER.name(), Role.TOURNAMENT_ORGANIZER.name(), Role.TEAM_REPRESENTATIVE.name())
+                                .requestMatchers("/api/requests/role-change", "/api/requests/by-requester").hasAnyRole(Role.USER.name(), Role.TOURNAMENT_ORGANIZER.name(), Role.TEAM_REPRESENTATIVE.name())
                                 .requestMatchers("/api/requests/team-creation").hasRole(Role.TEAM_REPRESENTATIVE.name())
                                 .requestMatchers("/api/requests/by-approver").hasAnyRole(Role.TEAM_REPRESENTATIVE.name(), Role.TOURNAMENT_ORGANIZER.name(), Role.ADMIN.name())
                                 .anyRequest().authenticated()
