@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { RoleChangeForm } from '../form/RoleChangeForm';
 import RegisterTeamForm from '../form/RegisterTeamForm';
-import { createTeamRegistrationRequest } from '../../../../service/requestService';
+import { createTeamRegistrationRequest, createTournamentCreationRequest } from '../../../../service/requestService';
 
 export const SendRequestModal = ({ setIsRequestModalOpen, role, requesterId }) => {
   const [requestType, setRequestType] = useState("");
@@ -22,16 +22,28 @@ export const SendRequestModal = ({ setIsRequestModalOpen, role, requesterId }) =
     setRequestType(e.target.value);
   };
 
-  const handleSendRequest = async () => {
+  const handleSendTeamRegistrationRequestRequest = async () => {
     const createTeamRequestObject = {
       teamRepresentativeId: requesterId
     }
     try {
       const response = await createTeamRegistrationRequest(createTeamRequestObject);
-      console.log("response: ", response);
+      console.log("createTeamRegistrationRequest: ", response);
       setIsRequestModalOpen(false);
     } catch (error) {
-      console.log("ae reko šae: ", error)
+      setErrorMessage(error);
+    }
+  };
+
+  const handleSendTornamentOrganizationRequest = async () => {
+    const createTournamentOrganizationRequestObject = {
+      tournamentOrganizerId: requesterId
+    }
+    try {
+      const response = await createTournamentCreationRequest(createTournamentOrganizationRequestObject);
+      console.log("createTournamentCreationRequest: ", response);
+      setIsRequestModalOpen(false);
+    } catch (error) {
       setErrorMessage(error);
     }
   };
@@ -76,14 +88,15 @@ export const SendRequestModal = ({ setIsRequestModalOpen, role, requesterId }) =
 
           {requestType === "TEAM_REGISTRATION" && (
             <div className="px-4 py-3 flex items-center text-xs">
-              <div className="w-32"><button onClick={handleSendRequest} className="bg-blue-600 px-2 py-1.5 rounded-lg text-white hover:bg-blue-700 cursor-pointer">Send</button></div>
+              <div className="w-32"><button onClick={handleSendTeamRegistrationRequestRequest} className="bg-blue-600 px-2 py-1.5 rounded-lg text-white hover:bg-blue-700 cursor-pointer">Send</button></div>
               <div className="w-64 text-center text-red-600">{errorMessage}</div>
             </div>
           )}
 
-          {requestType === "TOURNAMENT_ENROLLMENT" && (
-            <div>
-              Tournament Enrollment
+          {requestType === "TOURNAMENT_CREATION" && (
+            <div className="px-4 py-3 flex items-center text-xs">
+              <div className="w-32"><button onClick={handleSendTornamentOrganizationRequest} className="bg-blue-600 px-2 py-1.5 rounded-lg text-white hover:bg-blue-700 cursor-pointer">Send</button></div>
+              <div className="w-64 text-center text-red-600">{errorMessage}</div>
             </div>
           )}
           

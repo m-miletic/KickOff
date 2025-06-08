@@ -11,7 +11,7 @@ export const RequestDetailsModal = ({ selectedRequest, setSelectedRequest, setIs
   const requContext = useContext(RequestContext);
   const [isProceedButtonClicked, setIsProceedButtonClicked] = useState(false);
 
-/*   const handleRequestChange = (value) => {
+/*   const handleRequestUpdate = (value) => {
     requContext.setTotalPendingRequests(prevCount => prevCount - 1);
     setIsModalOpen(false);
     const updatedSelectedRequest = {
@@ -25,14 +25,14 @@ export const RequestDetailsModal = ({ selectedRequest, setSelectedRequest, setIs
         req.id === selectedRequest.id ? { ...req, status: value } : req
       )
     )
-  };
- */
-  console.log("selectedRequest: ", selectedRequest);
+  }; */
+
+  console.log("ovo je ode: ", selectedRequest);
 
   const [errorMessage, setErrorMessage] = useState(null);
 
   // prvo omogucit da se kreira request za enroll team
-  const handleEnrollTeam = async ( statusValue ) => {
+  const handleEnrollTeam = async  () => {
     const enrollTeamObject = {
       teamRepresentativeId: selectedRequest.requester.id,
       tournamentOrganizerId: decodedJwt.userId,
@@ -48,7 +48,7 @@ export const RequestDetailsModal = ({ selectedRequest, setSelectedRequest, setIs
         )
       );
       setIsModalOpen(false);
-    } catch (error) {s
+    } catch (error) {
       setErrorMessage(error.response.data.message);
     }
   };
@@ -70,6 +70,7 @@ export const RequestDetailsModal = ({ selectedRequest, setSelectedRequest, setIs
     }
   };
 
+  // tek request mjenjam - kasnije se registrira tim
   const handleRegisterTeam = async ( statusValue ) => {
     const registerTeamObject = {
       requestId: selectedRequest.id,
@@ -77,12 +78,36 @@ export const RequestDetailsModal = ({ selectedRequest, setSelectedRequest, setIs
     }
     try {
       const response = await updateRequest(registerTeamObject);
-      console.log("response -> ", response);
+      setRequests((prevRequests) => 
+        prevRequests.map((req) => 
+          req.id === selectedRequest.id ? { ...req, status: statusValue } : req
+        )
+      )
       setIsModalOpen(false);
     } catch (error) {
       console.log("error -  ", error);
     }
   };
+
+  const handleCreateTournament = async ( statusValue ) => {
+    const createTournamentObject = {
+      requestId: selectedRequest.id,
+      status: statusValue
+    }
+    try { 
+      const response = await updateRequest(createTournamentObject);
+      setRequests((prevRequests) => 
+        prevRequests.map((req) => 
+          req.id === selectedRequest.id ? { ...req, status: statusValue } : req
+        )
+      )
+      setIsModalOpen(false);
+    } catch (error) {
+      console.log("error -- ", error);
+    }
+  }
+
+  console.log("jel ga ode minja - ", selectedRequest)
 
   return (
     <div className="fixed inset-0 z-50 flex justify-center items-center text-black">
@@ -125,7 +150,7 @@ export const RequestDetailsModal = ({ selectedRequest, setSelectedRequest, setIs
                     <>
                       {selectedRequest.requestType === 'TEAM_REGISTRATION' && (
                         <div>
-                          <CreateTeamForm setIsModalOpen={setIsModalOpen} selectedRequest={selectedRequest} decodedJwt={decodedJwt} /> 
+                          <CreateTeamForm setIsModalOpen={setIsModalOpen} selectedRequest={selectedRequest} setRequests={setRequests} decodedJwt={decodedJwt} /> 
                         </div> 
                       )}
                       {selectedRequest.requestType === 'TOURNAMENT_CREATION' && (
@@ -186,6 +211,13 @@ export const RequestDetailsModal = ({ selectedRequest, setSelectedRequest, setIs
                     <div className='flex items-center justify-between space-x-1'>
                       <div><button onClick={() => handleRoleChange("APPROVED")} className='bg-blue-500 px-2 py-1 rounded-xl'>Approve role change</button></div>
                       <div><button onClick={() => handleRoleChange("DECLINED")} className='bg-red-500 px-2 py-1 rounded-xl'>Decline role change</button></div>
+                    </div>
+                  )}
+
+                  {selectedRequest.requestType === "TOURNAMENT_CREATION" && (
+                    <div className='flex items-center justify-between space-x-1'>
+                      <div><button onClick={() => handleCreateTournament("APPROVED")} className='bg-blue-500 px-2 py-1 rounded-xl'>Approve creating tournament</button></div>
+                      <div><button onClick={() => handleCreateTournament("DECLINED")} className='bg-red-500 px-2 py-1 rounded-xl'>Decline creating tournament</button></div>
                     </div>
                   )}
 

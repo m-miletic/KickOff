@@ -64,7 +64,7 @@ public class TeamController {
                     .success(false)
                     .build();
 
-            return ResponseEntity.status(HttpStatus.OK).body(errorResponse);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }
 
@@ -81,8 +81,9 @@ public class TeamController {
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
         } catch (IllegalStateException e) {
+            System.out.println("Poruka - " + e.getMessage());
             ApiResponse<TeamDto> response = ApiResponse.<TeamDto>builder()
-                    .message("Failed to create a team: " + e.getMessage())
+                    .message(e.getMessage())
                     .success(false)
                     .data(null)
                     .build();

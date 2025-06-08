@@ -54,6 +54,6 @@ export const createTeam = async (teamObject) => {
     });
     return response;
   } catch (error) {
-    throw new Error("There was a problem while trying to send a POST request for creating a team.");
+    throw error;
   }
 }

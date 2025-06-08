@@ -1,8 +1,10 @@
 package com.kick_off.kick_off.controller;
 
+import ch.qos.logback.core.encoder.EchoEncoder;
 import com.kick_off.kick_off.dto.novo.CreateEnrollTeamRequestDto;
 import com.kick_off.kick_off.dto.novo.CreateRoleChangeRequestDto;
 import com.kick_off.kick_off.dto.request.*;
+import com.kick_off.kick_off.dto.tournament.sig.TournamentCreationRequestDto;
 import com.kick_off.kick_off.model.Request;
 import com.kick_off.kick_off.response.ApiResponse;
 import com.kick_off.kick_off.service.RequestService;
@@ -88,6 +90,7 @@ public class RequestController {
 
     @PostMapping("/enroll-team")
     public ResponseEntity<ApiResponse<Void>> createEnrollTeamRequest(@RequestBody CreateEnrollTeamRequestDto request) {
+        System.out.println("request --- " + request.toString());
         try {
             requestService.createEnrollTeamRequest(request);
             ApiResponse<Void> response = ApiResponse.<Void>builder()
@@ -109,19 +112,40 @@ public class RequestController {
     }
 
     @PostMapping("/team-creation")
-    public ResponseEntity<ApiResponse<Request>> createTeamRegistrationRequest(@RequestBody TeamRegistrationRequestDto request) {
-        System.out.println("request - " + request.toString());
+    public ResponseEntity<ApiResponse<Void>> createTeamRegistrationRequest(@RequestBody TeamRegistrationRequestDto request) {
         try {
-            Request r = requestService.createTeamRegistrationRequest(request);
-            ApiResponse<Request> response = ApiResponse.<Request>builder()
+            requestService.createTeamRegistrationRequest(request);
+            ApiResponse<Void> response = ApiResponse.<Void>builder()
                     .message("Successfully created request for team creation.")
-                    .data(r)
+                    .data(null)
                     .success(true)
                     .build();
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
-            ApiResponse<Request> errorResponse = ApiResponse.<Request>builder()
+            ApiResponse<Void> errorResponse = ApiResponse.<Void>builder()
+                    .message(e.getMessage())
+                    .data(null)
+                    .success(false)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+    }
+
+    @PostMapping("/tournament-creation")
+    public ResponseEntity<ApiResponse<Void>> createTournamentCreationRequest(@RequestBody TournamentCreationRequestDto request) {
+        try {
+            requestService.createTournamentCreationRequest(request);
+            ApiResponse<Void> response = ApiResponse.<Void>builder()
+                    .message("Successfully created request for creating a tournament.")
+                    .data(null)
+                    .success(true)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            ApiResponse<Void> errorResponse = ApiResponse.<Void>builder()
                     .message(e.getMessage())
                     .data(null)
                     .success(false)
@@ -132,18 +156,19 @@ public class RequestController {
     }
 
     @PutMapping
-    public ResponseEntity<ApiResponse<Void>> updateRequest(@RequestBody UpdateRequestStatusDto request) {
+    public ResponseEntity<ApiResponse<RequestDto>> updateRequest(@RequestBody UpdateRequestStatusDto request) {
         try {
-            requestService.updateRequest(request);
-            ApiResponse<Void> response = ApiResponse.<Void>builder()
+            RequestDto requestDto = requestService.updateRequest(request);
+            System.out.println("RequestDto: " + requestDto);
+            ApiResponse<RequestDto> response = ApiResponse.<RequestDto>builder()
                     .message("Request status updated.")
-                    .data(null)
+                    .data(requestDto)
                     .success(true)
                     .build();
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
-            ApiResponse<Void> errorResponse = ApiResponse.<Void>builder()
+            ApiResponse<RequestDto> errorResponse = ApiResponse.<RequestDto>builder()
                     .message(e.getMessage())
                     .data(null)
                     .success(false)

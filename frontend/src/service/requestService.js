@@ -110,10 +110,26 @@ export const createTeamRegistrationRequest = async ( requestObject ) => {
         }
       }
     );
-    console.log("response: ", response);
     return response;
   } catch (error) {
     throw (error.response.data.message);
+  }
+}
+
+export const createTournamentCreationRequest = async ( requestObject ) => {
+  const jwt = localStorage.getItem('token');
+  try {
+    const response = await apiClient.post(`/requests/tournament-creation`,
+      requestObject, {
+        headers: {
+          Authorization: `Bearer ${jwt}`
+        }
+      }
+    );
+    return response;
+  } catch (error) {
+    console.log("error when creating tournament creation request: ", error)
+    throw error.response.data.message;
   }
 }
 

@@ -25,6 +25,7 @@ const TeamRepresentativeTournamentList = () => {
   });
 
   const { tournaments = [], setTournaments, error, loading } = useFetchTournaments(filters);
+
   const { isPreviewModalOpen, setIsPreviewModalOpen } = useContext(ActiveModalContext);
 
   const handlePreviewButtonClick = (tournament) => {
@@ -47,7 +48,7 @@ const TeamRepresentativeTournamentList = () => {
         </div>
 
         <div className='p-2'>
-          {tournaments.map((tournament, index) => {
+          {tournaments.tournamentsList.map((tournament, index) => {
             return(
               <div key={index} className='flex justify-between items-center'>
 

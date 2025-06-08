@@ -3,6 +3,7 @@ package com.kick_off.kick_off.service;
 import com.kick_off.kick_off.dto.novo.CreateEnrollTeamRequestDto;
 import com.kick_off.kick_off.dto.novo.CreateRoleChangeRequestDto;
 import com.kick_off.kick_off.dto.request.*;
+import com.kick_off.kick_off.dto.tournament.sig.TournamentCreationRequestDto;
 import com.kick_off.kick_off.model.Request;
 
 import java.util.List;
@@ -14,7 +15,9 @@ public interface RequestService {
 
     void createEnrollTeamRequest(CreateEnrollTeamRequestDto request);
 
-    Request createTeamRegistrationRequest(TeamRegistrationRequestDto request);
+    void createTeamRegistrationRequest(TeamRegistrationRequestDto request);
+
+    void createTournamentCreationRequest(TournamentCreationRequestDto request);
 
     RequestListDto getRequestsByApproverId(GetRequestsDto getRequestsDto);
     RequestListDto getRequestsByRequesterId(GetRequestsDto getRequestsDto);
@@ -24,7 +27,7 @@ public interface RequestService {
 
     RequestDto getRequestById(Long id);
 
-    void updateRequest(UpdateRequestStatusDto request);
+    RequestDto updateRequest(UpdateRequestStatusDto request);
 
 
 }

@@ -13,7 +13,7 @@ INSERT INTO users (email, role, password) VALUES ('organizer3@gmail.com', 'TOURN
 
 INSERT INTO tournaments (tournament_name, details, start_date, end_date, organizer_id) VALUES ('no name tournament', 'details', now(), now(), 6);
 INSERT INTO tournaments (tournament_name, details, start_date, end_date, organizer_id) VALUES ('no name tournament2', 'details', now(), now(), 7);
-INSERT INTO tournaments (tournament_name, details, start_date, end_date, organizer_id) VALUES ('no name tournament3', 'details', now(), now(), 8);
+INSERT INTO tournaments (tournament_name, details, start_date, end_date) VALUES ('no name tournament3', 'details', now(), now());
 
 INSERT INTO teams (team_name, representative_id) VALUES ('HNK Hajduk Split', 2);
 INSERT INTO teams (team_name, representative_id) VALUES ('HNK Dinamo Zagreb', 3);

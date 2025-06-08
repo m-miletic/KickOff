@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { createTeam } from "../../../../service/teamService";
 
-const CreateTeamForm = ({ setIsModalOpen, selectedRequest, decodedJwt  }) => {
+const CreateTeamForm = ({ setIsModalOpen, selectedRequest, setRequests, decodedJwt  }) => {
 
   const [teamObject, setTeamObject] = useState({
     teamName: '',
@@ -10,7 +10,8 @@ const CreateTeamForm = ({ setIsModalOpen, selectedRequest, decodedJwt  }) => {
     representativeId: decodedJwt.userId
   });
 
-  console.log("Selected Request: ", selectedRequest);
+  const [errorMessage, setErrorMessage] = useState('');
+
 
   const handleInputChange = (e) => {
     setTeamObject((prev) => ({
@@ -20,8 +21,21 @@ const CreateTeamForm = ({ setIsModalOpen, selectedRequest, decodedJwt  }) => {
   };
 
   const handleCreateButtonClick = async () => {
-    createTeam(teamObject);
-    setIsModalOpen(false);
+    try {
+      const response = await createTeam(teamObject);
+      console.log("resss- ", response);
+      if (response.data.success === true) {
+        setRequests((prevRequests) =>
+          prevRequests.map((request) =>
+            request.id === selectedRequest.id ? { ...request, requestFulfilled: true } : request
+          )
+        )
+      } 
+      setIsModalOpen(false);
+      
+    } catch (error) {
+      setErrorMessage(error.response.data.message);
+    }
   };
 
   return(
@@ -57,9 +71,17 @@ const CreateTeamForm = ({ setIsModalOpen, selectedRequest, decodedJwt  }) => {
         </div>
       </div>
       
-      <div className="p-3">
-        <button onClick={() => handleCreateButtonClick()} className="bg-blue-700 rounded-lg p-1 text-sm text-white">Create</button>
-      </div>
+      {errorMessage ? (
+        <div className="p-3">
+          <span className="text-sm">{errorMessage}</span>
+        </div>
+      ) : (
+        <div className="p-3">
+          <button onClick={() => handleCreateButtonClick()} className="bg-blue-700 rounded-lg p-1 text-sm text-white">Create</button>
+        </div>
+      )}
+
+
 
     </div>
   );

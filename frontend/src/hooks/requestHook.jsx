@@ -14,6 +14,7 @@ export const useFetchRequests = ( selectedFilters, activeComponent ) => {
       try {
         if(activeComponent === "recievedRequests") {
           response = await fetchRequestsByApprover(selectedFilters);
+          console.log("rq: ", response);
           setRequests(response.requests);
           setTotalPages(response.totalPages);
         } else if (activeComponent === "sentRequests") {

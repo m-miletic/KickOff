@@ -3,6 +3,7 @@ package com.kick_off.kick_off.service.impl;
 import com.kick_off.kick_off.dto.novo.CreateEnrollTeamRequestDto;
 import com.kick_off.kick_off.dto.novo.CreateRoleChangeRequestDto;
 import com.kick_off.kick_off.dto.request.*;
+import com.kick_off.kick_off.dto.tournament.sig.TournamentCreationRequestDto;
 import com.kick_off.kick_off.model.*;
 import com.kick_off.kick_off.model.authentication.User;
 import com.kick_off.kick_off.model.Request;
@@ -124,7 +125,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public Request createTeamRegistrationRequest(TeamRegistrationRequestDto request) {
+    public void createTeamRegistrationRequest(TeamRegistrationRequestDto request) {
         Long requesterId = request.getTeamRepresentativeId();
         /*String desiredTeamName = request.getTeamName();*/
 
@@ -138,9 +139,14 @@ public class RequestServiceImpl implements RequestService {
 
         /*boolean teamNameExists = teamRepository.existsByTeamName(desiredTeamName);*/
 
+        boolean alreadyHasPendingReq = requestRepository.existsByRequester_IdAndRequestTypeAndStatus(requesterId, RequestType.TEAM_REGISTRATION, Status.PENDING);
+
         if(alreadyRepresentsTeam) {
             throw new RuntimeException("You already represent a team.");
-        } /*else if (teamNameExists) {
+        } else if (alreadyHasPendingReq) {
+            throw new RuntimeException("Team registration request already pending.");
+        }
+        /*else if (teamNameExists) {
             throw new RuntimeException("Team with this name already exists");
         }*/ else {
             Request newRequest = new Request();
@@ -151,7 +157,39 @@ public class RequestServiceImpl implements RequestService {
             newRequest.setRequestType(RequestType.TEAM_REGISTRATION);
             newRequest.setMessage("I would like to register a team");
 
-            return requestRepository.save(newRequest);
+            requestRepository.save(newRequest);
+        }
+    }
+
+    @Override
+    public void createTournamentCreationRequest(TournamentCreationRequestDto request) {
+        Long requesterId = request.getTournamentOrganizerId();
+
+        User tournamentOrganizer = userRepository.findById(requesterId)
+                .orElseThrow(() -> new EntityNotFoundException("User(organizer) with id: " + requesterId + " not found."));
+
+        User approver = userRepository.findByRole(Role.ADMIN)
+                .orElseThrow(() -> new EntityNotFoundException("User with role: " + Role.ADMIN + " not found."));
+
+        boolean alreadyHostsATournament = tournamentRepository.existsByOrganizer(tournamentOrganizer);
+
+        boolean alreadyHasPendingReq = requestRepository.existsByRequester_IdAndRequestTypeAndStatus(requesterId, RequestType.TOURNAMENT_CREATION, Status.PENDING);
+
+        if(alreadyHostsATournament) {
+            throw new RuntimeException("You already host a tournament.");
+
+        } else if (alreadyHasPendingReq) {
+            throw new RuntimeException("Tournament creation request already pending.");
+        } else {
+            Request newRequest = new Request();
+            newRequest.setRequester(tournamentOrganizer);
+            newRequest.setApprover(approver);
+            newRequest.setTimeCreated(LocalDateTime.now());
+            newRequest.setStatus(Status.PENDING);
+            newRequest.setRequestType(RequestType.TOURNAMENT_CREATION);
+            newRequest.setMessage("I would like to host a tournament.");
+
+            requestRepository.save(newRequest);
         }
     }
 
@@ -278,7 +316,7 @@ public class RequestServiceImpl implements RequestService {
 
 
     @Override
-    public void updateRequest(UpdateRequestStatusDto request) {
+    public RequestDto updateRequest(UpdateRequestStatusDto request) {
         Long requestId = request.getRequestId();
         Status status = Status.valueOf(request.getStatus());
 
@@ -288,8 +326,12 @@ public class RequestServiceImpl implements RequestService {
         r.setStatus(status);
         if (status.equals(Status.DECLINED)) {
             r.setRequestFulfilled(true);
-        };
+        }
+
         requestRepository.save(r);
+
+        RequestDto requestDto = modelMapper.map(r, RequestDto.class);
+        return requestDto;
     }
 
 
