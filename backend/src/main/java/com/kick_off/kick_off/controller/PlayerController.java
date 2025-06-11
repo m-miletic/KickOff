@@ -2,10 +2,8 @@ package com.kick_off.kick_off.controller;
 
 import com.kick_off.kick_off.dto.player.GetPlayersByTeamIdDto;
 import com.kick_off.kick_off.dto.player.PlayerDto;
-import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.response.ApiResponse;
 import com.kick_off.kick_off.service.PlayerService;
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-/* import image from '../assets/logo-white.png'; */
 import { Link } from "react-router-dom";
 import { useCollapseSidebarOnResize } from "../../../hooks/useCollapseSidebarOnResize";
 import { SendRequestModal } from "../../ui/request/modal/SendRequestModal";
@@ -13,14 +12,14 @@ import { GUEST_NAVBAR_ITEMS, TEAM_REPRESENTATIVE_NAVBAR_ITEMS, TOURNAMENT_ORGANI
 const Navbar = () => {
   const [isSideBarActive, setIsSideBarActive] = useState(false);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
-  const { activeComponent, setActiveComponent } = useContext(ActiveComponentContext);
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 640);
 
-  useCollapseSidebarOnResize(setIsSideBarActive); 
-
+  const { activeComponent, setActiveComponent } = useContext(ActiveComponentContext);
   const { decodedJwt, jwt, loading } = useContext(LoggedUserContext);
 
-  console.log("activeComponent: ", activeComponent);
+  console.log("decodedjwt: ", decodedJwt)
+
+  useCollapseSidebarOnResize(setIsSideBarActive);
 
   const toggleSidebar = () => {
     setIsSideBarActive(!isSideBarActive);
@@ -46,24 +45,65 @@ const Navbar = () => {
           {isSideBarActive ? (
             <div className="bg-[#001E28] flex-col w-40 h-screen text-white text-base fixed top-0 left-0 z-50">
 
-              <div className="px-3 pt-5">
+              <div className="px-2 pt-5">
                 <button onClick={toggleSidebar} className="p-1 hover:bg-[#005571] rounded-md">
                   <IoClose />
                 </button>
               </div>
 
-              <div className="px-4 pt-8">
+              <div className="p-6">
                 AppLogo
               </div>
+              
+              {decodedJwt === null ? (
+                <>
+                  <div className={`flex flex-col items-start space-y-2 px-3`}>
+                    {GUEST_NAVBAR_ITEMS.map((item, index) => {
+                      return (
+                        <div key={index} className="cursor-pointer hover:border-b border-white/25 w-full hover:bg-[#005571]  rounded-md p-1">
+                          <Link><button onClick={() => setActiveComponent(item)}>{item}</button></Link>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              ) : (
+                <>
+                  {decodedJwt.role === "TEAM_REPRESENTATIVE" && (
+                    <>
+                      <div className={`flex flex-col items-start space-y-2 ml-3`}>
+                        {TEAM_REPRESENTATIVE_NAVBAR_ITEMS.map((item, index) => {
+                          return (
+                            <div key={index} className="cursor-pointer hover:border-b border-white/25">
+                              <Link><button onClick={() => setActiveComponent(item)}>{item}</button></Link>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
 
+                  {decodedJwt.role === "TOURNAMENT_ORGANIZER" && (
+                    <>
+                      <div className={`flex flex-col items-start space-y-2 ml-3`}>
+                        {TOURNAMENT_ORGANIZER_NAVBAR_ITEMS.map((item, index) => {
+                          return (
+                            <div key={index} className="cursor-pointer hover:border-b border-white/25">
+                              <Link><button onClick={() => setActiveComponent(item)}>{item}</button></Link>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
             </div>
           ) : (
             <div className={`bg-[#001E28] w-screen h-16 flex justify-between items-center text-white text-base px-3`}>
-              
               <div>
                 <button onClick={toggleSidebar} ><GiHamburgerMenu /></button>
               </div>
-
               <div>
                 {decodedJwt === null ? (
                   <div>
@@ -74,10 +114,7 @@ const Navbar = () => {
                     <UserProfileDropdown name={decodedJwt?.sub} handleIsRequestModalOpen={handleIsRequestModalOpen} />
                   </div>
                 )}
-
-
               </div>
-
             </div>
           )}
 

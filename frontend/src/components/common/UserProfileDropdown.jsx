@@ -20,6 +20,11 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
     setIsUserProfileDropdownOpen(!isUserProfileDropdownOpen);
   };
 
+  const handleSelectItem = (item) => {
+    setActiveComponent(item);
+    handleIsUserProfileDropdownOpen();
+  }
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     UserService.logout(localStorage.getItem('refreshToken'));
@@ -58,14 +63,14 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
 
           <div
             className='cursor-pointer hover:bg-[#005571] rounded-md px-2 py-1'
-            onClick={() => setActiveComponent("recievedRequests")}
+            onClick={() => handleSelectItem("recievedRequests")}
             >
             <button>Recieved Requests</button>
           </div>
 
           <div
             className='cursor-pointer hover:bg-[#005571] rounded-md px-2 py-1'
-            onClick={() => setActiveComponent("sentRequests")}
+            onClick={() => handleSelectItem("sentRequests")}
             >
             <button>Sent Requests</button>
           </div>
