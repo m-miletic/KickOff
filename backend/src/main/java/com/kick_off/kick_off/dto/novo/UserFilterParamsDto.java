@@ -11,7 +11,7 @@ public class UserFilterParamsDto {
 
     private String role = "USER";
     private String sortDirection = "DESC";
-    private String sortField = "email";
+    private String sortField = "username";
     private int pageNumber = 1;
     private int pageSize = 3;
 }

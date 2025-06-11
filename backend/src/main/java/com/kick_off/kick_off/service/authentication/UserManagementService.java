@@ -39,14 +39,14 @@ public class UserManagementService {
     public RequestResponse register(RequestResponse registrationRequest) {
         RequestResponse response = new RequestResponse();
         try {
-            if (userRepository.existsByEmail(registrationRequest.getEmail())) {
+            if (userRepository.existsByUsername(registrationRequest.getUsername())) {
                 response.setStatusCode(HttpStatus.CONFLICT.value());
-                response.setMessage("User with this email already exists.");
+                response.setMessage("Username already taken..");
 
                 return response;
             } else {
                 User newUser = new User();
-                newUser.setEmail(registrationRequest.getEmail());
+                newUser.setUsername(registrationRequest.getUsername());
                 newUser.setRole(Role.valueOf("USER"));
                 newUser.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
 
@@ -72,12 +72,12 @@ public class UserManagementService {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            loginRequest.getEmail(),
+                            loginRequest.getUsername(),
                             loginRequest.getPassword()
                     )
             );
-            User user = userRepository.findByEmail(loginRequest.getEmail())
-                    .orElseThrow(() -> new EntityNotFoundException("User with email: " + loginRequest.getEmail() + " not found."));
+            User user = userRepository.findByUsername(loginRequest.getUsername())
+                    .orElseThrow(() -> new EntityNotFoundException("User with username: " + loginRequest.getUsername() + " not found."));
 
             String jwt = jwtUtil.generateToken(user);
 
@@ -157,7 +157,7 @@ public class UserManagementService {
         RequestResponse response = new RequestResponse();
         try {
             User existingUser = userRepository.findById(id).orElseThrow();
-            existingUser.setEmail(updatedUser.getUsername());
+            existingUser.setUsername(updatedUser.getUsername());
             existingUser.setRole(updatedUser.getRole());
             if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
                 existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));

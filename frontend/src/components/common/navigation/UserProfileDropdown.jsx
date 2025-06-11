@@ -2,14 +2,17 @@ import React, { useContext, useState } from 'react'
 import { RxCaretDown } from "react-icons/rx";
 import { RxCaretUp } from "react-icons/rx";
 import { CiLogout } from "react-icons/ci";
-import { ActiveComponentContext } from '../../context/ActiveComponentContext';
+import { ActiveComponentContext } from '../../../context/ActiveComponentContext';
 import { useNavigate } from 'react-router-dom';
-import UserService from '../../service/UserService';
+import UserService from '../../../service/AuthService';
+import { LoggedUserContext } from '../../../context/LoggedUserContext';
 
 const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
   const [isUserProfileDropdownOpen, setIsUserProfileDropdownOpen] = useState(false);
   const { setActiveComponent } = useContext(ActiveComponentContext);
+  const { setJwt, setDecodedJwt } = useContext(LoggedUserContext)
   const nav = useNavigate();
+  const firstLetter = name.charAt(0).toUpperCase();
 
   const handleSendRequestClick = () => {
     handleIsRequestModalOpen();
@@ -29,7 +32,12 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
     localStorage.removeItem('token');
     UserService.logout(localStorage.getItem('refreshToken'));
     localStorage.removeItem('refreshToken');
-    nav("/login");
+
+    // prilikom redirect-a na /home jos vata stari jwt pa bi display-a umisto logina user dropdown - zato ga setiram na null
+    setJwt(null);
+    setDecodedJwt(null);
+
+    nav("/home");
   };
 
   return (
@@ -38,11 +46,11 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
       <div onClick={handleIsUserProfileDropdownOpen} className='flex items-center justify-center cursor-pointer'>
 
         <div>
-          { isUserProfileDropdownOpen ? <RxCaretUp /> : <RxCaretDown /> }
+          { isUserProfileDropdownOpen ? <RxCaretUp className='w-5 h-5'/> : <RxCaretDown className='w-5 h-5' /> }
         </div>
 
-        <div className="rounded-full border w-5 h-5 border-white cursor-pointer bg-white flex items-center justify-center mt-2">
-          <button className="text-black">U</button>
+        <div className="rounded-full border w-5 h-5 border-white cursor-pointer bg-white flex items-center justify-center mt-2 p-3">
+          <button className="text-black mb-[1px]">{firstLetter}</button>
         </div>
 
       </div>
@@ -51,7 +59,7 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
         <div className="absolute top-[70px] right-0 text-xs bg-[#001E28] rounded-lg p-2 space-y-1">
 
           <div className='text-gray-300 cursor-pointer pb-2'>
-            Hello name
+            Hello {name}
           </div>
           
           <div 

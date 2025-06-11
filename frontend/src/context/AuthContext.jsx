@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import UserService from '../service/UserService.js';
+import AuthService from "../service/AuthService";
 
 export const AuthContext = createContext(); // should be null value as default according to react docs
 
@@ -12,8 +12,8 @@ export const AuthProvider = ({ children }) => {
 
   // refresh authentication state
   const refreshAuthState = () => {
-    setIsAuthenticated(UserService.isAuthenticated());
-    setIsAdmin(UserService.isAdmin());
+    setIsAuthenticated(AuthService.isAuthenticated());
+    setIsAdmin(AuthService.isAdmin());
   };
 
   // how does useEffect work

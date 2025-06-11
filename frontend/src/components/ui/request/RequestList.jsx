@@ -6,13 +6,16 @@ import { RequestDetailsModal } from './modal/RequestDetailsModal';
 import Pagination from '../../common/navigation/Pagination';
 import { ActiveComponentContext } from '../../../context/ActiveComponentContext';
 import DropdownContent from '../../common/dropdown/DropdownContent';
+import { LoggedUserContext } from '../../../context/LoggedUserContext';
 
-const RequestList = ({ decodedJwt }) => {
+const RequestList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState([]);
 /*   const { totalPages } = useContext(RequestContext); */
 
   const { activeComponent } = useContext(ActiveComponentContext);
+
+  const { decodedJwt } = useContext(LoggedUserContext)
 
   const [selectedFilters, setSelectedFilters] = useState({
     userId: decodedJwt.userId,
@@ -91,7 +94,7 @@ const RequestList = ({ decodedJwt }) => {
       <table id="default-table" className={`${isModalOpen && 'opacity-20'}`}>
         <thead>
           <tr>
-            {decodedJwt.role === 'ADMIN' && (
+            {decodedJwt.role === 'ADMIN' || decodedJwt.role === 'TOURNAMENT_ORGANIZER' && (
               <th>
                 <span className="px-2">
                   Requested by
@@ -120,7 +123,7 @@ const RequestList = ({ decodedJwt }) => {
               return(
                 <tr key={request.id} className={`${selectedFilters.status === 'PENDING' && request.status !== 'PENDING' ? 'hidden' : ''} `}>{/* kako bi dobio dojam real-time update-a kada admin respond-a na request */}
                   {decodedJwt.role === "ADMIN" || decodedJwt.role === 'TOURNAMENT_ORGANIZER'  && (
-                    <td>{request.requester.email}</td>
+                    <td>{request.requester.username}</td>
                   )}
                   <td className='px-2'>{request.timeCreated}</td>
                   <td className='px-2'>{request.status}</td>
@@ -149,7 +152,7 @@ const RequestList = ({ decodedJwt }) => {
 
       {isModalOpen && (
         <div>
-          <RequestDetailsModal selectedRequest={selectedRequest} setSelectedRequest={setSelectedRequest} setIsModalOpen={setIsModalOpen} setRequests={setRequests} decodedJwt={decodedJwt} />
+          <RequestDetailsModal selectedRequest={selectedRequest} setIsModalOpen={setIsModalOpen} setRequests={setRequests} />
         </div>
       )}
 

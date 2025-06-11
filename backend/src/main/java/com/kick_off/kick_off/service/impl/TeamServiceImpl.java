@@ -1,6 +1,8 @@
 package com.kick_off.kick_off.service.impl;
 
+import com.kick_off.kick_off.dto.match.MatchDto;
 import com.kick_off.kick_off.dto.team.CreateTeamDto;
+import com.kick_off.kick_off.dto.team.LightTeamDto;
 import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.dto.team.requestParams.TeamFilterParamsDto;
 import com.kick_off.kick_off.dto.team.TeamListDto;
@@ -62,12 +64,21 @@ public class TeamServiceImpl implements TeamService {
         long totalTeams = pageTeams.getTotalElements();
         long totalPages = calculateTotalPages(totalTeams, filters.getPageSize());
 
-
         List<TeamDto> teams = new ArrayList<>();
         teams = pageTeams
                 .stream()
                 .map(t ->
                         modelMapper.map(t, TeamDto.class)).toList();
+
+        for (TeamDto teamDto : teams) {
+            List<MatchDto> teamsHomeMatches = teamDto.getHomeMatches();
+            List<MatchDto> teamsAwayMatches = teamDto.getAwayMatches();
+            List<MatchDto> allMatches = new ArrayList<>();
+            allMatches.addAll(teamsHomeMatches);
+            allMatches.addAll(teamsAwayMatches);
+            teamDto.setAllMatches(allMatches);
+
+        }
 
         return TeamListDto.builder()
                 .teamsList(teams)
@@ -148,11 +159,11 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public TeamDto findTeamByRepresentativeId(Long representativeId) {
+    public LightTeamDto findTeamByRepresentativeId(Long representativeId) {
         Team team = teamRepository.findTeamByRepresentative_Id(representativeId)
                 .orElseThrow(() -> new EntityNotFoundException("Representative with id: " + representativeId + " not found."));
 
-        TeamDto teamDto = modelMapper.map(team, TeamDto.class);
+        LightTeamDto teamDto = modelMapper.map(team, LightTeamDto.class);
         return teamDto;
     }
 

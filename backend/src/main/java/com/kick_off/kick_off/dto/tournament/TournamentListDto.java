@@ -1,4 +1,4 @@
-package com.kick_off.kick_off.dto.tournament.sig;
+package com.kick_off.kick_off.dto.tournament;
 
 import lombok.Builder;
 import lombok.Getter;

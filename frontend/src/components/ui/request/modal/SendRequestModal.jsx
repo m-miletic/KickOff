@@ -1,22 +1,16 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { RoleChangeForm } from '../form/RoleChangeForm';
-import RegisterTeamForm from '../form/RegisterTeamForm';
 import { createTeamRegistrationRequest, createTournamentCreationRequest } from '../../../../service/requestService';
+import { LoggedUserContext } from '../../../../context/LoggedUserContext';
+import { REQUEST_TYPES_BY_ROLE } from '../../../../data/requestTypeList';
 
-export const SendRequestModal = ({ setIsRequestModalOpen, role, requesterId }) => {
+export const SendRequestModal = ({ setIsRequestModalOpen }) => {
   const [requestType, setRequestType] = useState("");
-  let requestTypeList = [];
-  let roles = ["TEAM_REPRESENTATIVE", "TOURNAMENT_ORGANIZER"];
+  const { decodedJwt, jwt, loading } = useContext(LoggedUserContext)
 
-    const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  if (role === 'USER') {
-    requestTypeList = ['ROLE_CHANGE']
-  } else if (role === 'TEAM_REPRESENTATIVE') {
-    requestTypeList = ['ROLE_CHANGE', 'TEAM_REGISTRATION'];
-  } else if (role === 'TOURNAMENT_ORGANIZER') {
-    requestTypeList = ['ROLE_CHANGE', 'TOURNAMENT_CREATION'];
-  }
+  const requestTypeList = REQUEST_TYPES_BY_ROLE[decodedJwt?.role] ?? [];
 
   const handleReqTypeChange = (e) => {
     setRequestType(e.target.value);
@@ -24,11 +18,10 @@ export const SendRequestModal = ({ setIsRequestModalOpen, role, requesterId }) =
 
   const handleSendTeamRegistrationRequestRequest = async () => {
     const createTeamRequestObject = {
-      teamRepresentativeId: requesterId
+      teamRepresentativeId: decodedJwt.userId
     }
     try {
       const response = await createTeamRegistrationRequest(createTeamRequestObject);
-      console.log("createTeamRegistrationRequest: ", response);
       setIsRequestModalOpen(false);
     } catch (error) {
       setErrorMessage(error);
@@ -41,14 +34,12 @@ export const SendRequestModal = ({ setIsRequestModalOpen, role, requesterId }) =
     }
     try {
       const response = await createTournamentCreationRequest(createTournamentOrganizationRequestObject);
-      console.log("createTournamentCreationRequest: ", response);
       setIsRequestModalOpen(false);
     } catch (error) {
       setErrorMessage(error);
     }
   };
   
-
   return (
     <div className="fixed inset-0 z-50 flex justify-center items-center">
       <div className="relative p-4 w-[400px] sm:w-[450px] md:w-[450px] lg:w-[500px] xl:w-[550px] 2xlw-[600px]">
@@ -82,7 +73,7 @@ export const SendRequestModal = ({ setIsRequestModalOpen, role, requesterId }) =
           
           {requestType === "ROLE_CHANGE" && (
             <div className='flex items-center px-5 py-3 text-xs'>
-              <RoleChangeForm role={role} requesterId={requesterId} setIsRequestModalOpen={setIsRequestModalOpen}/>
+              <RoleChangeForm setIsRequestModalOpen={setIsRequestModalOpen}/>
             </div>
           )}
 

@@ -6,10 +6,13 @@ import CreateTournamentForm from '../../tournaments/form/CreateTournamentForm';
 import { updateRequest } from '../../../../service/requestService';
 import { enrollTeam } from '../../../../service/tournamentService';
 import { changeUserRole } from '../../../../service/usersService';
+import { LoggedUserContext } from '../../../../context/LoggedUserContext';
 
-export const RequestDetailsModal = ({ selectedRequest, setSelectedRequest, setIsModalOpen, setRequests, decodedJwt }) => {
+export const RequestDetailsModal = ({ selectedRequest, setIsModalOpen, setRequests }) => {
   const requContext = useContext(RequestContext);
   const [isProceedButtonClicked, setIsProceedButtonClicked] = useState(false);
+
+  const { decodedJwt } = useContext(LoggedUserContext)
 
 /*   const handleRequestUpdate = (value) => {
     requContext.setTotalPendingRequests(prevCount => prevCount - 1);
@@ -26,8 +29,6 @@ export const RequestDetailsModal = ({ selectedRequest, setSelectedRequest, setIs
       )
     )
   }; */
-
-  console.log("ovo je ode: ", selectedRequest);
 
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -49,7 +50,8 @@ export const RequestDetailsModal = ({ selectedRequest, setSelectedRequest, setIs
       );
       setIsModalOpen(false);
     } catch (error) {
-      setErrorMessage(error.response.data.message);
+      console.log("testiram - ", error)
+      /* setErrorMessage(error.response.data.message); */
     }
   };
 
@@ -106,8 +108,6 @@ export const RequestDetailsModal = ({ selectedRequest, setSelectedRequest, setIs
       console.log("error -- ", error);
     }
   }
-
-  console.log("jel ga ode minja - ", selectedRequest)
 
   return (
     <div className="fixed inset-0 z-50 flex justify-center items-center text-black">

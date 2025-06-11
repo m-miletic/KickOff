@@ -3,17 +3,16 @@ package com.kick_off.kick_off.controller;
 import com.kick_off.kick_off.dto.request.RequestDto;
 import com.kick_off.kick_off.dto.team.EnrollTeamDto;
 import com.kick_off.kick_off.dto.tournament.CreateTournamentDto;
-import com.kick_off.kick_off.dto.tournament.sig.GetTournamentsDto;
-import com.kick_off.kick_off.dto.tournament.sig.TournamentDto;
-import com.kick_off.kick_off.dto.tournament.sig.TournamentListDto;
+import com.kick_off.kick_off.dto.tournament.GetTournamentByOrganizer;
+import com.kick_off.kick_off.dto.tournament.GetTournamentsDto;
+import com.kick_off.kick_off.dto.tournament.TournamentDto;
+import com.kick_off.kick_off.dto.tournament.TournamentListDto;
 import com.kick_off.kick_off.response.ApiResponse;
 import com.kick_off.kick_off.service.TeamService;
 import com.kick_off.kick_off.service.TournamentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/tournaments")
@@ -52,7 +51,6 @@ public class TournamentController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<TournamentDto>> createTournament(@RequestBody CreateTournamentDto tournamentDto) {
-        System.out.println("Created Tournament: " + tournamentDto.toString());
         try {
             TournamentDto createdTournamentDto = tournamentService.createTournament(tournamentDto);
             ApiResponse<TournamentDto> response = ApiResponse.<TournamentDto>builder()
@@ -93,6 +91,50 @@ public class TournamentController {
                     .build();
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/by-organizer")
+    public ResponseEntity<ApiResponse<TournamentDto>> getTournamentByOrganizer(@ModelAttribute GetTournamentByOrganizer request) {
+        try {
+            TournamentDto tournament = tournamentService.getTournamentByOrganizer(request);
+            ApiResponse<TournamentDto> response = ApiResponse.<TournamentDto>builder()
+                    .message("Successfully retrieved organizers tournament.")
+                    .data(tournament)
+                    .success(true)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            ApiResponse<TournamentDto> errorResponse = ApiResponse.<TournamentDto>builder()
+                    .message(e.getMessage())
+                    .data(null)
+                    .success(false)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<ApiResponse<TournamentDto>> editTournament(@PathVariable(name = "id") Long id, @RequestBody TournamentDto updatedTournament) {
+        try {
+            TournamentDto tournament = tournamentService.updateTournament(id, updatedTournament);
+            ApiResponse<TournamentDto> response = ApiResponse.<TournamentDto>builder()
+                    .message("Successfully updated tournament.")
+                    .data(tournament)
+                    .success(true)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            ApiResponse<TournamentDto> errorResponse = ApiResponse.<TournamentDto>builder()
+                    .message(e.getMessage())
+                    .data(null)
+                    .success(false)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(errorResponse);
         }
     }
 }

@@ -1,12 +1,12 @@
 import React, { useContext, useState } from "react";
-import UserService from "../service/UserService.js";
+import AuthService from "../service/AuthService.js";
 import { useNavigate } from "react-router-dom";
 import image from '../assets/register-background.jpg'
 import { jwtDecode } from "jwt-decode";
 import { LoggedUserContext } from "../context/LoggedUserContext.jsx";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   let navigate = useNavigate();
@@ -16,7 +16,7 @@ const LoginPage = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const userData = await UserService.login(email, password);
+      const userData = await AuthService.login(username, password);
       if (userData.accessToken) {
         localStorage.setItem('token', userData.accessToken);
         localStorage.setItem('refreshToken', userData.refreshToken.token);
@@ -59,13 +59,13 @@ const LoginPage = () => {
           <form onSubmit={handleLogin}>
           
             <div className="flex flex-col text-xl text-left gap-1">
-              <span>Email</span>
+              <span>Username</span>
               <input 
-                type="email" 
+                type="text" 
                 className="rounded-md p-1 border-2 outline-none focus:border-black focus:bg-slate-50 text-md"
-                name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                name="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
                 />
             </div>

@@ -3,7 +3,7 @@ package com.kick_off.kick_off.service.impl;
 import com.kick_off.kick_off.dto.novo.CreateEnrollTeamRequestDto;
 import com.kick_off.kick_off.dto.novo.CreateRoleChangeRequestDto;
 import com.kick_off.kick_off.dto.request.*;
-import com.kick_off.kick_off.dto.tournament.sig.TournamentCreationRequestDto;
+import com.kick_off.kick_off.dto.tournament.TournamentCreationRequestDto;
 import com.kick_off.kick_off.model.*;
 import com.kick_off.kick_off.model.authentication.User;
 import com.kick_off.kick_off.model.Request;

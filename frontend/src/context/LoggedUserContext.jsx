@@ -41,7 +41,7 @@ const LoggedUserProvider = ({ children }) => {
   }, []);
   
   return(
-    <LoggedUserContext.Provider value={{ decodedJwt, jwt, loading, setTokenFromLogin }} >
+    <LoggedUserContext.Provider value={{ decodedJwt, jwt, loading, setTokenFromLogin, setJwt, setDecodedJwt }} >
       {children}
     </LoggedUserContext.Provider>
   );

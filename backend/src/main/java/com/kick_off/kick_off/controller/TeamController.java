@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/teams")
@@ -136,10 +135,10 @@ public class TeamController {
     }
 
     @GetMapping("/by-representative")
-    public ResponseEntity<ApiResponse<TeamDto>> fetchTeamByRepresentative(@ModelAttribute GetTeamByRepresentative request) {
+    public ResponseEntity<ApiResponse<LightTeamDto>> fetchTeamByRepresentative(@ModelAttribute GetTeamByRepresentative request) {
         try {
-            TeamDto team = teamService.findTeamByRepresentativeId(request.getRepresentativeId());
-            ApiResponse<TeamDto> response = ApiResponse.<TeamDto>builder()
+            LightTeamDto team = teamService.findTeamByRepresentativeId(request.getRepresentativeId());
+            ApiResponse<LightTeamDto> response = ApiResponse.<LightTeamDto>builder()
                     .message("Successfully retrieved representatives team.")
                     .data(team)
                     .success(true)
@@ -148,7 +147,7 @@ public class TeamController {
             return ResponseEntity.status(HttpStatus.OK).body(response);
 
         } catch (Exception e) {
-            ApiResponse<TeamDto> errorResponse = ApiResponse.<TeamDto>builder()
+            ApiResponse<LightTeamDto> errorResponse = ApiResponse.<LightTeamDto>builder()
                     .message(e.getMessage())
                     .data(null)
                     .success(false)

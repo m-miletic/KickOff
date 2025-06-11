@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import UserService from "../service/UserService";
+import AuthService from "../service/AuthService";
 import { useNavigate } from "react-router-dom";
 
 export const useHandleLogout = (activeComponent) => {
@@ -12,7 +12,7 @@ export const useHandleLogout = (activeComponent) => {
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
 
-      UserService.logout(refreshToken).catch((error) => {
+      AuthService.logout(refreshToken).catch((error) => {
         console.log("Logout error: ", error);
       });
 

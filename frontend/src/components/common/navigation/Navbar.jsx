@@ -4,10 +4,10 @@ import { useCollapseSidebarOnResize } from "../../../hooks/useCollapseSidebarOnR
 import { SendRequestModal } from "../../ui/request/modal/SendRequestModal";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoClose } from "react-icons/io5";
-import UserProfileDropdown from "../UserProfileDropdown";
+import UserProfileDropdown from "./UserProfileDropdown.jsx";
 import { ActiveComponentContext } from "../../../context/ActiveComponentContext";
 import { LoggedUserContext } from "../../../context/LoggedUserContext"
-import { GUEST_NAVBAR_ITEMS, TEAM_REPRESENTATIVE_NAVBAR_ITEMS, TOURNAMENT_ORGANIZER_NAVBAR_ITEMS } from '../../../data/navbarItems.jsx'
+import { GUEST_NAVBAR_ITEMS, TEAM_REPRESENTATIVE_NAVBAR_ITEMS, TOURNAMENT_ORGANIZER_NAVBAR_ITEMS } from '../../../data/navbarItems.js'
 
 const Navbar = () => {
   const [isSideBarActive, setIsSideBarActive] = useState(false);
@@ -16,8 +16,6 @@ const Navbar = () => {
 
   const { activeComponent, setActiveComponent } = useContext(ActiveComponentContext);
   const { decodedJwt, jwt, loading } = useContext(LoggedUserContext);
-
-  console.log("decodedjwt: ", decodedJwt)
 
   useCollapseSidebarOnResize(setIsSideBarActive);
 
@@ -180,7 +178,7 @@ const Navbar = () => {
 
       <div>
         {decodedJwt !== null && isRequestModalOpen && (
-          <SendRequestModal setIsRequestModalOpen={setIsRequestModalOpen} role={decodedJwt.role} requesterId={decodedJwt.userId} />
+          <SendRequestModal setIsRequestModalOpen={setIsRequestModalOpen} />
         )}
       </div>
 

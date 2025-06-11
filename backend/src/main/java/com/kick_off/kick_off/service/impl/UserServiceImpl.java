@@ -5,7 +5,7 @@ import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.dto.novo.UserDto;
 import com.kick_off.kick_off.dto.novo.UserFilterParamsDto;
 import com.kick_off.kick_off.dto.novo.UserListDto;
-import com.kick_off.kick_off.dto.tournament.sig.TournamentDto;
+import com.kick_off.kick_off.dto.tournament.TournamentDto;
 import com.kick_off.kick_off.model.Request;
 import com.kick_off.kick_off.model.Role;
 import com.kick_off.kick_off.model.Status;

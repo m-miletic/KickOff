@@ -22,7 +22,7 @@ const UserList = () => {
   const [filter, setFilter] = useState({
     role: "USER",
     sortDirection: 'DESC',
-    sortField: 'email',
+    sortField: 'username',
     pageNumber: 1
   });
   const [selectedUser, setSelectedUser] = useState(null);
@@ -83,9 +83,9 @@ const UserList = () => {
         <div className="flex justify-between bg-[#001E28] px-2 py-1.5 rounded-md text-xs xl:text-sm 2xl:text-base font-medium w-[340px] sm:w-[380px] lg:w-[530px] xl:w-[560px] 2xl:py-2.5">
 
           <div className="flex items-center">
-            <span>Email</span>
+            <span>Username</span>
             <TbCaretUpDownFilled
-              onClick={() => handleSortDirection("email")}
+              onClick={() => handleSortDirection("username")}
               className="w-2.5 h-2.5 ml-1 cursor-pointer"/>
           </div>
 
@@ -106,7 +106,7 @@ const UserList = () => {
           {users && users.usersList.map((user) => {
             return(
               <div key={user.id} className="flex justify-between text-2xs xl:text-xs 2xl:text-sm px-1.5 py-1">
-                <div>{user.email}</div>
+                <div>{user.username}</div>
                 <div className="w-20 sm:w-auto text-center overflow-x-scroll sm:overflow-x-hidden">{user.role}</div>
                 <div className="flex items-center space-x-1">
                   <div>

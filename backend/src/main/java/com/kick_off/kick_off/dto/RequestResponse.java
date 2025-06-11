@@ -24,7 +24,7 @@ public class RequestResponse {
     private String refreshToken;
     private String expirationTime;
 
-    private String email;
+    private String username;
     private String password;
     private User user;
     private UserDetails userDetails;

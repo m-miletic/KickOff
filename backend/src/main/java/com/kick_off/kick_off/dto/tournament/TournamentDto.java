@@ -1,10 +1,13 @@
-package com.kick_off.kick_off.dto.tournament.sig;
+package com.kick_off.kick_off.dto.tournament;
 
+import com.kick_off.kick_off.dto.match.MatchDto;
+import com.kick_off.kick_off.dto.team.TeamDto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,4 +19,6 @@ public class TournamentDto {
     private LocalDate endDate;
     private String details;
     private Long organizerId;
+    private List<TeamDto> teams;
+    private List<MatchDto> matchesList;
 }

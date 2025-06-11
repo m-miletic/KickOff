@@ -3,9 +3,10 @@ package com.kick_off.kick_off.service.impl;
 import com.kick_off.kick_off.dto.request.RequestDto;
 import com.kick_off.kick_off.dto.team.EnrollTeamDto;
 import com.kick_off.kick_off.dto.tournament.CreateTournamentDto;
-import com.kick_off.kick_off.dto.tournament.sig.GetTournamentsDto;
-import com.kick_off.kick_off.dto.tournament.sig.TournamentDto;
-import com.kick_off.kick_off.dto.tournament.sig.TournamentListDto;
+import com.kick_off.kick_off.dto.tournament.GetTournamentByOrganizer;
+import com.kick_off.kick_off.dto.tournament.GetTournamentsDto;
+import com.kick_off.kick_off.dto.tournament.TournamentDto;
+import com.kick_off.kick_off.dto.tournament.TournamentListDto;
 import com.kick_off.kick_off.model.Request;
 import com.kick_off.kick_off.model.Status;
 import com.kick_off.kick_off.model.Team;
@@ -154,5 +155,33 @@ public class TournamentServiceImpl implements TournamentService {
 
         return modelMapper.map(request, RequestDto.class);
 
+    }
+
+    @Override
+    public TournamentDto getTournamentByOrganizer(GetTournamentByOrganizer request) {
+        Long organizerId = request.getOrganizerId();
+
+        Tournament tournament = tournamentRepository.findTournamentByOrganizer_Id(organizerId)
+                .orElseThrow(() -> new EntityNotFoundException("Tournament with organizer id: " + organizerId + " not found."));
+
+        TournamentDto tournamentDto = modelMapper.map(tournament, TournamentDto.class);
+        return tournamentDto;
+    }
+
+    @Override
+    public TournamentDto updateTournament(Long id, TournamentDto updatedTournament) {
+
+        Tournament tournament = tournamentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Tournament with id: " + id + " not found."));
+
+        tournament.setTournamentName(updatedTournament.getTournamentName());
+        tournament.setDetails(updatedTournament.getDetails());
+        tournament.setStartDate(updatedTournament.getStartDate());
+        tournament.setEndDate(updatedTournament.getEndDate());
+
+        Tournament saveUpdatedTournament = tournamentRepository.save(tournament);
+
+        TournamentDto tournamentDto = modelMapper.map(saveUpdatedTournament, TournamentDto.class);
+        return tournamentDto;
     }
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import UserService from "../service/UserService";
+import AuthService from "../service/AuthService";
 import image from '../assets/register-background.jpg'
 
 const MAX_MOBILE_SCREEN_WIDTH = 1028;
@@ -9,7 +9,7 @@ const SignupPage = () => {
     firstName: "",
     lastName: "",
     role: "",
-    email: "",
+    username: "",
     password: ""
   });
 
@@ -42,14 +42,14 @@ const SignupPage = () => {
   const handleRegistration = async (event) => {
     event.preventDefault();
     try {
-      const response = await UserService.register(formData);
+      const response = await AuthService.register(formData);
       if (response.statusCode === 200) {
         alert(response.message);
         setFormData({ 
           firstName: '',
           lastName: '', 
           role: '',
-          email: '', 
+          username: '', 
           password: '' 
         });
       } else if (response.statusCode === 409) {
@@ -75,10 +75,10 @@ const SignupPage = () => {
             <div className="flex flex-col text-xl text-left gap-1">
               <span>Email</span>
               <input 
-                type="email" 
+                type="text" 
                 className="rounded-md p-1 border-2 outline-none focus:border-black focus:bg-slate-50 text-md"
-                name="email"
-                value={formData.email}
+                name="username"
+                value={formData.username}
                 onChange={handleInputChange}
                 required
                 />

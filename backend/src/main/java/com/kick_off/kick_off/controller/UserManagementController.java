@@ -74,7 +74,7 @@ public class UserManagementController {
 
         UserDto userDto = new UserDto(
                 user.getId(),
-                user.getEmail(),
+                user.getUsername(),
                 user.getRole().toString()
         );
 

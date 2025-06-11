@@ -1,20 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { createRoleChangeRequest } from "../../../../service/requestService";
+import { ALLOWED_ROLES_CHANGE_LIST } from "../../../../data/roleChangeList";
+import { LoggedUserContext } from "../../../../context/LoggedUserContext";
 
-export const RoleChangeForm = ({ role, requesterId, setIsRequestModalOpen }) => {
+export const RoleChangeForm = ({ setIsRequestModalOpen }) => {
+  const { decodedJwt } = useContext(LoggedUserContext);
   const [requestObject, setRequestObject] = useState({
     desiredRole: '',
-    requesterId: requesterId
+    requesterId: decodedJwt.userId
   });
 
-  let roles = [];
-  if (role === 'USER') {
-    roles = ["TEAM_REPRESENTATIVE", "TOURNAMENT_ORGANIZER"]
-  } else if (role === 'TEAM_REPRESENTATIVE') {
-    roles = ["TOURNAMENT_ORGANIZER"]
-  } else if (role === "TOURNAMENT_ORGANIZER") {
-    roles = ["TEAM_REPRESENTATIVE"]
-  }
+  const roles = ALLOWED_ROLES_CHANGE_LIST[decodedJwt?.role] ?? [];
 
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -28,17 +24,12 @@ export const RoleChangeForm = ({ role, requesterId, setIsRequestModalOpen }) => 
   const handleSendRequest = async () => {
     try {
       const response = await createRoleChangeRequest(requestObject);
-      console.log("response - ", response);
       setIsRequestModalOpen(false);
       return response;
     } catch (error) {
       setErrorMessage(error);
     }
   };
-
-/*   console.log("role: ", role);
-  console.log("requestObject: ", requestObject);
-  console.log("roles: ", roles); */
 
   return(
     <div>

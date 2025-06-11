@@ -54,3 +54,39 @@ export const enrollTeam = async (enrollTeamObj) => {
   }
 }
 
+export const fetchOrganizersTournament = async (fetchTourObj) => {
+  const jwt = localStorage.getItem('token');
+  try {
+    const response = await apiClient.get(`/tournaments/by-organizer`,{
+      params: {
+        ...fetchTourObj
+      }, 
+      headers: {
+        Authorization: `Bearer ${jwt}`
+      }
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const updateTournament = async (id, updateTournamentObj) => {
+  const jwt = localStorage.getItem('token');
+  try {
+    const response = await apiClient.patch(`/tournaments/${id}`, 
+      updateTournamentObj,
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`
+        }
+      }
+    );
+    console.log("heheeh - ", response);
+    return response;
+  } catch (error) {
+    console.log(error.message)
+    throw error;
+  }
+}
+
