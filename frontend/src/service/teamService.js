@@ -57,3 +57,36 @@ export const createTeam = async (teamObject) => {
     throw error;
   }
 }
+
+export const fetchTeamByRepresentative = async (fetchTeamObj) => {
+  const jwt = localStorage.getItem('token');
+  try {
+    const response = await apiClient.get(`/teams/by-representative`, {
+      params: {
+        ...fetchTeamObj
+      },
+      headers: {
+        Authorization: `Bearer ${jwt}`
+      }
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const uploadTeamCrest = async (uploadImageObj) => {
+  const jwt = localStorage.getItem('token');
+  console.log("uploadImageObj: ", uploadImageObj)
+  try {
+    const response = await apiClient.patch(`/teams/upload-crest`, uploadImageObj, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+

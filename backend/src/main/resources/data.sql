@@ -27,6 +27,13 @@ INSERT INTO teams (team_name) VALUES ('Slaven Belupo');
 INSERT INTO players (first_name, team_id) VALUES ('Marko', 1);
 INSERT INTO players (first_name, team_id) VALUES ('Filip', 1);
 INSERT INTO players (first_name, team_id) VALUES ('Niko', 1);
+INSERT INTO players (first_name, team_id) VALUES ('Ivan', 1);
+INSERT INTO players (first_name, team_id) VALUES ('Zvonimir', 1);
+INSERT INTO players (first_name, team_id) VALUES ('Dario', 1);
+INSERT INTO players (first_name, team_id) VALUES ('Ismael', 1);
+INSERT INTO players (first_name, team_id) VALUES ('Dominik', 1);
+INSERT INTO players (first_name, team_id) VALUES ('Bamba', 1);
+INSERT INTO players (first_name, team_id) VALUES ('Josip', 1);
 
 INSERT INTO matches (home_team_id, away_team_id, name) VALUES (1, 2, 'mec');
 

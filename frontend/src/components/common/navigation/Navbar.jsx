@@ -5,10 +5,10 @@ import { useCollapseSidebarOnResize } from "../../../hooks/useCollapseSidebarOnR
 import { SendRequestModal } from "../../ui/request/modal/SendRequestModal";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoClose } from "react-icons/io5";
-import { NAVBAR_ITEMS } from "../../../data/navbarItems";
 import UserProfileDropdown from "../UserProfileDropdown";
 import { ActiveComponentContext } from "../../../context/ActiveComponentContext";
-import { LoggedUserContext } from "../../../context/LoggedUserContext";
+import { LoggedUserContext } from "../../../context/LoggedUserContext"
+import { GUEST_NAVBAR_ITEMS, TEAM_REPRESENTATIVE_NAVBAR_ITEMS, TOURNAMENT_ORGANIZER_NAVBAR_ITEMS } from '../../../data/navbarItems.jsx'
 
 const Navbar = () => {
   const [isSideBarActive, setIsSideBarActive] = useState(false);
@@ -19,6 +19,8 @@ const Navbar = () => {
   useCollapseSidebarOnResize(setIsSideBarActive); 
 
   const { decodedJwt, jwt, loading } = useContext(LoggedUserContext);
+
+  console.log("activeComponent: ", activeComponent);
 
   const toggleSidebar = () => {
     setIsSideBarActive(!isSideBarActive);
@@ -54,16 +56,6 @@ const Navbar = () => {
                 AppLogo
               </div>
 
-              <div className="pt-8">
-                {NAVBAR_ITEMS.map((item, index) => {
-                  return(
-                    <div key={index} className="cursor-pointer px-4 py-1 p-1 hover:bg-[#005571] rounded-md mx-1">
-                      <Link><button onClick={() => setActiveComponent(item)}>{item}</button></Link>
-                    </div>
-                  );
-                })}
-              </div>
-
             </div>
           ) : (
             <div className={`bg-[#001E28] w-screen h-16 flex justify-between items-center text-white text-base px-3`}>
@@ -82,6 +74,8 @@ const Navbar = () => {
                     <UserProfileDropdown name={decodedJwt?.sub} handleIsRequestModalOpen={handleIsRequestModalOpen} />
                   </div>
                 )}
+
+
               </div>
 
             </div>
@@ -91,32 +85,59 @@ const Navbar = () => {
       ) : (
         <div className="flex justify-between items-center bg-[#001E28] text-white h-16 px-4">
 
-          <div>
-            AppLogo
-          </div>
+          <div>AppLogo</div>
 
-          <div className={`flex justify-center items-center space-x-2`}>
-            {NAVBAR_ITEMS.map((item, index) => {
-              return(
-                <div key={index} className="cursor-pointer hover:border-b border-white/25">
-                  <Link><button onClick={() => setActiveComponent(item)}>{item}</button></Link>
-                </div>
-              );
-            })}
-          </div>
-
-          <div>
-            {decodedJwt === null ? (
+          {decodedJwt === null ? (
+            <>
+              <div className={`flex justify-center items-center space-x-2`}>
+                {GUEST_NAVBAR_ITEMS.map((item, index) => {
+                  return (
+                    <div key={index} className="cursor-pointer hover:border-b border-white/25">
+                      <Link><button onClick={() => setActiveComponent(item)}>{item}</button></Link>
+                    </div>
+                  );
+                })}
+              </div>
               <div>
                 <Link to={"/login"} className="px-2.5 py-1.5 text-xs sm:text-sm lg:px-3 lg:py-2 rounded-xl bg-blue-500"><span>Login</span></Link>
               </div>
-            ) : (
+            </>
+          ) : (
+            <>
+
+              {decodedJwt.role === "TEAM_REPRESENTATIVE" && (
+                <>
+                  <div className={`flex justify-center items-center space-x-2`}>
+                    {TEAM_REPRESENTATIVE_NAVBAR_ITEMS.map((item, index) => {
+                      return (
+                        <div key={index} className="cursor-pointer hover:border-b border-white/25">
+                          <Link><button onClick={() => setActiveComponent(item)}>{item}</button></Link>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+
+              {decodedJwt.role === "TOURNAMENT_ORGANIZER" && (
+                <>
+                  <div className={`flex justify-center items-center space-x-2`}>
+                    {TOURNAMENT_ORGANIZER_NAVBAR_ITEMS.map((item, index) => {
+                      return (
+                        <div key={index} className="cursor-pointer hover:border-b border-white/25">
+                          <Link><button onClick={() => setActiveComponent(item)}>{item}</button></Link>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+
               <div>
                 <UserProfileDropdown name={decodedJwt?.sub} handleIsRequestModalOpen={handleIsRequestModalOpen} />
               </div>
-            )}
-          </div>
-
+           </>
+          )}
         </div>
       )}
 

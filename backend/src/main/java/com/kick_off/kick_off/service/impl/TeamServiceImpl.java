@@ -77,8 +77,12 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public Optional<Team> getTeamById(Long id) {
-        return teamRepository.findById(id);
+    public TeamDto getTeamById(Long id) {
+        Team team = teamRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Team with id: " + id + " not found."));
+
+        TeamDto teamDto = modelMapper.map(team, TeamDto.class);
+        return teamDto;
     }
 
 
@@ -144,12 +148,21 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public TeamDto findTeamByRepresentative(Long representativeId) {
+    public TeamDto findTeamByRepresentativeId(Long representativeId) {
         Team team = teamRepository.findTeamByRepresentative_Id(representativeId)
                 .orElseThrow(() -> new EntityNotFoundException("Representative with id: " + representativeId + " not found."));
 
         TeamDto teamDto = modelMapper.map(team, TeamDto.class);
         return teamDto;
+    }
+
+    @Override
+    public void uploadTeamCrest(Long teamId, String teamCrestUrl) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new EntityNotFoundException("Team with id: " + teamId + " not found."));
+
+        team.setTeamCrest(teamCrestUrl);
+        teamRepository.save(team);
     }
 
 }

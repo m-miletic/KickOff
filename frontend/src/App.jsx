@@ -31,7 +31,13 @@ const App = () => {
                   </ActiveModalProvider>
                 } />
               <Route path="/signup" element={<SignupPage />} />
-              <Route path="/teams/:id" element={<TeamPage />} />
+              <Route path="/teams/:id" element=
+              {
+                <ActiveComponentProvider>
+                  <TeamPage />
+                </ActiveComponentProvider>
+
+              } />
               <Route path="/organizer" element={
                   <ActiveModalProvider>
                     <ActiveComponentProvider>

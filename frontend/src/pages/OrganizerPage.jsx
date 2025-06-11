@@ -4,6 +4,7 @@ import RequestList from "../components/ui/request/RequestList";
 import { RequestProvider } from "../context/RequestContext";
 import { ActiveComponentContext } from "../context/ActiveComponentContext";
 import { LoggedUserContext } from "../context/LoggedUserContext";
+import FileUpload from "../components/ui/files/FileUpload";
 
 const OrganizerPage = () => {
   const { activeComponent } = useContext(ActiveComponentContext);
@@ -25,6 +26,10 @@ const OrganizerPage = () => {
           </RequestProvider>
         </div>
       }
+      <div className="flex justify-center items-center text-white">
+        <FileUpload />
+      </div>
+
     </div>
   );
 }

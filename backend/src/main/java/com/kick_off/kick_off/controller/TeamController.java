@@ -1,12 +1,11 @@
 package com.kick_off.kick_off.controller;
 
-import com.kick_off.kick_off.dto.team.CreateTeamDto;
-import com.kick_off.kick_off.dto.team.TeamDto;
+import com.kick_off.kick_off.dto.team.*;
 import com.kick_off.kick_off.dto.team.requestParams.TeamFilterParamsDto;
-import com.kick_off.kick_off.dto.team.TeamListDto;
 import com.kick_off.kick_off.model.Team;
 import com.kick_off.kick_off.response.ApiResponse;
 import com.kick_off.kick_off.service.TeamService;
+import org.springframework.data.repository.init.RepositoriesPopulatedEvent;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -115,12 +114,74 @@ public class TeamController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Team> fetchTeamById(@PathVariable("id") Long id) {
-        Optional<Team> team = teamService.getTeamById(id);
-        return team
-                .map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<ApiResponse<TeamDto>> fetchTeamById(@PathVariable("id") Long id) {
+        try {
+            TeamDto team = teamService.getTeamById(id);
+            ApiResponse<TeamDto> response = ApiResponse.<TeamDto>builder()
+                    .message("Successfully retrieved team.")
+                    .data(team)
+                    .success(true)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            ApiResponse<TeamDto> errorResponse = ApiResponse.<TeamDto>builder()
+                    .message(e.getMessage())
+                    .data(null)
+                    .success(false)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(errorResponse);
+        }
     }
+
+    @GetMapping("/by-representative")
+    public ResponseEntity<ApiResponse<TeamDto>> fetchTeamByRepresentative(@ModelAttribute GetTeamByRepresentative request) {
+        try {
+            TeamDto team = teamService.findTeamByRepresentativeId(request.getRepresentativeId());
+            ApiResponse<TeamDto> response = ApiResponse.<TeamDto>builder()
+                    .message("Successfully retrieved representatives team.")
+                    .data(team)
+                    .success(true)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+
+        } catch (Exception e) {
+            ApiResponse<TeamDto> errorResponse = ApiResponse.<TeamDto>builder()
+                    .message(e.getMessage())
+                    .data(null)
+                    .success(false)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+    }
+
+    @PatchMapping("/upload-crest")
+    public ResponseEntity<ApiResponse<Void>> updateTeamCrestImage(@RequestBody UploadTeamCrestDto request) {
+        System.out.println("Am I here");
+        try {
+            teamService.uploadTeamCrest(request.getTeamId(), request.getTeamCrest());
+            ApiResponse<Void> response = ApiResponse.<Void>builder()
+                    .message("Team crest image uploaded.")
+                    .data(null)
+                    .success(true)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            ApiResponse<Void> errorResponse = ApiResponse.<Void>builder()
+                    .message(e.getMessage())
+                    .data(null)
+                    .success(false)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+    }
+
+
 
 
 }

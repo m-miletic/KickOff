@@ -11,7 +11,8 @@ import java.util.Optional;
 
 public interface TeamService {
     TeamListDto getTeams(TeamFilterParamsDto filters);
-    Optional<Team> getTeamById(Long id);
+
+    TeamDto getTeamById(Long id);
 
     TeamDto createTeam(CreateTeamDto teamDto);
 
@@ -19,5 +20,7 @@ public interface TeamService {
 
     List<TeamDto> findTeamByTournament(String tournamentName);
 
-    TeamDto findTeamByRepresentative(Long representativeId);
+    TeamDto findTeamByRepresentativeId(Long representativeId);
+
+    void uploadTeamCrest(Long teamId, String teamCrestUrl);
 }

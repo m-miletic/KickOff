@@ -39,7 +39,9 @@ export const PreviewTeamModal = ({ setIsModalOpen, selectedTeam: team }) => {
               <div>Coach</div>
               <div><span className='font-medium'>Tralalero Tralala</span></div>
             </div>
-            <div className='mr-20'><GiSoccerBall className='w-16 h-16' /></div>
+            <div>
+              <img src={team.teamCrest} alt="" className='w-36 h-32 rounded-2xl' />
+            </div>
           </div>
 
         </div>

@@ -155,7 +155,7 @@ public class RequestController {
         }
     }
 
-    @PutMapping
+    @PatchMapping
     public ResponseEntity<ApiResponse<RequestDto>> updateRequest(@RequestBody UpdateRequestStatusDto request) {
         try {
             RequestDto requestDto = requestService.updateRequest(request);
@@ -177,4 +177,5 @@ public class RequestController {
             return ResponseEntity.status(HttpStatus.OK).body(errorResponse);
         }
     }
+
 }

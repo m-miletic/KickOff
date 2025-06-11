@@ -3,6 +3,7 @@ import { useFetchTeamsByTournament } from "../../hooks/team/useTeamHook";
 import { DropdownButton } from "../common/dropdown/DropdownButton";
 import { useFetchTournaments } from "../../hooks/tournaments/useFetchTournaments";
 import DropdownContent from "../common/dropdown/DropdownContent";
+import { useNavigate } from "react-router-dom";
 
 const Standings = () => {
   const [filterTeams, setFilterTeams] = useState({
@@ -18,6 +19,8 @@ const Standings = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  const navigate = useNavigate();
+
   // potrebno jer ne izgleda svaki response isto na ovaj nacin dropdownContent alko primi uvik isti format tocno zna sta displayat
   // isto je formatiran REQUEST_STATUS i REQUEST_TIME_CREATED
   const dropdownItems = tournaments.tournamentsList.map(tournament => ({
@@ -31,6 +34,10 @@ const Standings = () => {
       [type]: value
     }));
     setIsDropdownOpen(false);
+  };
+
+  const handleShowTeamPage = (teamId) => {
+    navigate(`/teams/${teamId}`)
   };
 
   return (
@@ -86,7 +93,7 @@ const Standings = () => {
               </div>
               <div className="w-[125px] sticky left-[25px] z-20 bg-[#04111a] h-full flex items-center py-[3px] border-r border-white/10">
                 <span className="block w-[75px] overflow-hidden text-ellipsis whitespace-nowrap">
-                  {team.teamName}
+                  <button onClick={() => handleShowTeamPage(team.id)} className="hover:underline">{team.teamName}</button>
                 </span>
               </div>
               <div className="w-[30px] px-2">{team.matchesPlayed}</div>

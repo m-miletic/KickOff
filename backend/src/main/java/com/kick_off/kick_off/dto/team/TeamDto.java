@@ -18,4 +18,5 @@ public class TeamDto {
     private Integer losses;
     private Integer goalsScored;
     private Integer goalsAgainst;
+    private String teamCrest;
 }

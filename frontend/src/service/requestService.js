@@ -53,7 +53,7 @@ export const fetchAllRequestsByUserId = async ( selectedFilters, userId ) => {
 export const updateRequest = async ( updateObject ) => {
   const jwt = localStorage.getItem('token');
   try {
-    const response = await apiClient.put(`/requests`, updateObject, {
+    const response = await apiClient.patch(`/requests`, updateObject, {
       headers: {
         Authorization: `Bearer ${jwt}`
       }
