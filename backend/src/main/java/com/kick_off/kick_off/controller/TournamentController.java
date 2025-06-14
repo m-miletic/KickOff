@@ -128,6 +128,7 @@ public class TournamentController {
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
+            System.out.println("poruka - " + e.getMessage());
             ApiResponse<TournamentDto> errorResponse = ApiResponse.<TournamentDto>builder()
                     .message(e.getMessage())
                     .data(null)

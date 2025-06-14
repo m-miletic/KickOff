@@ -70,7 +70,8 @@ public class TeamServiceImpl implements TeamService {
                 .map(t ->
                         modelMapper.map(t, TeamDto.class)).toList();
 
-        for (TeamDto teamDto : teams) {
+        // nadodat samo za slucaj kada dohvacam meceve timova ...
+/*        for (TeamDto teamDto : teams) {
             List<MatchDto> teamsHomeMatches = teamDto.getHomeMatches();
             List<MatchDto> teamsAwayMatches = teamDto.getAwayMatches();
             List<MatchDto> allMatches = new ArrayList<>();
@@ -78,7 +79,7 @@ public class TeamServiceImpl implements TeamService {
             allMatches.addAll(teamsAwayMatches);
             teamDto.setAllMatches(allMatches);
 
-        }
+        }*/
 
         return TeamListDto.builder()
                 .teamsList(teams)

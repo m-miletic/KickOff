@@ -12,7 +12,7 @@ const Standings = () => {
   });
   // jel ok koristit isti filters objekt za dohvacanje timova i turnira?
   const { teams, loading, error } = useFetchTeamsByTournament(filterTeams);
-  const { tournaments } = useFetchTournaments(); 
+  const { tournaments } = useFetchTournaments(filterTeams); 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {

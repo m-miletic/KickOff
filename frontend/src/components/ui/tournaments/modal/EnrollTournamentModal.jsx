@@ -1,13 +1,38 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { IoMdClose } from "react-icons/io";
 import { createEnrollTeamRequest } from '../../../../service/requestService';
+import { LoggedUserContext } from '../../../../context/LoggedUserContext';
+import { fetchMyData } from '../../../../service/usersService';
 
-const EnrollTournamentModal = ({ setIsModalOpen, selectedTournament: tournament, decodedJwt }) => {
+const EnrollTournamentModal = ({ setIsModalOpen, selectedTournament: tournament }) => {
+
+  const { decodedJwt } = useContext(LoggedUserContext);
+
+  // provjerit zastupa li tim neki ako nije ne dat mu opciju enroll
+  // fali sa backenda naprvit dto di posalje i team koji zastupa
+
+  useEffect(() => {
+    const fetchMyInfo = async () => {
+      try {
+        const response = await fetchMyData(decodedJwt.userId);
+      } catch (error) {
+        throw error;
+      }
+    }
+
+    fetchMyInfo();
+  }, [])
+
+
+  console.log("a : ", decodedJwt)
+
   const [errorMessage, setErrorMessage] = useState(null);
   const [requestObject, setRequestObject] = useState({
     teamRepresentativeId: decodedJwt.userId,
     tournamentId: tournament.id,
   });
+
+
 
   const handleEnrollButtonClick = async () => {
     try {

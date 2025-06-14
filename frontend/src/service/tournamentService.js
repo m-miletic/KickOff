@@ -82,10 +82,8 @@ export const updateTournament = async (id, updateTournamentObj) => {
         }
       }
     );
-    console.log("heheeh - ", response);
     return response;
   } catch (error) {
-    console.log(error.message)
     throw error;
   }
 }

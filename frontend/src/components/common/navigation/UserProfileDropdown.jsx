@@ -46,17 +46,17 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
       <div onClick={handleIsUserProfileDropdownOpen} className='flex items-center justify-center cursor-pointer'>
 
         <div>
-          { isUserProfileDropdownOpen ? <RxCaretUp className='w-5 h-5'/> : <RxCaretDown className='w-5 h-5' /> }
+          { isUserProfileDropdownOpen ? <RxCaretUp className='w-5 h-5 xl:w-6 xl:h-6 2xl:w-7 2xl:h-7'/> : <RxCaretDown className='w-5 h-5 xl:w-6 xl:h-6 2xl:w-7 2xl:h-7' /> }
         </div>
 
-        <div className="rounded-full border w-5 h-5 border-white cursor-pointer bg-white flex items-center justify-center mt-2 p-3">
+        <div className="rounded-full border w-5 h-5 border-white cursor-pointer bg-white flex items-center justify-center mt-2 p-3 2xl:p-4">
           <button className="text-black mb-[1px]">{firstLetter}</button>
         </div>
 
       </div>
 
       {isUserProfileDropdownOpen && (
-        <div className="absolute top-[70px] right-0 text-xs bg-[#001E28] rounded-lg p-2 space-y-1">
+        <div className="absolute z-50 top-[68px] xl:top-[78px] 2xl:top-[88px] right-2 text-xs xl:text-sm bg-[#001E28] rounded-lg p-2 space-y-1 px-2 2xl:px-4 2xl:py-4">
 
           <div className='text-gray-300 cursor-pointer pb-2'>
             Hello {name}

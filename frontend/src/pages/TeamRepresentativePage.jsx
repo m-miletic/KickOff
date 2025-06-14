@@ -21,7 +21,7 @@ const TeamRepresentativePage = () => {
       {(activeComponent === "sentRequests" || activeComponent === "recievedRequests") && 
         <div className="flex justify-center text-white mt-20">
           <RequestProvider>
-            <RequestList decodedJwt={decodedJwt} />
+            <RequestList />
           </RequestProvider>
         </div>
       }

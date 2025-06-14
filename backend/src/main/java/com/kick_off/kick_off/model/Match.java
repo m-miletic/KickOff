@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -17,7 +18,7 @@ public class Match {
     @Column(name = "name")
     private String name;
     @Column(name = "match_date")
-    private LocalDate matchDate;
+    private LocalDateTime matchDate;
 
     @ManyToOne
     @JoinColumn(name = "home_team_id")
@@ -30,5 +31,8 @@ public class Match {
     @ManyToOne
     @JoinColumn(name = "tournament_id")
     private Tournament tournament;
+
+    @ManyToOne
+    private Stadium stadium; // za sada je unidirectional...ako buden triba dohvacat meceve iz stadiona ubacit bidirectional
 
 }

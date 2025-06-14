@@ -1,4 +1,4 @@
-import apiClient from "./apis/apiClient";
+import apiClient, { apiAuthClient } from "./apis/apiClient";
 
 export const fetchUsers = async (filter) => {
   const jwt = localStorage.getItem('token');
@@ -54,3 +54,17 @@ export const changeUserRole = async ( updateObject ) => {
     throw error.response.data.message;
   }
 };
+
+export const fetchMyData = async (id) => {
+  const jwt = localStorage.getItem('token')
+  try {
+    const response = await apiAuthClient.get(`/users/me/${id}`, {
+      headers: {
+        Authorization: `Bearer ${jwt}`
+      }
+    })
+    console.log("resssss- ", response)
+  } catch (error) {
+    throw error;
+  }
+}

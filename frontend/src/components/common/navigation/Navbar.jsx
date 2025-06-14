@@ -50,7 +50,7 @@ const Navbar = () => {
               </div>
 
               <div className="p-6">
-                AppLogo
+                KickOff
               </div>
               
               {decodedJwt === null ? (
@@ -118,9 +118,9 @@ const Navbar = () => {
 
         </div>
       ) : (
-        <div className="flex justify-between items-center bg-[#001E28] text-white h-16 px-4">
+        <div className="flex justify-between items-center bg-[#001E28] text-white h-16 xl:h-[72px] 2xl:h-[82px] px-4">
 
-          <div>AppLogo</div>
+          <div>KickOff</div>
 
           {decodedJwt === null ? (
             <>
@@ -159,7 +159,7 @@ const Navbar = () => {
                   <div className={`flex justify-center items-center space-x-2`}>
                     {TOURNAMENT_ORGANIZER_NAVBAR_ITEMS.map((item, index) => {
                       return (
-                        <div key={index} className="cursor-pointer hover:border-b border-white/25">
+                        <div key={index} className="cursor-pointer hover:border-b border-white/25 2xl:text-lg">
                           <Link><button onClick={() => setActiveComponent(item)}>{item}</button></Link>
                         </div>
                       );

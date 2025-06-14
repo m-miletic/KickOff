@@ -22,7 +22,9 @@ public class TeamDto {
     private Integer goalsScored;
     private Integer goalsAgainst;
     private String teamCrest;
-    private List<MatchDto> homeMatches;
+
+    // nadodat u posebni dto za posbne slucjajeve
+/*    private List<MatchDto> homeMatches;
     private List<MatchDto> awayMatches;
-    private List<MatchDto> allMatches;
+    private List<MatchDto> allMatches;*/
 }

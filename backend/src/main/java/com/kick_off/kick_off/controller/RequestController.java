@@ -88,7 +88,6 @@ public class RequestController {
 
     @PostMapping("/enroll-team")
     public ResponseEntity<ApiResponse<Void>> createEnrollTeamRequest(@RequestBody CreateEnrollTeamRequestDto request) {
-        System.out.println("request --- " + request.toString());
         try {
             requestService.createEnrollTeamRequest(request);
             ApiResponse<Void> response = ApiResponse.<Void>builder()

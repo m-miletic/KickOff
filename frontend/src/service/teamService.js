@@ -14,17 +14,17 @@ export const fetchAllTeams = async ( filters ) => {
     return response.data;
   } catch (error) {
     throw error;
-  }
+  } 
 };
 
-export const fetchTeamsByTournament = async ( filters ) => {
+export const fetchTeamsByTournament = async ( fetchTeamObj ) => {
   try {
     const response = await apiClient.get("/teams/by-tournament", {
       params: {
-        ...filters
+        ...fetchTeamObj
       }
     });
-    return response.data;
+    return response.data.data;
   } catch (error) {
     throw error;
   }

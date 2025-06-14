@@ -4,18 +4,11 @@ import { ActiveModalContext } from '../../../context/ActiveModalContext';
 import { FaRegEye } from "react-icons/fa";
 import EnrollTournamentModal from './modal/EnrollTournamentModal';
 import { jwtDecode } from "jwt-decode";
+import { LoggedUserContext } from '../../../context/LoggedUserContext';
 
 const TeamRepresentativeTournamentList = () => {
 
-  let decodedJwt = null;
-  const jwt = localStorage.getItem('token');
-  if (jwt) {
-    try {
-      decodedJwt = jwtDecode(jwt);
-    } catch (error) {
-      console.error("Invalid JWT:", error);
-    }
-  };
+  const { decodedJwt } = useContext(LoggedUserContext)
 
   const [selectedTournament, setSelectedTournament] = useState();
   const [filters, setFilters] = useState({
@@ -40,7 +33,7 @@ const TeamRepresentativeTournamentList = () => {
   console.log("tournaments: ", tournaments);
 
   return (  
-    <div className='w-[325px] text-2xs text-white'>
+    <div className='w-[325px] text-2xs text-white mt-20 space-y-1'>
         
         <div className='bg-[#04111a] p-3 rounded-md flex justify-between items-center'>
           <div>Tournament</div>
@@ -50,7 +43,7 @@ const TeamRepresentativeTournamentList = () => {
         <div className='p-2'>
           {tournaments.tournamentsList.map((tournament, index) => {
             return(
-              <div key={index} className='flex justify-between items-center'>
+              <div key={index} className='flex justify-between items-center space-y-2'>
 
                 <div className='py-2'>
                   {tournament.tournamentName}
@@ -70,7 +63,7 @@ const TeamRepresentativeTournamentList = () => {
         </div>
 
         {isPreviewModalOpen && (
-          <EnrollTournamentModal setIsModalOpen={setIsPreviewModalOpen} selectedTournament={selectedTournament} decodedJwt={decodedJwt} />
+          <EnrollTournamentModal setIsModalOpen={setIsPreviewModalOpen} selectedTournament={selectedTournament} />
         )}
 
 

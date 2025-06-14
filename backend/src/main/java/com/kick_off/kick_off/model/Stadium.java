@@ -17,14 +17,11 @@ public class Stadium {
     private Long id;
     @Column(name = "stadium_name")
     private String stadiumName;
-    @Column(name = "capacity")
-    private String capacity;
-    @Column(name = "city")
-    private String city;
-    @Column(name = "street")
-    private String street;
+    @Column(name = "location")
+    private String location;
 
     // @JoinTable & @JoinColumn are not required but are used so that I can name table and fields as I want
     @ManyToMany(mappedBy = "stadiums")
     private List<Tournament> tournaments;
+
 }

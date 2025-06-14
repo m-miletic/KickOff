@@ -19,6 +19,8 @@ public class TournamentDto {
     private LocalDate endDate;
     private String details;
     private Long organizerId;
+
+    // ovo bi tribalo bit ok
     private List<TeamDto> teams;
     private List<MatchDto> matchesList;
 }

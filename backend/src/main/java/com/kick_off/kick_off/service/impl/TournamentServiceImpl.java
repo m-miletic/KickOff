@@ -7,6 +7,7 @@ import com.kick_off.kick_off.dto.tournament.GetTournamentByOrganizer;
 import com.kick_off.kick_off.dto.tournament.GetTournamentsDto;
 import com.kick_off.kick_off.dto.tournament.TournamentDto;
 import com.kick_off.kick_off.dto.tournament.TournamentListDto;
+import com.kick_off.kick_off.exception.ForbiddenActionException;
 import com.kick_off.kick_off.model.Request;
 import com.kick_off.kick_off.model.Status;
 import com.kick_off.kick_off.model.Team;
@@ -21,8 +22,12 @@ import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -173,6 +178,22 @@ public class TournamentServiceImpl implements TournamentService {
 
         Tournament tournament = tournamentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tournament with id: " + id + " not found."));
+
+        LocalDate now = LocalDate.now();
+        LocalDate editStartDate = updatedTournament.getStartDate();
+        LocalDate editEndDate = updatedTournament.getEndDate();
+
+        if(editEndDate.isBefore(editStartDate)) {
+            throw new ForbiddenActionException("End date can't be before start date");
+        }
+
+        if(editStartDate.isBefore(now) || editEndDate.isBefore(now)) {
+            throw new ForbiddenActionException("Can't set dates in past");
+        }
+
+        if(editEndDate.isAfter(editStartDate.plusMonths(1))) {
+            throw new ForbiddenActionException("Tournament can't last longer than a month");
+        }
 
         tournament.setTournamentName(updatedTournament.getTournamentName());
         tournament.setDetails(updatedTournament.getDetails());

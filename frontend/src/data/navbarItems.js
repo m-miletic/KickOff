@@ -6,15 +6,11 @@ export const GUEST_NAVBAR_ITEMS = [
 ]
 
 export const TEAM_REPRESENTATIVE_NAVBAR_ITEMS = [
-  "Home",
   "Tournaments",
   "My Team",
-  "About",
 ]
 
 export const TOURNAMENT_ORGANIZER_NAVBAR_ITEMS = [
-  "Home",
-  "Tournaments",
+  "Create Match",
   "My Tournament",
-  "About",
 ]

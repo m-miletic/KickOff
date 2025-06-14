@@ -5,6 +5,7 @@ import { RequestProvider } from "../context/RequestContext";
 import { ActiveComponentContext } from "../context/ActiveComponentContext";
 import FileUpload from "../components/ui/files/FileUpload";
 import OrganizersTournament from "../components/ui/tournaments/OrganizersTournament";
+import { Calendar } from "../components/calendar/Calendar";
 
 const OrganizerPage = () => {
   const { activeComponent } = useContext(ActiveComponentContext);
@@ -22,9 +23,15 @@ const OrganizerPage = () => {
         </div>
       }
 
-      {activeComponent === "My Tournament" && (
+      { (activeComponent === "My Tournament" || activeComponent === "") && (
         <OrganizersTournament />
       )}
+
+      {activeComponent === "Create Match" && (
+        <Calendar />
+      )}
+
+      
 
 {/*       <div className="flex justify-center items-center text-white">
         <FileUpload />

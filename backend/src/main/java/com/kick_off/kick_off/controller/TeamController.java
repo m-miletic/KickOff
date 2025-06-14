@@ -46,6 +46,7 @@ public class TeamController {
 
     @GetMapping("/by-tournament")
     public ResponseEntity<ApiResponse<List<TeamDto>>> getTeamsByTournament(@RequestParam String tournamentName) {
+        System.out.println("Tournament name: " + tournamentName);
         try {
             List<TeamDto> teams = teamService.findTeamByTournament(tournamentName);
             ApiResponse<List<TeamDto>> response = ApiResponse.<List<TeamDto>>builder()

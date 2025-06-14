@@ -30,7 +30,7 @@ export const SendRequestModal = ({ setIsRequestModalOpen }) => {
 
   const handleSendTornamentOrganizationRequest = async () => {
     const createTournamentOrganizationRequestObject = {
-      tournamentOrganizerId: requesterId
+      tournamentOrganizerId: decodedJwt.userId
     }
     try {
       const response = await createTournamentCreationRequest(createTournamentOrganizationRequestObject);
