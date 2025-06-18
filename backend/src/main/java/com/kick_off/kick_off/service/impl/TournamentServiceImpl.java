@@ -1,6 +1,7 @@
 package com.kick_off.kick_off.service.impl;
 
 import com.kick_off.kick_off.dto.request.RequestDto;
+import com.kick_off.kick_off.dto.request.RequestListDto;
 import com.kick_off.kick_off.dto.team.EnrollTeamDto;
 import com.kick_off.kick_off.dto.tournament.CreateTournamentDto;
 import com.kick_off.kick_off.dto.tournament.GetTournamentByOrganizer;
@@ -17,6 +18,7 @@ import com.kick_off.kick_off.repository.RequestRepository;
 import com.kick_off.kick_off.repository.TeamRepository;
 import com.kick_off.kick_off.repository.TournamentRepository;
 import com.kick_off.kick_off.repository.authentication.UserRepository;
+import com.kick_off.kick_off.service.RequestService;
 import com.kick_off.kick_off.service.TournamentService;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -115,10 +117,11 @@ public class TournamentServiceImpl implements TournamentService {
     }
 
     @Override
-    public RequestDto enrollTeam(EnrollTeamDto teamDto) {
+    public RequestListDto enrollTeam(EnrollTeamDto teamDto) {
         Long teamRepresentativeId = teamDto.getTeamRepresentativeId();
         Long tournamentOrganizerId = teamDto.getTournamentOrganizerId();
         Long requestId = teamDto.getRequestId();
+        Status status = Status.valueOf(teamDto.getStatus().toString());
 
         Tournament tournament = tournamentRepository.findTournamentByOrganizer_Id(tournamentOrganizerId)
                 .orElseThrow(() -> new EntityNotFoundException("Tournament with id: " + tournamentOrganizerId + " not found."));
@@ -129,6 +132,23 @@ public class TournamentServiceImpl implements TournamentService {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new EntityNotFoundException("Request with id: " + requestId + " not found."));
 
+        if (status.equals(Status.DECLINED)) {
+            request.setStatus(Status.DECLINED);
+            request.setRequestFulfilled(true);
+            requestRepository.save(request);
+
+
+            List<Request> updatedRequests = requestRepository.findAllByStatusAndApprover_Id(Status.PENDING, tournamentOrganizerId);
+
+            List<RequestDto> updatedRequestsDto = updatedRequests.stream()
+                    .map(req -> modelMapper.map(req, RequestDto.class)).toList();
+
+            return RequestListDto.builder()
+                    .requests(updatedRequestsDto)
+                    .totalRequests(updatedRequests.size())
+                    .build();
+
+        }
 
         List<Tournament> allTournaments = tournamentRepository.findAll();
 
@@ -146,9 +166,9 @@ public class TournamentServiceImpl implements TournamentService {
 
 
         if(alreadyEnrolled) {
-            throw new IllegalStateException("Team is already enrolled in the tournament.");
+            throw new ForbiddenActionException("Team is already enrolled in the tournament.");
         } else if (counter >= 2) {
-            throw new IllegalStateException("Team already enrolled in max number of tournaments.");
+            throw new ForbiddenActionException("Team already enrolled in max number of tournaments.");
         } else {
             tournament.getTeams().add(team);
             team.getTournaments().add(tournament);
@@ -156,9 +176,18 @@ public class TournamentServiceImpl implements TournamentService {
             request.setStatus(Status.APPROVED);
             request.setRequestFulfilled(true);
             requestRepository.save(request);
-        }
 
-        return modelMapper.map(request, RequestDto.class);
+
+            List<Request> updatedRequests = requestRepository.findAllByStatusAndApprover_Id(Status.PENDING, tournamentOrganizerId);
+
+            List<RequestDto> updatedRequestsDto = updatedRequests.stream()
+                    .map(req -> modelMapper.map(req, RequestDto.class)).toList();
+
+            return RequestListDto.builder()
+                    .requests(updatedRequestsDto)
+                    .totalRequests(updatedRequests.size())
+                    .build();
+        }
 
     }
 

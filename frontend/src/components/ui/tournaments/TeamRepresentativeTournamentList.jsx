@@ -33,41 +33,43 @@ const TeamRepresentativeTournamentList = () => {
   console.log("tournaments: ", tournaments);
 
   return (  
-    <div className='w-[325px] text-2xs text-white mt-20 space-y-1'>
-        
-        <div className='bg-[#04111a] p-3 rounded-md flex justify-between items-center'>
-          <div>Tournament</div>
-          <div>Preview</div>
+    <div className='w-[325px] sm:w-[400px] lg:w-[500px] xl:w-[600px] text-xs sm:text-sm 2xl:text-base text-gray-900 mt-20 space-y-1'>
+
+    <div className='bg-[#001E28] p-3 rounded-md flex justify-between items-center font-semibold text-white'>
+      <div>Tournament</div>
+      <div>Preview</div>
+    </div>
+
+    <div className='p-2'>
+      {tournaments.tournamentsList.map((tournament, index) => (
+        <div key={index} className='flex justify-between items-center py-2 border-b border-gray-200 odd:bg-gray-200 rounded-lg px-2'>
+
+          <div>
+            {tournament.tournamentName}
+          </div>
+
+          <div>
+            <button
+              onClick={() => handlePreviewButtonClick(tournament)}
+              className="px-2 py-1 text-gray-700 bg-white rounded-lg border border-gray-300 font-medium hover:bg-gray-100 focus:ring-2 focus:ring-gray-400 focus:outline-none"
+            >
+              <span className="flex items-center space-x-1">
+                <FaRegEye />
+                <span>Preview</span>
+              </span>
+            </button>
+          </div>
+
         </div>
+      ))}
+    </div>
+      
+    {isPreviewModalOpen && (
+      <EnrollTournamentModal setIsModalOpen={setIsPreviewModalOpen} selectedTournament={selectedTournament} />
+    )}
 
-        <div className='p-2'>
-          {tournaments.tournamentsList.map((tournament, index) => {
-            return(
-              <div key={index} className='flex justify-between items-center space-y-2'>
+</div>
 
-                <div className='py-2'>
-                  {tournament.tournamentName}
-                </div>
-
-                <div className='flex justify-center items-center space-x-1'>
-
-                  <button onClick={() => handlePreviewButtonClick(tournament)} className="px-1.5 py-1 text-white lg:text-xs xl:text-sm  bg-transparent rounded-lg border font-medium border-gray-500 focus:z-10 focus:ring-1 hover:ring-1 hover:ring-gray-500 focus:ring-gray-500">
-                    <span className="flex items-center justify-between"> <FaRegEye /> <span className="ml-1">Preview</span> </span>
-                  </button>
-
-                </div>
-                
-              </div>
-            );
-          })}
-        </div>
-
-        {isPreviewModalOpen && (
-          <EnrollTournamentModal setIsModalOpen={setIsPreviewModalOpen} selectedTournament={selectedTournament} />
-        )}
-
-
-      </div>
   );
 }
 export default TeamRepresentativeTournamentList;

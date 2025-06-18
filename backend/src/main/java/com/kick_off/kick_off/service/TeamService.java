@@ -19,9 +19,9 @@ public interface TeamService {
 
     void deleteTeam(Long id);
 
-    List<TeamDto> findTeamByTournament(String tournamentName);
+    List<TeamDto> findTeamByTournamentId(Long tournamentId);
 
-    LightTeamDto findTeamByRepresentativeId(Long representativeId);
+    TeamDto findTeamByRepresentativeId(Long representativeId);
 
-    void uploadTeamCrest(Long teamId, String teamCrestUrl);
+    String uploadTeamCrest(Long teamId, String teamCrestUrl);
 }

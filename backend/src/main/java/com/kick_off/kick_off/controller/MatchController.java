@@ -1,6 +1,7 @@
 package com.kick_off.kick_off.controller;
 
 import com.kick_off.kick_off.dto.match.CreateMatchDto;
+import com.kick_off.kick_off.dto.match.EditMatchDto;
 import com.kick_off.kick_off.dto.match.MatchDto;
 import com.kick_off.kick_off.response.ApiResponse;
 import com.kick_off.kick_off.service.MatchService;
@@ -24,7 +25,6 @@ public class MatchController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<MatchDto>> createMatch(@RequestBody CreateMatchDto match) {
-        System.out.println("CreateMatchDto : " + match.toString());
         try {
             MatchDto matchDto = matchService.createMatch(match);
             ApiResponse<MatchDto> response = ApiResponse.<MatchDto>builder()
@@ -64,6 +64,55 @@ public class MatchController {
                     .build();
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<ApiResponse<MatchDto>> editMatch(@PathVariable(name = "id") Long matchId, @RequestBody EditMatchDto updateMatchData) {
+        System.out.println("I'm in");
+        System.out.println("MatchId: " + matchId);
+        System.out.println("EditMatchDto: " + updateMatchData.toString());
+        try {
+            MatchDto matchDto = matchService.updateMatch(matchId, updateMatchData);
+            ApiResponse<MatchDto> response = ApiResponse.<MatchDto>builder()
+                    .message("Match successfully updated")
+                    .data(matchDto)
+                    .success(true)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            ApiResponse<MatchDto> errorResponse = ApiResponse.<MatchDto>builder()
+                    .message(e.getMessage())
+                    .data(null)
+                    .success(false)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteMatch(@PathVariable Long id) {
+        try {
+            matchService.deleteMatch(id);
+            ApiResponse<Void> response = ApiResponse.<Void>builder()
+                    .message("Match successfully deleted")
+                    .data(null)
+                    .success(true)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            ApiResponse<Void> errorResponse = ApiResponse.<Void>builder()
+                    .message(e.getMessage())
+                    .data(null)
+                    .success(false)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+
         }
     }
 

@@ -1,9 +1,11 @@
 package com.kick_off.kick_off.service.impl;
 
 import com.kick_off.kick_off.dto.match.CreateMatchDto;
+import com.kick_off.kick_off.dto.match.EditMatchDto;
 import com.kick_off.kick_off.dto.match.MatchDto;
 import com.kick_off.kick_off.dto.stadium.StadiumDto;
 import com.kick_off.kick_off.dto.team.TeamDto;
+import com.kick_off.kick_off.exception.ForbiddenActionException;
 import com.kick_off.kick_off.model.Match;
 import com.kick_off.kick_off.model.Stadium;
 import com.kick_off.kick_off.model.Team;
@@ -15,6 +17,7 @@ import com.kick_off.kick_off.repository.TournamentRepository;
 import com.kick_off.kick_off.service.MatchService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.coyote.BadRequestException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -60,12 +63,13 @@ public class MatchServiceImpl implements MatchService {
         Stadium stadium = stadiumRepository.findById(stadiumId)
                 .orElseThrow(() -> new EntityNotFoundException("Stadium with id: " + stadiumId + " doesn't exist."));
 
+
         boolean matchExists = matchRepository.existsByHomeTeamIdAndAwayTeamId(homeTeamId, awayTeamId);
         if (matchExists) {
             throw new EntityExistsException("Match already exists.");
         }
 
-        // s obzirom da san na frontendu šretvoria u string i maka vremensku zonu ode ga moram vratit u Date objekt tj. LocalDateTime
+        // s obzirom da san na frontendu pretvoria u string i maka vremensku zonu ode ga moram vratit u Date objekt tj. LocalDateTime
         String matchDate = matchDto.getMatchDate();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         LocalDateTime parsedDate = LocalDateTime.parse(matchDate, formatter);
@@ -82,6 +86,11 @@ public class MatchServiceImpl implements MatchService {
         }
         if(awayTeamBusy) {
             throw new EntityExistsException("Away team already has a match that day");
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        if (parsedDate.isBefore(now.plusHours(24))) {
+            throw new ForbiddenActionException("Match date must at least 24 hrs before scheduled start.");
         }
 
         LocalDateTime matchDateTime = LocalDateTime.parse(matchDto.getMatchDate(), formatter);
@@ -127,6 +136,40 @@ public class MatchServiceImpl implements MatchService {
                 .map(match -> modelMapper.map(match, MatchDto.class)).toList();
 
         return matchDtos;
+    }
+
+    @Override
+    public MatchDto updateMatch(Long matchId, EditMatchDto editMatchDto) {
+
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> new EntityNotFoundException("Match with id: " + matchId + " doesn't exist."));
+
+        LocalDateTime newDate = editMatchDto.getMatchDate();
+        LocalDateTime now = LocalDateTime.now();
+        if (newDate != null && !newDate.equals(match.getMatchDate())) {
+            if (newDate.isBefore(now.plusHours(24))) {
+                throw new ForbiddenActionException("Match date must at least 24 hrs before scheduled start.");
+            }
+            match.setMatchDate(newDate);
+        }
+
+        if (editMatchDto.getHomeTeamGoals() != null) {
+            match.setHomeTeamGoals(editMatchDto.getHomeTeamGoals());
+        }
+
+        if (editMatchDto.getAwayTeamGoals() != null) {
+            match.setAwayTeamGoals(editMatchDto.getAwayTeamGoals());
+        }
+
+        Match updatedMatch = matchRepository.save(match);
+
+        MatchDto matchDto = modelMapper.map(updatedMatch, MatchDto.class);
+        return matchDto;
+    }
+
+    @Override
+    public void deleteMatch(Long id) {
+        matchRepository.deleteById(id);
     }
 }
 

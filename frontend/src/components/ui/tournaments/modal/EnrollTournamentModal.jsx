@@ -44,50 +44,53 @@ const EnrollTournamentModal = ({ setIsModalOpen, selectedTournament: tournament 
   };
 
   return (
-    <div className='fixed inset-0 z-50 flex justify-center items-center'>
-      <div className='bg-white text-gray-800 rounded-lg shadow-sm w-[400px]'>
-        
-        <div className='flex items-center justify-between p-4 border-b border-gray-500 rounded-t text-black'>
-          <h3 className='text-lg'>Preview Tournament</h3>
-          <button onClick={() => setIsModalOpen(false)} className='hover:bg-gray-200 p-1.5 rounded-lg'>
-            <IoMdClose className='w-4 h-4'/>
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop overlay */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+  
+      {/* Modal content */}
+      <div className="relative bg-white text-gray-800 rounded-lg shadow-lg w-[400px] z-10">
+        <div className="flex items-center justify-between p-4 border-b border-gray-300">
+          <h3 className="text-lg font-medium">Tournament Overview</h3>
+          <button onClick={() => setIsModalOpen(false)} className="hover:bg-gray-200 p-1.5 rounded-lg">
+            <IoMdClose className="w-4 h-4" />
           </button>
         </div>
-
-        <div className='text-black text-sm p-4 space-y-3'>
-
-          <div className='flex justify-evenly items-center'>
-            <div>Tournament name </div>
+  
+        <div className="p-4 text-sm space-y-3 px-10">
+          <div className="flex justify-between">
+            <div className="font-medium">Tournament Name:</div>
             <div>{tournament.tournamentName}</div>
           </div>
-
-          <div className='flex justify-evenly items-center'>
-            <div>Start Date</div>
+          <div className="flex justify-between">
+            <div className="font-medium">Start Date:</div>
             <div>{tournament.startDate}</div>
           </div>
-
-          <div className='flex justify-evenly items-center'>
-            <div>End Date</div>
+          <div className="flex justify-between">
+            <div className="font-medium">End Date:</div>
             <div>{tournament.endDate}</div>
           </div>
-
-          <div className='flex justify-evenly items-center'>
-            <div>Tournament details</div>
+          <div className="flex justify-between">
+            <div className="font-medium">Description:</div>
             <div>{tournament.details}</div>
           </div>
-
-          <div className='flex justify-center mt-4'>
-            <div>
-              {errorMessage !== null ? (
-                <span>{errorMessage}</span>
-              ) : (
-                <button onClick={handleEnrollButtonClick} className='border px-2 py-1 rounded-md hover:ring-1 hover:ring-black'>Enroll</button>
-              )}
-            </div>
+  
+          <div className="flex justify-center mt-4">
+            {errorMessage ? (
+              <span className="text-red-600">{errorMessage}</span>
+            ) : (
+              <button
+                onClick={handleEnrollButtonClick}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+              >
+                Submit Enrollment Request
+              </button>
+            )}
           </div>
         </div>
       </div>
     </div>
-  )
+  );
+  
 }
 export default EnrollTournamentModal;

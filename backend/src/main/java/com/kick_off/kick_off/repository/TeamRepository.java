@@ -18,7 +18,6 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 
     Optional<Team> findTeamByRepresentative_Id(Long id);
 
-    @Query("SELECT t FROM Team t JOIN t.tournaments tournament WHERE tournament.tournamentName = :tournamentName")
-    List<Team> findTeamByTournamentName(String tournamentName);
+    List<Team> findTeamByTournamentId(Long tournamentId);
 
 }

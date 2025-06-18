@@ -19,6 +19,7 @@ public interface RequestService {
     void createTournamentCreationRequest(TournamentCreationRequestDto request);
 
     RequestListDto getRequestsByApproverId(GetRequestsDto getRequestsDto);
+
     RequestListDto getRequestsByRequesterId(GetRequestsDto getRequestsDto);
 
     List<RequestDto> getRequestsByApproverId(Long approverId);

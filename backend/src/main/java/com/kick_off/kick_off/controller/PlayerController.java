@@ -1,15 +1,12 @@
 package com.kick_off.kick_off.controller;
 
-import com.kick_off.kick_off.dto.player.GetPlayersByTeamIdDto;
-import com.kick_off.kick_off.dto.player.PlayerDto;
+import com.kick_off.kick_off.dto.PlayerDto;
 import com.kick_off.kick_off.response.ApiResponse;
 import com.kick_off.kick_off.service.PlayerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,26 +20,59 @@ public class PlayerController {
         this.playerService = playerService;
     }
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<PlayerDto>>> getPlayersByTeam(@ModelAttribute GetPlayersByTeamIdDto request) {
-        System.out.println("Test: " + request.toString());
-        try {
-            List<PlayerDto> players = playerService.getPlayersByTeam(request.getTeamId());
-            ApiResponse<List<PlayerDto>> response = ApiResponse.<List<PlayerDto>>builder()
-                    .message("Successfully retrieved players from team.")
-                    .data(players)
-                    .success(true)
-                    .build();
+    // vidit di se koristi
+    @GetMapping("/team/{teamId}")
+    public ResponseEntity<ApiResponse<List<PlayerDto>>> getPlayersByTeam(@PathVariable Long teamId) {
 
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e) {
-            ApiResponse<List<PlayerDto>> errorResponse = ApiResponse.<List<PlayerDto>>builder()
-                    .message(e.getMessage())
-                    .data(null)
-                    .success(false)
-                    .build();
+        List<PlayerDto> players = playerService.getPlayersByTeam(teamId);
+        ApiResponse<List<PlayerDto>> response = ApiResponse.<List<PlayerDto>>builder()
+                .message("Successfully retrieved players from team.")
+                .data(players)
+                .success(true)
+                .build();
 
-            return ResponseEntity.status(HttpStatus.OK).body(errorResponse);
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    // MyTeam.jsx
+    @PostMapping
+    public ResponseEntity<ApiResponse<PlayerDto>> createPlayer(@Validated @RequestBody PlayerDto request) {
+        PlayerDto player = playerService.createPlayer(request);
+        ApiResponse<PlayerDto> response = ApiResponse.<PlayerDto>builder()
+                .message("Successfully created player.")
+                .data(player)
+                .success(true)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+
+    //Myteam.jsx
+    @PatchMapping("/{id}")
+    public ResponseEntity<ApiResponse<PlayerDto>> updatePlayer(@PathVariable Long id, @Validated @RequestBody PlayerDto requestBody) {
+
+        PlayerDto player = playerService.updatePlayer(requestBody, id);
+        ApiResponse<PlayerDto> response = ApiResponse.<PlayerDto>builder()
+                .message("Successfully updated player.")
+                .data(player)
+                .success(true)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    // MyTeam
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<PlayerDto>> deletePlayer(@PathVariable Long id) {
+
+        PlayerDto deletedPlayer = playerService.deletePlayer(id);
+        ApiResponse<PlayerDto> response = ApiResponse.<PlayerDto>builder()
+                .message("Successfully deleted player.")
+                .data(deletedPlayer)
+                .success(true)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

@@ -8,6 +8,8 @@ import UserProfileDropdown from "./UserProfileDropdown.jsx";
 import { ActiveComponentContext } from "../../../context/ActiveComponentContext";
 import { LoggedUserContext } from "../../../context/LoggedUserContext"
 import { GUEST_NAVBAR_ITEMS, TEAM_REPRESENTATIVE_NAVBAR_ITEMS, TOURNAMENT_ORGANIZER_NAVBAR_ITEMS } from '../../../data/navbarItems.js'
+import logoWhite from '../../../assets/logoWhite.png';
+
 
 const Navbar = () => {
   const [isSideBarActive, setIsSideBarActive] = useState(false);
@@ -41,17 +43,18 @@ const Navbar = () => {
       {isMobileView ? (
         <div>
           {isSideBarActive ? (
-            <div className="bg-[#001E28] flex-col w-40 h-screen text-white text-base fixed top-0 left-0 z-50">
+            <div className="bg-[#001E28] flex-col w-40 h-screen text-white text-base fixed top-0 left-0 z-[100]">
 
               <div className="px-2 pt-5">
                 <button onClick={toggleSidebar} className="p-1 hover:bg-[#005571] rounded-md">
                   <IoClose />
                 </button>
+                <div className="p-6">
+                  <img src={logoWhite} alt="Logo" className="w-20 mb-8 h-auto" />
+                </div>
               </div>
 
-              <div className="p-6">
-                KickOff
-              </div>
+
               
               {decodedJwt === null ? (
                 <>
@@ -118,9 +121,9 @@ const Navbar = () => {
 
         </div>
       ) : (
-        <div className="flex justify-between items-center bg-[#001E28] text-white h-16 xl:h-[72px] 2xl:h-[82px] px-4">
+        <div className="flex justify-between items-center bg-[#001E28] text-white h-20 lg:h-[78px] xl:h-[88px] 2xl:h-[94px] px-4">
 
-          <div>KickOff</div>
+          <div><img src={logoWhite} alt="Logo" className="w-[85px] h-12 mt-2 " /></div>
 
           {decodedJwt === null ? (
             <>

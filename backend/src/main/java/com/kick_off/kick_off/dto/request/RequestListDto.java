@@ -14,4 +14,5 @@ public class RequestListDto {
 
     private List<RequestDto> requests;
     private long totalPages;
+    private long totalRequests;
 }

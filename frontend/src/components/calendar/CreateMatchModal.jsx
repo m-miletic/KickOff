@@ -6,7 +6,7 @@ import { fetchTeamsByTournament } from "../../service/teamService";
 import { createMatch } from "../../service/matchService";
 import { fetchStadiums } from "../../service/stadiumService";
 
-export const CreateMatchModal = ({ selectedDate, setIsModalOpen, tournament }) => {
+export const CreateMatchModal = ({ selectedDate, setIsCreateMatchModalOpen, tournament }) => {
   console.log("Tour here- ", tournament)
   if (!tournament) {
     return <div>Loading tournament data...</div>;
@@ -116,7 +116,7 @@ export const CreateMatchModal = ({ selectedDate, setIsModalOpen, tournament }) =
 
     try {
       await createMatch(formData)
-      setIsModalOpen(false)
+      setIsCreateMatchModalOpen(false)
     } catch (error) {
       console.log("Failed to create match: ", error.message)
       setErrors({ general: error.response.data.message })
@@ -132,7 +132,7 @@ export const CreateMatchModal = ({ selectedDate, setIsModalOpen, tournament }) =
 
     <div className="flex justify-between items-center absolute top-4 pt-2 left-4 right-4 text-xl">
       <div>Create Match</div>
-      <div className="hover:bg-gray-200 rounded-md px-1"><button onClick={() => setIsModalOpen(false)}><IoMdClose /></button></div>
+      <div className="hover:bg-gray-200 rounded-md px-1"><button onClick={() => setIsCreateMatchModalOpen(false)}><IoMdClose /></button></div>
     </div>
 
     <form onSubmit={handleSubmit} className="space-y-6 mt-12">

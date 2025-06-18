@@ -9,6 +9,4 @@ import lombok.ToString;
 @ToString
 public class LightTeamDto {
     private Long id;
-    private String teamName;
-    private String teamCrest;
 }

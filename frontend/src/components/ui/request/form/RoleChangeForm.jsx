@@ -11,7 +11,6 @@ export const RoleChangeForm = ({ setIsRequestModalOpen }) => {
   });
 
   const roles = ALLOWED_ROLES_CHANGE_LIST[decodedJwt?.role] ?? [];
-
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleSelectRole = (e) => {
@@ -27,20 +26,18 @@ export const RoleChangeForm = ({ setIsRequestModalOpen }) => {
       setIsRequestModalOpen(false);
       return response;
     } catch (error) {
-      setErrorMessage(error);
+      const message = error?.response?.data?.message || error.message || 'An error occurred';
+      setErrorMessage(message);
     }
   };
 
-  return(
+  return (
     <div>
-
-      <div className="flex items-center justify-between"> 
+      <div className="flex items-center justify-between">
         <div className='w-32'>Select a role</div>
         <div>
           <select
             className='text-xs w-64 h-8 px-2 py-1 border border-gray-300 rounded'
-            name=""
-            id=""
             onChange={handleSelectRole}
             value={requestObject.desiredRole}
           >
@@ -53,10 +50,11 @@ export const RoleChangeForm = ({ setIsRequestModalOpen }) => {
       </div>
 
       <div className="py-3 flex items-center text-xs">
-        <div className="w-32"><button onClick={handleSendRequest} className="bg-blue-600 px-2 py-1.5 rounded-lg text-white hover:bg-blue-700 cursor-pointer">Send</button></div>
+        <div className="w-32">
+          <button onClick={handleSendRequest} className="bg-blue-600 px-2 py-1.5 rounded-lg text-white hover:bg-blue-700 cursor-pointer">Send</button>
+        </div>
         <div className="w-64 text-center text-red-600">{errorMessage}</div>
       </div>
-
     </div>
   );
-}
+};

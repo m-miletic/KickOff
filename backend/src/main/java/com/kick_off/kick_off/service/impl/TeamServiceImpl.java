@@ -1,5 +1,6 @@
 package com.kick_off.kick_off.service.impl;
 
+import com.kick_off.kick_off.dto.match.LightMatchDto;
 import com.kick_off.kick_off.dto.match.MatchDto;
 import com.kick_off.kick_off.dto.team.CreateTeamDto;
 import com.kick_off.kick_off.dto.team.LightTeamDto;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class TeamServiceImpl implements TeamService {
@@ -149,32 +150,64 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public List<TeamDto> findTeamByTournament(String tournamentName) {
-        List<Team> teams = teamRepository.findTeamByTournamentName(tournamentName);
+    public List<TeamDto> findTeamByTournamentId(Long tournamentId) {
+        List<Team> teams = teamRepository.findTeamByTournamentId(tournamentId);
+
         List<TeamDto> teamsDto = teams
                 .stream()
-                .map(team ->
-                        modelMapper.map(team, TeamDto.class)).toList();
+                .map(team -> {
+                    List<LightMatchDto> homeMatches = team.getHomeMatches().stream()
+                            .map(match -> {
+                                LightMatchDto matchDto = modelMapper.map(match, LightMatchDto.class);
+                                matchDto.setIsHomeMatch(true);
+                                return matchDto;
+                            })
+                            .toList();
+
+                    List<LightMatchDto> awayMatches = team.getAwayMatches().stream()
+                            .map(match -> {
+                                LightMatchDto matchDto = modelMapper.map(match, LightMatchDto.class);
+                                matchDto.setIsHomeMatch(false); // Set isHomeMatch flag for away matches
+                                return matchDto;
+                            })
+                            .toList();
+
+                    List<LightMatchDto> allMatches = new ArrayList<>();
+                    allMatches.addAll(homeMatches);
+                    allMatches.addAll(awayMatches);
+
+
+                    TeamDto teamDto = modelMapper.map(team, TeamDto.class);
+
+                    teamDto.setHomeMatches(homeMatches);
+                    teamDto.setAwayMatches(awayMatches);
+                    teamDto.setAllMatches(allMatches);
+
+
+                    return teamDto;
+                })
+                .toList();
 
         return teamsDto;
     }
 
     @Override
-    public LightTeamDto findTeamByRepresentativeId(Long representativeId) {
+    public TeamDto findTeamByRepresentativeId(Long representativeId) {
         Team team = teamRepository.findTeamByRepresentative_Id(representativeId)
                 .orElseThrow(() -> new EntityNotFoundException("Representative with id: " + representativeId + " not found."));
 
-        LightTeamDto teamDto = modelMapper.map(team, LightTeamDto.class);
+        TeamDto teamDto = modelMapper.map(team, TeamDto.class);
         return teamDto;
     }
 
     @Override
-    public void uploadTeamCrest(Long teamId, String teamCrestUrl) {
+    public String uploadTeamCrest(Long teamId, String photoUrl) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new EntityNotFoundException("Team with id: " + teamId + " not found."));
 
-        team.setTeamCrest(teamCrestUrl);
+        team.setPhotoUrl(photoUrl);
         teamRepository.save(team);
+        return team.getPhotoUrl();
     }
 
 }

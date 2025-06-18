@@ -7,35 +7,40 @@ import TeamRepresentativeTournamentList from "../components/ui/tournaments/TeamR
 import { LoggedUserContext } from "../context/LoggedUserContext";
 import MyTeam from "../components/ui/team/MyTeam";
 import useRoleVerification from "../hooks/useRoleVerification";
+import Footer from "../components/common/footer/Footer";
 
 const TeamRepresentativePage = () => {
   const { activeComponent } = useContext(ActiveComponentContext);
-  const { decodedJwt, jwt, loading } = useContext(LoggedUserContext);
+  const { decodedJwt, jwt } = useContext(LoggedUserContext);
 
   useRoleVerification(decodedJwt, jwt);
 
-  return(
-    <div>
+  return (
+    <div className="min-h-screen flex flex-col"> {/* Make full height & flex column */}
       <Navbar />
 
-      {(activeComponent === "sentRequests" || activeComponent === "recievedRequests") && 
-        <div className="flex justify-center text-white mt-20">
-          <RequestProvider>
-            <RequestList />
-          </RequestProvider>
-        </div>
-      }
-      {activeComponent === "Tournaments" && 
-        <div className="flex justify-center">
-          <TeamRepresentativeTournamentList />
-        </div>
-      }
-      {activeComponent === "My Team" &&
-        <div className="flex justify-center mt-10">
-          <MyTeam />
-        </div>
-      }
+      <main className="flex-grow">
+        {(activeComponent === "sentRequests" || activeComponent === "recievedRequests") && 
+          <div className="flex justify-center text-white mt-20">
+            <RequestProvider>
+              <RequestList />
+            </RequestProvider>
+          </div>
+        }
+        {activeComponent === "Active Tournaments" && 
+          <div className="flex justify-center">
+            <TeamRepresentativeTournamentList />
+          </div>
+        }
+        {activeComponent === "Team Overview" &&
+          <div className="flex justify-center mt-10">
+            <MyTeam />
+          </div>
+        }
+      </main>
+
+      <Footer />
     </div>
   );
-}
+};
 export default TeamRepresentativePage;

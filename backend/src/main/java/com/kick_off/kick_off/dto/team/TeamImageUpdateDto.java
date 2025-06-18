@@ -7,7 +7,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class GetTeamByRepresentative {
-
-    private Long representativeId;
+public class TeamImageUpdateDto {
+    private String photoUrl;
 }

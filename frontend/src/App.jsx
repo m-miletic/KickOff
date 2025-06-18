@@ -13,6 +13,7 @@ import { ActiveComponentProvider } from "./context/ActiveComponentContext";
 import { ActiveModalProvider } from "./context/ActiveModalContext";
 import { LoggedUserProvider } from "./context/LoggedUserContext";
 import UserPage from "./pages/UserPage";
+import 'flowbite';
 
 const App = () => {
   return (

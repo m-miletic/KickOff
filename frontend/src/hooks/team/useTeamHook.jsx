@@ -29,7 +29,7 @@ export const useFetchTeams = ( filters ) => {
   return { teams, setTeams, loading, error };
 };
 
-export const useFetchTeamsByTournament = ( filters ) => {
+export const useFetchTeamsByTournament = (tournamentId, page) => {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,7 +38,7 @@ export const useFetchTeamsByTournament = ( filters ) => {
     const getTeams = async () => {
       setLoading(true); // zbog mogućnosti promjene filtera, s obzirom da u finally bloku setam na false pa ako opet krene fetcha-at neće mi prikazivat "loading...""
       try {
-        const response = await fetchTeamsByTournament(filters);
+        const response = await fetchTeamsByTournament(tournamentId, page);
         setTeams(response.data);
         setError(null);
       } catch (error) {
@@ -48,7 +48,7 @@ export const useFetchTeamsByTournament = ( filters ) => {
       }
     }
     getTeams();
-  }, [filters]);
+  }, []);
 
   return { teams, loading, error };
 };

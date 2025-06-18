@@ -1,17 +1,15 @@
 import apiClient from "./apis/apiClient";
 
-export const fetchAllTournaments = async ( filters ) => {
+export const fetchAllTournaments = async () => {
   const jwt = localStorage.getItem('token');
   try {
-    const response = await apiClient.get("/tournaments", {
-      params: {
-        ...filters
-      },
-      headers: {
-        Authorization: `Bearer ${jwt}`
+    const response = await apiClient.get("/tournaments",
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`
+        }
       }
-    });
-    console.log("response jbt: ", response)
+    );
     return response.data;
   } catch (error) {
     throw error;

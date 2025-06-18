@@ -10,9 +10,10 @@ import { LoggedUserContext } from '../../../context/LoggedUserContext';
 const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
   const [isUserProfileDropdownOpen, setIsUserProfileDropdownOpen] = useState(false);
   const { setActiveComponent } = useContext(ActiveComponentContext);
-  const { setJwt, setDecodedJwt } = useContext(LoggedUserContext)
+  const { setJwt, setDecodedJwt, decodedJwt } = useContext(LoggedUserContext)
   const nav = useNavigate();
   const firstLetter = name.charAt(0).toUpperCase();
+
 
   const handleSendRequestClick = () => {
     handleIsRequestModalOpen();
@@ -56,7 +57,7 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
       </div>
 
       {isUserProfileDropdownOpen && (
-        <div className="absolute z-50 top-[68px] xl:top-[78px] 2xl:top-[88px] right-2 text-xs xl:text-sm bg-[#001E28] rounded-lg p-2 space-y-1 px-2 2xl:px-4 2xl:py-4">
+        <div className="absolute z-[100] top-[76px] xl:top-[84px] 2xl:top-[98px] right-2 text-xs xl:text-sm bg-[#001E28] rounded-lg p-2 space-y-1 px-2 2xl:px-4 2xl:py-4">
 
           <div className='text-gray-300 cursor-pointer pb-2'>
             Hello {name}
@@ -69,12 +70,17 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
             <button>Send Request</button>
           </div>
 
-          <div
-            className='cursor-pointer hover:bg-[#005571] rounded-md px-2 py-1'
-            onClick={() => handleSelectItem("recievedRequests")}
-            >
-            <button>Recieved Requests</button>
-          </div>
+          {decodedJwt.role === "TOURNAMENT_ORGANIZER" ? (
+            <div></div>
+          ) : (
+            <div
+              className='cursor-pointer hover:bg-[#005571] rounded-md px-2 py-1'
+              onClick={() => handleSelectItem("recievedRequests")}
+              >
+              <button>Recieved Requests</button>
+            </div>
+          )}
+
 
           <div
             className='cursor-pointer hover:bg-[#005571] rounded-md px-2 py-1'

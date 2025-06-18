@@ -1,3 +1,4 @@
+import js from "@eslint/js";
 import apiClient from "./apis/apiClient";
 
 export const fetchAllTeams = async ( filters ) => {
@@ -17,14 +18,18 @@ export const fetchAllTeams = async ( filters ) => {
   } 
 };
 
-export const fetchTeamsByTournament = async ( fetchTeamObj ) => {
+export const fetchTeamsByTournament = async (tournamentId, page) => {
+  const jwt = localStorage.getItem('token')
   try {
-    const response = await apiClient.get("/teams/by-tournament", {
-      params: {
-        ...fetchTeamObj
+    const response = await apiClient.get(`/teams/tournament/${tournamentId}`,
+      page,
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`
+        }
       }
-    });
-    return response.data.data;
+    );
+    return response.data;
   } catch (error) {
     throw error;
   }
@@ -56,35 +61,36 @@ export const createTeam = async (teamObject) => {
   } catch (error) {
     throw error;
   }
-}
+};
 
-export const fetchTeamByRepresentative = async (fetchTeamObj) => {
+export const getTeamByTeamRepresentative = async (userId) => {
   const jwt = localStorage.getItem('token');
   try {
-    const response = await apiClient.get(`/teams/by-representative`, {
-      params: {
-        ...fetchTeamObj
-      },
-      headers: {
-        Authorization: `Bearer ${jwt}`
+    const response = await apiClient.get(`/teams/user/${userId}`, 
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`
+        }
       }
-    });
-    return response;
+    );
+    return response.data;
   } catch (error) {
     throw error;
   }
-}
+};
 
-export const uploadTeamCrest = async (uploadImageObj) => {
+export const updateTeamImage = async (id, payload) => {
   const jwt = localStorage.getItem('token');
-  console.log("uploadImageObj: ", uploadImageObj)
   try {
-    const response = await apiClient.patch(`/teams/upload-crest`, uploadImageObj, {
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-    });
-    return response;
+    const response = await apiClient.patch(`/teams/${id}`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`
+        }
+      }
+    );
+    return response.data;
   } catch (error) {
     throw error;
   }

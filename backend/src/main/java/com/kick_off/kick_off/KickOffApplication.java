@@ -18,7 +18,9 @@ public class KickOffApplication {
 
 	@Bean
 	public ModelMapper getModelMapper() {
-		return new ModelMapper();
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.getConfiguration().setSkipNullEnabled(true);
+		return modelMapper;
 	}
 
 

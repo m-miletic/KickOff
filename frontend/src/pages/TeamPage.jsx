@@ -62,7 +62,9 @@ const TeamPage = () => {
         <div className="grid grid-cols-4 gap-4 w-full text-center">
           {players.map((player, index) => (
             <div key={player.id || index} className="bg-[#001E30] h-56 p-2 rounded text-white">
-              <div className="h-[70%]">image</div>
+              <div className="h-[70%]">
+              <img className='w-28 h-28 rounded-full mb-3 flex items-center justify-center text-sm' src={player.photoUrl} />
+              </div>
               <div>{player.firstName} {player.lastName}</div>
             </div>
           ))}

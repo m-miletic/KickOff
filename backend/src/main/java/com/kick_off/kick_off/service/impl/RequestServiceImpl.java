@@ -103,10 +103,13 @@ public class RequestServiceImpl implements RequestService {
 
         if (req.isPresent()) {
             if(req.get().getStatus().toString().equals("DECLINED")) {
+                System.out.println("In declined");
                 throw new RuntimeException("Enrollment request was declined");
             } else if (req.get().getStatus().toString().equals("APPROVED")) {
+                System.out.println("In approved");
                 throw new RuntimeException("Already enrolled to tournament");
             } else {
+                System.out.println("In already sent");
                 throw new IllegalStateException("Enrollment request already sent.");
             }
 
@@ -248,6 +251,7 @@ public class RequestServiceImpl implements RequestService {
         return RequestListDto.builder()
                 .requests(requestsDto)
                 .totalPages(totalPages)
+                .totalRequests(totalRequests)
                 .build();
     }
 

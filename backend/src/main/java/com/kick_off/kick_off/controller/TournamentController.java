@@ -1,6 +1,7 @@
 package com.kick_off.kick_off.controller;
 
 import com.kick_off.kick_off.dto.request.RequestDto;
+import com.kick_off.kick_off.dto.request.RequestListDto;
 import com.kick_off.kick_off.dto.team.EnrollTeamDto;
 import com.kick_off.kick_off.dto.tournament.CreateTournamentDto;
 import com.kick_off.kick_off.dto.tournament.GetTournamentByOrganizer;
@@ -14,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/tournaments")
 public class TournamentController {
@@ -26,27 +29,17 @@ public class TournamentController {
         this.teamService = teamService;
     }
 
-    // isti endpoint se poziva ako gost s /home dohvaca turnire i ako team_representative dohvaca turnire ... ok?
     @GetMapping
     public ResponseEntity<ApiResponse<TournamentListDto>> fetchAllTournaments(@ModelAttribute GetTournamentsDto request) {
-        try {
-            TournamentListDto tournaments = tournamentService.getTournaments(request);
-            ApiResponse<TournamentListDto> response = ApiResponse.<TournamentListDto>builder()
-                    .message("Successfully retrieved tournaments.")
-                    .data(tournaments)
-                    .success(true)
-                    .build();
 
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (IllegalStateException e) {
-            ApiResponse<TournamentListDto> errorResponse = ApiResponse.<TournamentListDto>builder()
-                    .message(e.getMessage())
-                    .data(null)
-                    .success(false)
-                    .build();
+        TournamentListDto tournaments = tournamentService.getTournaments(request);
+        ApiResponse<TournamentListDto> response = ApiResponse.<TournamentListDto>builder()
+                .message("Successfully retrieved tournaments.")
+                .data(tournaments)
+                .success(true)
+                .build();
 
-            return ResponseEntity.status(HttpStatus.OK).body(errorResponse);
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping
@@ -73,10 +66,10 @@ public class TournamentController {
 
 
     @PostMapping("/enroll-team")
-    public ResponseEntity<ApiResponse<RequestDto>> updateTournament(@RequestBody EnrollTeamDto teamDto) {
+    public ResponseEntity<ApiResponse<RequestListDto>> updateTournament(@RequestBody EnrollTeamDto request) {
         try {
-            RequestDto updatedRequest = tournamentService.enrollTeam(teamDto);
-            ApiResponse<RequestDto> response = ApiResponse.<RequestDto>builder()
+            RequestListDto updatedRequest = tournamentService.enrollTeam(request);
+            ApiResponse<RequestListDto> response = ApiResponse.<RequestListDto>builder()
                     .message("Team successfully enrolled to tournament")
                     .success(true)
                     .data(updatedRequest)
@@ -84,7 +77,7 @@ public class TournamentController {
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
-            ApiResponse<RequestDto> errorResponse = ApiResponse.<RequestDto>builder()
+            ApiResponse<RequestListDto> errorResponse = ApiResponse.<RequestListDto>builder()
                     .message("Failed to enroll. " + e.getMessage())
                     .success(false)
                     .data(null)

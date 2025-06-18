@@ -11,10 +11,8 @@ import { LoggedUserContext } from '../../../context/LoggedUserContext';
 const RequestList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState([]);
-/*   const { totalPages } = useContext(RequestContext); */
 
   const { activeComponent } = useContext(ActiveComponentContext);
-
   const { decodedJwt } = useContext(LoggedUserContext)
 
   const [selectedFilters, setSelectedFilters] = useState({
@@ -37,7 +35,7 @@ const RequestList = () => {
     setIsTimeCreatedDropdownOpen(!isTimeCreatedDropdownOpen);
   };
 
-  const handleSetSelectedFilter = ( filterType, value ) => {
+  const handleSetSelectedFilter = (filterType, value) => {
     setSelectedFilters((prevValues) => ({
       ...prevValues,
       [filterType]: value,
@@ -52,9 +50,8 @@ const RequestList = () => {
 
   const { requests, setRequests, totalPages, error } = useFetchRequests(selectedFilters, activeComponent);
 
-
   return (
-    <div className={`text-white text-[12px] sm:text-xs xl:text-base`}>
+    <div className={`text-black text-[12px] sm:text-xs xl:text-base`}>
 
       <div className='flex justify-between pb-4 space-x-1'>
 
@@ -91,72 +88,87 @@ const RequestList = () => {
         </div>
       </div>
 
-      <table id="default-table" className={`${isModalOpen && 'opacity-20'}`}>
-        <thead>
-          <tr>
-            {decodedJwt.role === 'ADMIN' || decodedJwt.role === 'TOURNAMENT_ORGANIZER' && (
-              <th>
-                <span className="px-2">
-                  Requested by
+      <div className="overflow-hidden rounded-lg border border-gray-600 ">
+        <table className="w-full">
+          <thead className="bg-[#001E28] rounded-t-lg text-white text-[10px] sm:text-xs lg:text-base">
+            <tr className="rounded-t-lg">
+              {(decodedJwt.role === 'ADMIN' || decodedJwt.role === 'TOURNAMENT_ORGANIZER') && (
+                <th className="px-4 py-3 text-leftrounded-tl-lg">Requested by</th>
+              )}
+              <th className="px-4 py-3 text-left" data-type="date" data-format="YYYY/DD/MM">
+                <span className="flex items-center">
+                  Time of request
+                  <svg
+                    onClick={() => handleSetSelectedFilter('sortDirection', selectedFilters.sortDirection === 'ASC' ? 'DESC' : 'ASC')}
+                    className="cursor-pointer w-4 h-4 ms-1 "
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="m8 15 4 4 4-4m0-6-4-4-4 4"
+                    />
+                  </svg>
                 </span>
               </th>
-            )}
-
-            <th data-type="date" data-format="YYYY/DD/MM">
-              <span className="flex items-center px-2">
-                Time of request
-                <svg onClick={() => handleSetSelectedFilter('sortDirection', selectedFilters.sortDirection === 'ASC' ? 'DESC' : 'ASC')} className="cursor-pointer w-4 h-4 ms-1 2xl:w-5 2xl:h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m8 15 4 4 4-4m0-6-4-4-4 4"/>
-                </svg>
-              </span>
-            </th>
-            <th>
-              <span className="flex items-center px-2">
-                Status
-              </span>
-            </th>
-          </tr>
-        </thead>
-          <tbody>
-            {requests.map((request) => {
-              selectedFilters.status === 'PENDING' && request.status === 'PENDING' && {}
-              return(
-                <tr key={request.id} className={`${selectedFilters.status === 'PENDING' && request.status !== 'PENDING' ? 'hidden' : ''} `}>{/* kako bi dobio dojam real-time update-a kada admin respond-a na request */}
-                  {decodedJwt.role === "ADMIN" || decodedJwt.role === 'TOURNAMENT_ORGANIZER'  && (
-                    <td>{request.requester.username}</td>
-                  )}
-                  <td className='px-2'>{request.timeCreated}</td>
-                  <td className='px-2'>{request.status}</td>
-                  <td><span className={`w-2 h-2 2xl:w-[10px] 2xl:h-[10px] rounded-xl inline-block mr-2
-                    ${request.status === 'PENDING'
-                      ? 'bg-yellow-200'
-                      : request.status === 'DECLINED'
-                      ? 'bg-red-400'
-                      : 'bg-green-400'
-                    }`}></span>
-                  </td>
-                  <td>
-                    <button onClick={() => showRequestModal(request)} className='text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-2xs px-1 py-[3px] my-1 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none 2xl:px-2 2xl:py-1'>
-                      Open
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
+              <th className="px-4 py-3 text-left">Status</th>
+              <th className="px-4 py-3"></th>
+              <th className="px-4 py-3 rounded-tr-lg"></th>
+            </tr>
+          </thead>
+          <tbody className='text-[9px] sm:text-[11px] lg:text-[12px] xl:text-[14px]'>
+            {requests.map((request, index) => (
+              <tr
+                key={request.id}
+                className={`
+                  ${selectedFilters.status === 'PENDING' && request.status !== 'PENDING' ? 'hidden' : ''} 
+                  border-b border-gray-700 
+                  ${index % 2 === 0 ? 'bg-[#00303f]' : 'bg-[#001E28]'}
+                `}
+              >
+                {(decodedJwt.role === 'ADMIN' || decodedJwt.role === 'TOURNAMENT_ORGANIZER') && (
+                  <td className="px-2 sm:px-4 lg:px-6 xl:px-8 py-4 text-white">{request.requester.username}</td>
+                )}
+                <td className="px-2 sm:px-4 lg:px-6 xl:px-8 py-4 text-white">{request.timeCreated}</td>
+                <td className="px-2 sm:px-4 lg:px-6 xl:px-8 py-4 text-white">{request.status}</td>
+                <td>
+                  <span
+                    className={`w-3 h-3 rounded-full inline-block mr-2 ${
+                      request.status === 'PENDING'
+                        ? 'bg-yellow-400'
+                        : request.status === 'DECLINED'
+                        ? 'bg-red-600'
+                        : 'bg-green-600'
+                    }`}
+                  ></span>
+                </td>
+                <td className="py-4 pr-1">
+                  <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-[10px] px-3 py-1">
+                    Open
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
-      </table>
-
-      <div className='text-center mt-2'>
-        <Pagination totalPages={totalPages} selectedFilters={selectedFilters} handleSelectFilter={handleSetSelectedFilter} />
-      </div>
+        </table>
 
       {isModalOpen && (
-        <div>
-          <RequestDetailsModal selectedRequest={selectedRequest} setIsModalOpen={setIsModalOpen} setRequests={setRequests} />
-        </div>
+        <RequestDetailsModal selectedRequest={selectedRequest} setIsModalOpen={setIsModalOpen} setRequests={setRequests} />
       )}
 
     </div>
+
+      <div className='text-center mt-4'>
+        <Pagination totalPages={totalPages} selectedFilters={selectedFilters} handleSelectFilter={handleSetSelectedFilter} />
+      </div>
+    </div>
   )
 }
-export default RequestList
+
+export default RequestList;

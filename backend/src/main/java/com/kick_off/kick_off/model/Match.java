@@ -28,11 +28,18 @@ public class Match {
     @JoinColumn(name = "away_team_id")
     private Team awayTeam;
 
+    @Column(name = "home_team_goals", columnDefinition = "integer default 0")
+    private Integer homeTeamGoals ;
+
+    @Column(name = "away_team_goals", columnDefinition = "integer default 0")
+    private Integer awayTeamGoals;
+
     @ManyToOne
     @JoinColumn(name = "tournament_id")
     private Tournament tournament;
 
     @ManyToOne
+    @JoinColumn(name = "stadium_id")
     private Stadium stadium; // za sada je unidirectional...ako buden triba dohvacat meceve iz stadiona ubacit bidirectional
 
 }

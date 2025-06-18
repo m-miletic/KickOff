@@ -20,7 +20,7 @@ const UserList = () => {
   };
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [filter, setFilter] = useState({
-    role: "USER",
+    role: "USER", // koristit jwTDecoded.role a ne hardcode
     sortDirection: 'DESC',
     sortField: 'username',
     pageNumber: 1

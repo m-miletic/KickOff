@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { fetchAllTournaments } from "../../service/tournamentService";
 
-export const useFetchTournaments = ( filters ) => {
+export const useFetchTournaments = () => {
   const [tournaments, setTournaments] = useState({
     tournamentsList: [],
     totalPages: 0
@@ -14,7 +14,7 @@ export const useFetchTournaments = ( filters ) => {
     const getTournaments = async () => {
       setLoading(true);
       try {
-        const response = await fetchAllTournaments(filters);
+        const response = await fetchAllTournaments();
         setTournaments(response.data);
         setError(null);
       } catch (error) {
@@ -25,7 +25,7 @@ export const useFetchTournaments = ( filters ) => {
     };
     
     getTournaments();
-  }, [filters]);
+  }, []);
 
   return { tournaments, setTournaments, loading, error };
 };

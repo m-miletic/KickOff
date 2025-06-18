@@ -17,17 +17,15 @@ public class Player {
     @Column(name = "id")
     private Long id;
     @Column(name = "first_name")
-    private String firstName;
+    private String firstName = "";
     @Column(name = "last_name")
-    private String lastName;
+    private String lastName = "";
     @Column(name = "age")
-    private Integer age;
+    private int age ;
     @Column(name = "height")
     private Integer height;
     @Column(name = "foot")
     private String foot;
-    @Column(name = "player_position")
-    private String position;
     @Column(name = "goals")
     private Integer goals;
     @Column(name = "assists")
@@ -48,7 +46,6 @@ public class Player {
                 ", age=" + age +
                 ", height=" + height +
                 ", foot='" + foot + '\'' +
-                ", position='" + position + '\'' +
                 ", goals=" + goals +
                 ", assists=" + assists +
                 ", photoUrl='" + photoUrl + '\'' +
