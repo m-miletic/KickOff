@@ -11,11 +11,11 @@ export const fetchUsers = async (filter) => {
         Authorization: `Bearer ${jwt}`
       }
     });
-    console.log("response - ", response);
+    console.log("User Service Response - ", response);
     return response.data;
   } catch (error) {
-    console.log("Error in usersService -> ", error);
-    throw error;
+    console.log("Error while fetching users - api response error: ", error);
+    throw error.response.data;
   }
 };
 
@@ -30,10 +30,11 @@ export const deleteUser = async ( filter, id ) => {
         Authorization: `Bearer ${jwt}`
       }
     });
-    console.log("response: ", response);
+    console.log("Delete User Service Response: ", response);
     return response.data;
   } catch (error) {
-    return error;
+    console.log("Delete User Service Error: ", error);
+    return error.response.data;
   }
 };
 
@@ -55,8 +56,9 @@ export const changeUserRole = async ( updateObject ) => {
   }
 };
 
-export const fetchMyData = async (id) => {
+/* export const fetchMyData = async (id) => {
   const jwt = localStorage.getItem('token')
+  console.log("Ftech my data Check id: ", id)
   try {
     const response = await apiAuthClient.get(`/users/me/${id}`, {
       headers: {
@@ -65,6 +67,8 @@ export const fetchMyData = async (id) => {
     })
     console.log("resssss- ", response)
   } catch (error) {
+    console.log("Service Error while trying to fetch my data error - ", error)
     throw error;
   }
 }
+ */

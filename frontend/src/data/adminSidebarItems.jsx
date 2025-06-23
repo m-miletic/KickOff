@@ -1,12 +1,10 @@
-// ode bi triba neki key value pair
 import { LuLayoutDashboard } from "react-icons/lu";
 import { HiInboxArrowDown } from "react-icons/hi2";
 import { ImUsers } from "react-icons/im";
 import { PiMicrosoftTeamsLogo } from "react-icons/pi";
-import { TbTournament } from "react-icons/tb";
 import { MdOutlineLogout } from "react-icons/md";
 
-export const ITEMS = [
+export const adminSidebarItems = [
   {
     label: "Dashboard",
     value: "dashboard",
@@ -33,13 +31,6 @@ export const ITEMS = [
     value: "teams",
     icon: (
       <PiMicrosoftTeamsLogo className="text-gray-400 w-5 h-5" />
-    ),  
-  },
-  {
-    label: "Tournaments",
-    value: "tournaments",
-    icon: (
-      <TbTournament className="text-gray-400 w-5 h-5" />
     ),  
   },
   {

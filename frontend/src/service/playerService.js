@@ -24,9 +24,14 @@ export const editPlayer = async (payload, id) => {
         }
       }
     );
+    console.log("Edit Player Service response: ", response)
     return response.data
   } catch (error) {
-    throw error
+    if (error.response) {
+      throw error.response.data
+    } else {
+      throw error
+    }   
   }
 };
 
@@ -41,9 +46,14 @@ export const addPlayer = async (payload) => {
         }
       }
     );
+    console.log("Add Player Service response: ", response)
     return response.data
   } catch (error) {
-    throw error
+    if (error.response) {
+      throw error.response.data
+    } else {
+      throw error
+    }   
   }
 };
 

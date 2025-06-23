@@ -1,239 +1,228 @@
-import React, { useContext, useState } from 'react'
-import { RequestContext } from "../../../../context/RequestContext";
+import React, { useContext, useState } from 'react';
+import { IoClose } from 'react-icons/io5';
 import CreateTeamForm from '../../team/form/CreateTeamForm';
-import { IoClose } from "react-icons/io5";
 import CreateTournamentForm from '../../tournaments/form/CreateTournamentForm';
 import { updateRequest } from '../../../../service/requestService';
 import { enrollTeam } from '../../../../service/tournamentService';
 import { changeUserRole } from '../../../../service/usersService';
 import { LoggedUserContext } from '../../../../context/LoggedUserContext';
+import { RequestContext } from '../../../../context/RequestContext';
+import { toast } from 'react-toastify';
 
 export const RequestDetailsModal = ({ selectedRequest, setIsModalOpen, setRequests }) => {
   const requContext = useContext(RequestContext);
+  const { decodedJwt } = useContext(LoggedUserContext);
   const [isProceedButtonClicked, setIsProceedButtonClicked] = useState(false);
-
-  const { decodedJwt } = useContext(LoggedUserContext)
-
-/*   const handleRequestUpdate = (value) => {
-    requContext.setTotalPendingRequests(prevCount => prevCount - 1);
-    setIsModalOpen(false);
-    const updatedSelectedRequest = {
-      ...selectedRequest,
-      status: value
-    };
-    updateRequest(updatedSelectedRequest, selectedRequest.id);
-
-    setRequests((prevRequests) => 
-      prevRequests.map((req) => 
-        req.id === selectedRequest.id ? { ...req, status: value } : req
-      )
-    )
-  }; */
-
   const [errorMessage, setErrorMessage] = useState(null);
 
-  // prvo omogucit da se kreira request za enroll team
-  const handleEnrollTeam = async  () => {
+  const handleEnrollTeam = async () => {
     const enrollTeamObject = {
       teamRepresentativeId: selectedRequest.requester.id,
       tournamentOrganizerId: decodedJwt.userId,
-      requestId: selectedRequest.id
-    }
+      requestId: selectedRequest.id,
+    };
     try {
       const response = await enrollTeam(enrollTeamObject);
-      let value = response.data.data.status;
-      
-      setRequests((prevRequests) => 
-        prevRequests.map((req) => 
-          req.id === selectedRequest.id ? { ...req, status: value } : req
-        )
-      );
+      const value = response.data.data.status;
+      setRequests(prev => prev.map(req => req.id === selectedRequest.id ? { ...req, status: value } : req));
       setIsModalOpen(false);
     } catch (error) {
-      console.log("testiram - ", error)
-      /* setErrorMessage(error.response.data.message); */
+      console.log("Enroll team error:", error);
     }
   };
 
-  const handleRoleChange = async ( statusValue ) => {
+  const handleRoleChange = async (statusValue) => {
     const roleChangeObject = {
       requesterId: selectedRequest.requester.id,
       requestId: selectedRequest.id,
       status: statusValue,
-      newRole: selectedRequest.desiredRole
-    }
+      newRole: selectedRequest.desiredRole,
+    };
     try {
-      const resposne = await changeUserRole(roleChangeObject);
-      console.log("response: ", resposne);
-      setRequests(resposne);
+      const response = await changeUserRole(roleChangeObject);
+      setRequests(response);
       setIsModalOpen(false);
     } catch (error) {
       setErrorMessage(error);
     }
   };
 
-  // tek request mjenjam - kasnije se registrira tim
-  const handleRegisterTeam = async ( statusValue ) => {
-    const registerTeamObject = {
-      requestId: selectedRequest.id,
-      status: statusValue
-    }
+  const handleRegisterTeam = async (statusValue) => {
     try {
-      const response = await updateRequest(registerTeamObject);
-      setRequests((prevRequests) => 
-        prevRequests.map((req) => 
-          req.id === selectedRequest.id ? { ...req, status: statusValue } : req
-        )
-      )
+      const response = await updateRequest({ requestId: selectedRequest.id, status: statusValue });
+      setRequests(prev => prev.map(req => req.id === selectedRequest.id ? { ...req, status: statusValue } : req));
       setIsModalOpen(false);
     } catch (error) {
-      console.log("error -  ", error);
+      console.log("Register team error:", error);
     }
   };
 
-  const handleCreateTournament = async ( statusValue ) => {
-    const createTournamentObject = {
-      requestId: selectedRequest.id,
-      status: statusValue
-    }
-    try { 
-      const response = await updateRequest(createTournamentObject);
-      setRequests((prevRequests) => 
-        prevRequests.map((req) => 
-          req.id === selectedRequest.id ? { ...req, status: statusValue } : req
+
+  const handleCreateTournament = async (statusValue) => {
+    try {
+      const response = await updateRequest({
+        requestId: selectedRequest.id,
+        status: statusValue,
+      });
+  
+      setRequests(prev =>
+        prev.map(req =>
+          req.id === selectedRequest.id
+            ? { ...req, status: statusValue }
+            : req
         )
-      )
+      );
+  
       setIsModalOpen(false);
+
+      if (statusValue === "APPROVED") {
+        toast.success("Accepted user's request to host a tournament.", {
+          autoClose: 2500,
+        });
+      } else if (statusValue === "DECLINED") {
+        toast.error("Declined user's request to host a tournament.", {
+          autoClose: 2500,
+        });
+      }
+      
     } catch (error) {
-      console.log("error -- ", error);
+      setIsModalOpen(false);
+  
+      toast.error(error?.data?.message || "Failed to update tournament request.", {
+        autoClose: 3000,
+        toastClassName: 'w-auto !min-w-0',
+      });
+  
+      console.log("Create tournament error:", error);
     }
-  }
+  };
+  
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-center items-center text-black">
-      <div className="relative p-4 w-[400px] sm:w-[450px] md:w-[450px] lg:w-[500px] xl:w-[550px] 2xlw-[600px]">
-        <div className="relative bg-white rounded-lg shadow-sm">
-
-          <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-200">
-            <div className="text-base md:text-lg 2xl:text-xl font-semibold text-gray-900 ">
-              <span>Request Details</span>
-            </div>
-
-            <div>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                type="button"
-                className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center  " data-modal-hide="default-modal">
-                <IoClose className='w-5 h-5' />
-              </button>
-            </div>
+    <>
+      {/* Main Modal */}
+      <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-30 backdrop-blur-sm">
+        <div className="relative bg-white rounded-lg shadow-sm p-4 w-[90%] max-w-[550px]">
+          {/* Top Bar */}
+          <div className="flex items-center justify-between border-b pb-3 mb-3">
+            <h2 className="text-lg font-semibold text-gray-900">Request Details</h2>
+            <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-800">
+              <IoClose className="w-5 h-5" />
+            </button>
           </div>
 
-          <div className='text-center'>
-            {errorMessage !== null && (
-              <p className='text-red-400'>{errorMessage}</p>
-            )}
-          </div>
+          {/* Error */}
+          {errorMessage && (
+            <div className="text-center text-red-500 mb-4">{errorMessage}</div>
+          )}
 
-          {/* 1 slucaj -> kada requester pregledaje svoje requestove - 2 slucaj -> kada approver pregledaje requesterove requestove */}
+          {/* Request Details */}
           {selectedRequest.requester.id === decodedJwt.userId ? (
             <div>
               {selectedRequest.status === "PENDING" && (
-                <div className='text-center bg-yellow-100 p-2 rounded-md'>Request is still pending...</div>
+                <div className="text-center bg-yellow-100 p-2 rounded">Request is still pending...</div>
               )}
               {selectedRequest.status === "DECLINED" && (
-                <div className='text-center bg-red-300 p-2 rounded-md'>Request was declined!</div>
+                <div className="text-center bg-red-300 p-2 rounded">Request was declined!</div>
               )}
               {selectedRequest.status === "APPROVED" && (
-                <div className='text-center p-2 rounded-md text-black'>
+                <div className="text-center p-2 text-black">
                   {isProceedButtonClicked ? (
                     <>
                       {selectedRequest.requestType === 'TEAM_REGISTRATION' && (
-                        <div>
-                          <CreateTeamForm setIsModalOpen={setIsModalOpen} selectedRequest={selectedRequest} setRequests={setRequests} decodedJwt={decodedJwt} /> 
-                        </div> 
+                        <CreateTeamForm
+                          setIsModalOpen={setIsModalOpen}
+                          selectedRequest={selectedRequest}
+                          setRequests={setRequests}
+                          decodedJwt={decodedJwt}
+                        />
                       )}
                       {selectedRequest.requestType === 'TOURNAMENT_CREATION' && (
-                        <div>
-                          <CreateTournamentForm setIsModalOpen={setIsModalOpen} selectedRequest={selectedRequest} decodedJwt={decodedJwt} />
-                        </div>
+                        <CreateTournamentForm
+                          setIsModalOpen={setIsModalOpen}
+                          selectedRequest={selectedRequest}
+                          decodedJwt={decodedJwt}
+                        />
                       )}
                       {selectedRequest.requestType === 'ROLE_CHANGE' && (
-                        <div>
-                          <span>Change role</span>
-                        </div>
+                        <div><span>Change role (TODO)</span></div>
                       )}
                       {selectedRequest.requestType === 'TOURNAMENT_ENROLLMENT' && (
-                        <div>
-                          <span>Enroll tournament</span>
-                        </div>
+                        <div><span>Enroll tournament (TODO)</span></div>
                       )}
                     </>
                   ) : (
                     <div>
                       {selectedRequest.requestFulfilled ? (
-                        <>
-                          <div className='p-2'>You already took action</div>                    
-                        </>
+                        <div className="p-2">You already took action</div>
                       ) : (
                         <>
-                          <div className='p-2'>Request approved - take action</div>
-                          <div><button onClick={() => setIsProceedButtonClicked(true)} className={`border border-black px-3 rounded-2xl`}>Proceed</button></div> {/* na proceed prominit UI modala ili ? */}
+                          <div className="p-2">Request approved - take action</div>
+                          <button onClick={() => setIsProceedButtonClicked(true)} className="border border-black px-3 py-1 rounded-xl">
+                            Proceed
+                          </button>
                         </>
                       )}
-
                     </div>
                   )}
-
                 </div>
               )}
             </div>
           ) : (
             <div>
+              <div className="mx-4 my-4 space-y-3 text-sm text-black">
+                <div className="flex justify-between">
+                  <span>Request Message:</span>
+                  <span>{selectedRequest.message}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Requester:</span>
+                  <span>{selectedRequest.requester.username}</span>
+                </div>
+              </div>
+
+              {/* Buttons for approver */}
               {selectedRequest.status === "PENDING" && (
-                <div className='text-white flex items-center justify-center space-x-5 p-5'>
-
+                <div className="text-white flex items-center justify-center space-x-4 p-4">
                   {selectedRequest.requestType === "TOURNAMENT_ENROLLMENT" && (
-                    <div className='flex items-center space-x-1'>
-                      <div><button onClick={() => handleEnrollTeam("APPROVED")} className='bg-blue-500 px-2 py-1 rounded-xl'>Accept team enrollment</button></div>
-                      <div><button onClick={() => handleEnrollTeam("DECLINED")} className='bg-red-500 px-2 py-1 rounded-xl'>Decline team enrollment</button></div>
-                    </div>
+                    <>
+                      <button onClick={() => handleEnrollTeam("APPROVED")} className="bg-blue-500 px-3 py-1 rounded-xl">Accept</button>
+                      <button onClick={() => handleEnrollTeam("DECLINED")} className="bg-red-500 px-3 py-1 rounded-xl">Decline</button>
+                    </>
                   )}
-
                   {selectedRequest.requestType === "TEAM_REGISTRATION" && (
-                    <div className='flex items-center space-x-1'>
-                      <div><button onClick={() => handleRegisterTeam("APPROVED")} className='bg-blue-500 px-2 py-1 rounded-xl'>Accept team registration</button></div>
-                      <div><button onClick={() => handleRegisterTeam("DECLINED")} className='bg-red-500 px-2 py-1 rounded-xl'>Decline team registration</button></div>
-                    </div>
+                    <>
+                      <button onClick={() => handleRegisterTeam("APPROVED")} className="bg-blue-500 px-3 py-1 rounded-xl">Accept</button>
+                      <button onClick={() => handleRegisterTeam("DECLINED")} className="bg-red-500 px-3 py-1 rounded-xl">Decline</button>
+                    </>
                   )}
-
                   {selectedRequest.requestType === "ROLE_CHANGE" && (
-                    <div className='flex items-center justify-between space-x-1'>
-                      <div><button onClick={() => handleRoleChange("APPROVED")} className='bg-blue-500 px-2 py-1 rounded-xl'>Approve role change</button></div>
-                      <div><button onClick={() => handleRoleChange("DECLINED")} className='bg-red-500 px-2 py-1 rounded-xl'>Decline role change</button></div>
-                    </div>
+                    <>
+                      <button onClick={() => handleRoleChange("APPROVED")} className="bg-blue-500 px-3 py-1 rounded-xl">Approve</button>
+                      <button onClick={() => handleRoleChange("DECLINED")} className="bg-red-500 px-3 py-1 rounded-xl">Decline</button>
+                    </>
                   )}
-
                   {selectedRequest.requestType === "TOURNAMENT_CREATION" && (
-                    <div className='flex items-center justify-between space-x-1'>
-                      <div><button onClick={() => handleCreateTournament("APPROVED")} className='bg-blue-500 px-2 py-1 rounded-xl'>Approve creating tournament</button></div>
-                      <div><button onClick={() => handleCreateTournament("DECLINED")} className='bg-red-500 px-2 py-1 rounded-xl'>Decline creating tournament</button></div>
-                    </div>
+                    <>
+                      <button onClick={() => handleCreateTournament("APPROVED")} className="bg-blue-500 px-3 py-1 rounded-xl">Approve</button>
+                      <button onClick={() => handleCreateTournament("DECLINED")} className="bg-red-500 px-3 py-1 rounded-xl">Decline</button>
+                    </>
                   )}
-
                 </div>
               )}
+
               {selectedRequest.status === "DECLINED" && (
-                <div className='text-center bg-red-300 p-2 rounded-md'>You declined the request</div>
+                <div className="text-center bg-red-300 p-2 rounded-md">You declined the request</div>
               )}
               {selectedRequest.status === "APPROVED" && (
-                <div className='text-center bg-green-300 p-2 rounded-md'>You approved the request</div>
+                <div className="text-center bg-green-300 p-2 rounded-md">You approved the request</div>
               )}
             </div>
-          )
-        }
+          )}
         </div>
       </div>
-    </div>
-  )
-}
+
+      {/* Optional: Additional blur/form overlay logic could go here if needed */}
+    </>
+  );
+};

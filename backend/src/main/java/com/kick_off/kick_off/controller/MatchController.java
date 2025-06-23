@@ -25,53 +25,31 @@ public class MatchController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<MatchDto>> createMatch(@RequestBody CreateMatchDto match) {
-        try {
-            MatchDto matchDto = matchService.createMatch(match);
-            ApiResponse<MatchDto> response = ApiResponse.<MatchDto>builder()
-                    .message("Successfully created a match.")
-                    .data(matchDto)
-                    .success(true)
-                    .build();
+        System.out.println("In create match controller");
+        MatchDto matchDto = matchService.createMatch(match);
+        ApiResponse<MatchDto> response = ApiResponse.<MatchDto>builder()
+                .message("Successfully created a match.")
+                .data(matchDto)
+                .success(true)
+                .build();
 
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e) {
-            ApiResponse<MatchDto> errorResponse = ApiResponse.<MatchDto>builder()
-                    .message(e.getMessage())
-                    .data(null)
-                    .success(false)
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/tournament/{tournamentId}")
     public ResponseEntity<ApiResponse<List<MatchDto>>> getMatchesByTournamentId(@PathVariable Long tournamentId) {
-        try {
-            List<MatchDto> matches = matchService.findMatchesByTournament(tournamentId);
-            ApiResponse<List<MatchDto>> response = ApiResponse.<List<MatchDto>>builder()
-                    .message("Matches fetched successfully.")
-                    .data(matches)
-                    .success(true)
-                    .build();
+        List<MatchDto> matches = matchService.findMatchesByTournament(tournamentId);
+        ApiResponse<List<MatchDto>> response = ApiResponse.<List<MatchDto>>builder()
+                .message("Matches fetched successfully.")
+                .data(matches)
+                .success(true)
+                .build();
 
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            ApiResponse<List<MatchDto>> errorResponse = ApiResponse.<List<MatchDto>>builder()
-                    .message(e.getMessage())
-                    .data(null)
-                    .success(false)
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        }
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<MatchDto>> editMatch(@PathVariable(name = "id") Long matchId, @RequestBody EditMatchDto updateMatchData) {
-        System.out.println("I'm in");
-        System.out.println("MatchId: " + matchId);
-        System.out.println("EditMatchDto: " + updateMatchData.toString());
         try {
             MatchDto matchDto = matchService.updateMatch(matchId, updateMatchData);
             ApiResponse<MatchDto> response = ApiResponse.<MatchDto>builder()

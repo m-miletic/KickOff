@@ -1,18 +1,33 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
-import { LoggedUserContext } from "../../context/LoggedUserContext";
-import { fetchOrganizersTournament } from "../../service/tournamentService";
-import { fetchTeamsByTournament } from "../../service/teamService";
 import { createMatch } from "../../service/matchService";
 import { fetchStadiums } from "../../service/stadiumService";
+import { toast } from "react-toastify";
 
 export const CreateMatchModal = ({ selectedDate, setIsCreateMatchModalOpen, tournament }) => {
-  console.log("Tour here- ", tournament)
-  if (!tournament) {
-    return <div>Loading tournament data...</div>;
-  }
 
-  const [teams, setTeams] = useState([])
+  console.log("CreateMatchModal -- ", tournament)
+
+  // ako user (organizator) ima account ali nije jos kreira nikakva turnir i pokusa kreirat utakmicu daj upozorenje i onemoguci kreiranje
+  if (!tournament) {
+    return (
+      <div className="fixed inset-0 z-50 flex justify-center items-center backdrop-blur-sm bg-black/40 -mt-48">
+        <div className="bg-white rounded-lg shadow-md p-6 text-center w-[360px] sm:w-[400px] lg:w-[430px]">
+          <h2 className="text-lg font-semibold text-red-600 mb-4">Not a tournament host</h2>
+          <p className="text-gray-700 text-sm mb-4">You need to host a tournament to create matches.</p>
+          <button
+            onClick={() => setIsCreateMatchModalOpen(false)}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
+
+  const [teams, setTeams] = useState(tournament?.teams)
   const [errors, setErrors] = useState({});
 
   const [stadiums, setStadiums] = useState([]);
@@ -34,7 +49,7 @@ export const CreateMatchModal = ({ selectedDate, setIsCreateMatchModalOpen, tour
 
   // sad mogu dohvatit timove po turniru
 
-  useEffect(() => {
+/*   useEffect(() => {
     if (!tournament) {
       console.log("tournament not defined yes wait and then fetch teams")
       return
@@ -53,13 +68,13 @@ export const CreateMatchModal = ({ selectedDate, setIsCreateMatchModalOpen, tour
     }
 
     fetchTeams();
-  }, [tournament]);
+  }, [tournament]); */
 
 
   useEffect(() => {
     const getStadiums = async () => {
       const response = await fetchStadiums();
-      setStadiums(response)
+      setStadiums(response.data)
     }
 
     getStadiums();
@@ -115,16 +130,19 @@ export const CreateMatchModal = ({ selectedDate, setIsCreateMatchModalOpen, tour
     }
 
     try {
-      await createMatch(formData)
-      setIsCreateMatchModalOpen(false)
+      const response = await createMatch(formData)
+      if (response.success) {
+        setIsCreateMatchModalOpen(false)
+        toast.success("Match Created!", {
+          autoClose: 2500
+        })
+      } /* else if (!response.success) {
+        
+      } */  /* vakjda ne triba nista */
     } catch (error) {
-      console.log("Failed to create match: ", error.message)
-      setErrors({ general: error.response.data.message })
+      setErrors({ general: error.data.message })
     }
   };
-
-  console.log(errors)
-
 
 
   return(
@@ -147,7 +165,7 @@ export const CreateMatchModal = ({ selectedDate, setIsCreateMatchModalOpen, tour
             onChange={handleInputChange}
           >
             <option value="" disabled>Select a team</option>
-            {teams.map((team) => (
+            {teams?.map((team) => (
               <option key={team.id} value={team.id}>{team.teamName}</option>
             ))}
           </select>
@@ -168,7 +186,7 @@ export const CreateMatchModal = ({ selectedDate, setIsCreateMatchModalOpen, tour
             onChange={handleInputChange}
           >
             <option value="" disabled>Select a team</option>
-            {teams.map((team) => (
+            {teams?.map((team) => (
               <option key={team.id} value={team.id}>{team.teamName}</option>
             ))}
           </select>

@@ -21,8 +21,16 @@ public class TeamController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<TeamListDto>> getAllTeams(@ModelAttribute TeamFilterParamsDto filters) {
-        try {
+    public ResponseEntity<ApiResponse<TeamListDto>> getAllTeams(
+            @RequestParam(required = false, defaultValue = "teamName") String sortField,
+            @RequestParam(required = false, defaultValue = "ASC") String sortDirection,
+            @RequestParam(required = false, defaultValue = "1") int pageNumber
+    ) {
+            TeamFilterParamsDto filters = new TeamFilterParamsDto();
+            filters.setSortField(sortField);
+            filters.setSortDirection(sortDirection);
+            filters.setPageNumber(pageNumber);
+
             TeamListDto teams = teamService.getTeams(filters);
             ApiResponse<TeamListDto> response = ApiResponse.<TeamListDto>builder()
                     .message("Successfully fetched teams.")
@@ -31,15 +39,6 @@ public class TeamController {
                     .build();
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e) {
-            ApiResponse<TeamListDto> errorResponse = ApiResponse.<TeamListDto>builder()
-                    .message(e.getMessage())
-                    .data(null)
-                    .success(false)
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.OK).body(errorResponse);
-        }
     }
 
     @GetMapping("/tournament/{tournamentId}")
@@ -47,48 +46,26 @@ public class TeamController {
             @PathVariable Long tournamentId,
             @RequestParam(required = false) Integer page
     ) {
-        try {
-            List<TeamDto> teams = teamService.findTeamByTournamentId(tournamentId);
-            ApiResponse<List<TeamDto>> response = ApiResponse.<List<TeamDto>>builder()
-                    .message("Successfully retrieved teams enrolled in tournament")
-                    .data(teams)
-                    .success(true)
-                    .build();
+        List<TeamDto> teams = teamService.findTeamByTournamentId(tournamentId);
+        ApiResponse<List<TeamDto>> response = ApiResponse.<List<TeamDto>>builder()
+                .message("Successfully retrieved teams enrolled in tournament")
+                .data(teams)
+                .success(true)
+                .build();
 
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e) {
-            ApiResponse<List<TeamDto>> errorResponse = ApiResponse.<List<TeamDto>>builder()
-                    .message(e.getMessage())
-                    .data(null)
-                    .success(false)
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<TeamDto>> createTeam(@RequestBody CreateTeamDto team) {
-        try {
-            TeamDto createdTeam = teamService.createTeam(team);
-            ApiResponse<TeamDto> response = ApiResponse.<TeamDto>builder()
-                    .message("Team created successfully.")
-                    .success(true)
-                    .data(createdTeam)
-                    .build();
+        TeamDto createdTeam = teamService.createTeam(team);
+        ApiResponse<TeamDto> response = ApiResponse.<TeamDto>builder()
+                .message("Team created successfully.")
+                .success(true)
+                .data(createdTeam)
+                .build();
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-
-        } catch (IllegalStateException e) {
-            System.out.println("Poruka - " + e.getMessage());
-            ApiResponse<TeamDto> response = ApiResponse.<TeamDto>builder()
-                    .message(e.getMessage())
-                    .success(false)
-                    .data(null)
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping("/{id}")
@@ -113,30 +90,35 @@ public class TeamController {
         }
     }
 
+    // triba mi jedan endpoint s drugacijim returnom od TeamDto jer on u sebi ima dosta toga
+    @GetMapping("/myTeam/{representativeId}")
+    public ResponseEntity<ApiResponse<MyTeamDto>> fetchMyTeam(@PathVariable Long representativeId) {
+        System.out.println("KOJI id stigne = " + representativeId);
+        MyTeamDto team = teamService.getMyTeam(representativeId);
+        ApiResponse<MyTeamDto> response = ApiResponse.<MyTeamDto>builder()
+                .message("Successfully retrieved team owner data.")
+                .data(team)
+                .success(true)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<TeamDto>> fetchTeamById(@PathVariable("id") Long id) {
-        try {
-            TeamDto team = teamService.getTeamById(id);
-            ApiResponse<TeamDto> response = ApiResponse.<TeamDto>builder()
-                    .message("Successfully retrieved team.")
-                    .data(team)
-                    .success(true)
-                    .build();
+    public ResponseEntity<ApiResponse<TeamDto>> fetchTeamById(@PathVariable Long id) {
+        TeamDto team = teamService.getTeamById(id);
+        ApiResponse<TeamDto> response = ApiResponse.<TeamDto>builder()
+                .message("Successfully retrieved team.")
+                .data(team)
+                .success(true)
+                .build();
 
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e) {
-            ApiResponse<TeamDto> errorResponse = ApiResponse.<TeamDto>builder()
-                    .message(e.getMessage())
-                    .data(null)
-                    .success(false)
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.OK).body(errorResponse);
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<TeamDto>> getTeamByTeamRepresentative(@PathVariable Long userId) {
+        System.out.println("In getTeamByTeamRepresentative - userId:" + userId);
 
         TeamDto team = teamService.findTeamByRepresentativeId(userId);
         ApiResponse<TeamDto> response = ApiResponse.<TeamDto>builder()

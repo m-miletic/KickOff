@@ -24,23 +24,13 @@ public class StadiumController {
 
     @GetMapping
     ResponseEntity<ApiResponse<List<StadiumDto>>> fetchAllStadiums() {
-        try {
-            List<StadiumDto> stadiums = stadiumService.fetchAllStadiums();
-            ApiResponse<List<StadiumDto>> response = ApiResponse.<List<StadiumDto>>builder()
-                    .message("Successfully retrieved all stadiums.")
-                    .data(stadiums)
-                    .success(true)
-                    .build();
+        List<StadiumDto> stadiums = stadiumService.fetchAllStadiums();
+        ApiResponse<List<StadiumDto>> response = ApiResponse.<List<StadiumDto>>builder()
+                .message("Successfully retrieved all stadiums.")
+                .data(stadiums)
+                .success(true)
+                .build();
 
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e) {
-            ApiResponse<List<StadiumDto>> errorResponse = ApiResponse.<List<StadiumDto>>builder()
-                    .message(e.getMessage())
-                    .data(null)
-                    .success(false)
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.OK).body(errorResponse);
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 /* import image from '../assets/logo-white.png'; */
 import { BREAKPOINTS } from "../../../data/breakpoints";
-import { ITEMS } from "../../../data/adminSidebarItems";
+import { adminSidebarItems } from "../../../data/adminSidebarItems";
 import { useSidebarVisibilityOnResize } from "../../../hooks/useSidebarVisibilityOnResize";
 import { ActiveComponentContext } from "../../../context/ActiveComponentContext";
 import { RxHamburgerMenu } from "react-icons/rx";
@@ -34,7 +34,7 @@ const Sidebar = () => {
         <RxHamburgerMenu className="h-5 w-5 ml-2 mt-1" />
       </button>
 
-      <aside id="logo-sidebar" className={`h-screen sticky w-52 ${!isSidebarOpen && 'hidden'} md:w-56 xl:w-64`} aria-label="Sidebar">
+      <aside id="logo-sidebar" className={`h-screen sticky w-52 ${!isSidebarOpen && 'hidden'} md:w-56 xl:w-[270px]`} aria-label="Sidebar">
         <div className="h-full px-3 py-4 overflow-y-auto bg-[#001E28] text-white">
           {/* <img src={image} className="h-14 pl-12 text-center" alt="App Logo"></img> */}
           <ul className="space-y-2 text-2xs md:text-xs xl:text-base">
@@ -44,7 +44,7 @@ const Sidebar = () => {
               </button>
             </li>
             <li className="pb-2.5"></li>
-            {ITEMS.map((item, index) => (
+            {adminSidebarItems.map((item, index) => (
               <li key={index}>
                 <button onClick={() => selectSideBarItem(item.value)} className="flex items-center hover:bg-[#005571] rounded-lg py-2 px-4 xl:py-2.5 w-full">
                   <span>{item.icon}</span>

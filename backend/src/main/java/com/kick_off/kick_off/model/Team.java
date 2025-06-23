@@ -8,7 +8,6 @@ import lombok.ToString;
 
 import java.util.List;
 
-// using Integer because of testing phase I'm not population all of the fields with data.sql so I get an error
 @Entity
 @Getter
 @Setter
@@ -42,8 +41,10 @@ public class Team {
     @OneToMany(mappedBy = "team", cascade = {CascadeType.REMOVE}, orphanRemoval = true) // orphan mi omogucava da iz team-a izbrisem player-a
     private List<Player> players;
 
-    @ManyToMany(mappedBy = "teams")
-    private List<Tournament> tournaments;
+    @ManyToOne
+    @JoinColumn(name = "tournament_id")
+    private Tournament tournament;
+
 
     // ako ne bi koristia orphanRemoval i probam preko Team-a izbrisat match samo ce ga detach-at nece ga izbrisat iz db
     @OneToMany(mappedBy = "homeTeam", cascade = CascadeType.REMOVE, orphanRemoval = true)

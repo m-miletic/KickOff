@@ -2,27 +2,30 @@ import React, { useState } from 'react'
 import { IoMdClose } from "react-icons/io";
 import { PiWarningCircleLight } from "react-icons/pi";
 import { deleteUser } from '../../../../service/usersService';
+import { toast } from 'react-toastify';
 
 export const DeleteUserModal = ({ setIsModalOpen, selectedUser, setUsers, filter }) => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleDelete = async () => {
     try {
-      const response = await deleteUser(filter, selectedUser.id);
-      if (response.success) {
-        setUsers(response.data);
-        setIsModalOpen(false);
-      } else {
-        setErrorMessage(response.message)
-      }
+      const response = await deleteUser(filter, selectedUser.id)
+      const deletedUser = response.data
+
+      setUsers(prevUsers => ({
+        ...prevUsers,
+        usersList: prevUsers.usersList.filter(user => user.id !== deleteUser.id)
+      }));
+      setIsModalOpen(false)
+      toast.success(`Deleted user: ${deletedUser.username}`)
     } catch (error) {
-      throw error;
+      setErrorMessage(error.message)
     }
   };
 
   return (
     <div className='fixed inset-0 z-50 flex justify-center items-center'>
-      <div className='w-[400px] bg-white text-gray-800 rounded-lg shadow-sm'>
+      <div className='w-[400px] bg-white text-gray-800 rounded-lg shadow-sm px-6 py-2'>
 
         <div className='flex items-center justify-between p-4 border-b border-gray-500 rounded-t text-black'>
           <h3 className='text-lg'>Delete Team</h3>
@@ -33,17 +36,17 @@ export const DeleteUserModal = ({ setIsModalOpen, selectedUser, setUsers, filter
 
         <div className='text-black'>
           <div className='flex justify-center items-center pt-2'>
-            <PiWarningCircleLight className='w-6 h-6'/>
+            <PiWarningCircleLight className='w-6 h-6 mt-2'/>
           </div>
           <div className='flex justify-center items-center pt-2 pb-6 '>
-            <div className='p-3'>
-              {errorMessage ? <span>{errorMessage}</span> : <span>Are you sure you want to delete</span>}
+            <div>
+              {errorMessage ? <span>{errorMessage}</span> : <span >Are you sure you want to delete?</span>}
             </div>
           </div>
 
           <div className='flex justify-center items-center space-x-2 pb-3 text-white font-medium '>
-            <div><button onClick={() => handleDelete()} className='bg-red-700 rounded-lg px-3 py-1.5 p-1'>Yes, I'm sure</button></div>
-            <div><button onClick={() => setIsModalOpen(false)} className='bg-blue-700 rounded-lg px-3 py-1.5 p-1'>No, cancel</button></div>
+            <div><button onClick={() => handleDelete()} className='bg-red-600 hover:bg-red-700 rounded-lg px-3 py-1.5 p-1'>Yes, I'm sure</button></div>
+            <div><button onClick={() => setIsModalOpen(false)} className='bg-blue-600 hover:bg-blue-700 rounded-lg px-3 py-1.5 p-1'>No, cancel</button></div>
 
           </div>
         </div>

@@ -1,53 +1,43 @@
 import React, { useContext, useState } from 'react'
-import { RoleChangeForm } from '../form/RoleChangeForm';
 import { createTeamRegistrationRequest, createTournamentCreationRequest } from '../../../../service/requestService';
 import { LoggedUserContext } from '../../../../context/LoggedUserContext';
-import { REQUEST_TYPES_BY_ROLE } from '../../../../data/requestTypeList';
+import { toast } from 'react-toastify';
 
 export const SendRequestModal = ({ setIsRequestModalOpen }) => {
-  const [requestType, setRequestType] = useState("");
   const { decodedJwt, jwt, loading } = useContext(LoggedUserContext)
 
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-
-  const requestTypeList = REQUEST_TYPES_BY_ROLE[decodedJwt?.role] ?? [];
-
-  const handleReqTypeChange = (e) => {
-    setRequestType(e.target.value);
-  };
-
-  const handleSendTeamRegistrationRequestRequest = async () => {
-    const createTeamRequestObject = {
-      teamRepresentativeId: decodedJwt.userId
-    }
+  const handleTeamRegRequest = async () => {
     try {
-      const response = await createTeamRegistrationRequest(createTeamRequestObject);
-      setIsRequestModalOpen(false);
+      await createTeamRegistrationRequest(decodedJwt.userId);
+      setIsRequestModalOpen(false)
+      toast.success("Team registration request sent!", {
+        autoClose: 2500
+      });
     } catch (error) {
-      setErrorMessage(error);
+      setIsRequestModalOpen(false)
+      toast.error(error.data.message, {
+        autoClose: 3000
+      });
     }
   };
-
-  const handleSendTornamentOrganizationRequest = async () => {
-    const createTournamentOrganizationRequestObject = {
-      tournamentOrganizerId: decodedJwt.userId
-    }
+  
+  const handleTournamentOrgRequest = async () => {
     try {
-      const response = await createTournamentCreationRequest(createTournamentOrganizationRequestObject);
-      if (response.data.success) {
-        console.log("Im here")
-        setSuccessMessage("Request sent!");
+      const response = await createTournamentCreationRequest(decodedJwt.userId);
+      if (response.success) {
+        setIsRequestModalOpen(false)
+        toast.success("Request to host a tournament sent!", {
+          autoClose: 2500
+        });
       }
-      setTimeout(() => {
-        setIsRequestModalOpen(false);
-      }, 2500);
     } catch (error) {
-      setErrorMessage(error);
+      setIsRequestModalOpen(false)
+      toast.error(error.data.message, {
+        autoClose: 3000,
+      });
     }
   };
-
-  console.log("successMessage: ", successMessage)
+  
   
 return ( 
   <div className="fixed inset-0 z-50 flex justify-center items-center backdrop-blur-sm bg-black/40 -mt-48">
@@ -65,56 +55,20 @@ return (
           </button>
         </div>
 
-        <div className='flex items-center px-5 py-3 text-xs'>
-          <div className='w-32'>Request Type</div>
-          <select
-            id="requestType"
-            name='requestType'
-            className='text-xs w-64 h-8 px-2 py-1 border border-gray-300 bg-white text-gray-800 rounded'
-            onChange={handleReqTypeChange}
-            value={requestType}
-          >
-            <option value={""} disabled>-- Select type --</option>
-            {requestTypeList.map((type, index) => (
-              <option key={index} value={type}>{type}</option>
-            ))}
-          </select>
-        </div>
-
-        {requestType === "ROLE_CHANGE" && (
-          <div className='flex items-center px-5 py-3 text-xs'>
-            <RoleChangeForm setIsRequestModalOpen={setIsRequestModalOpen}/>
+        {decodedJwt.role === "TEAM_REPRESENTATIVE" && (
+          <div className='px-5 py-3 text-base'>
+            <div className='w-auto'>Request Approval to Create Team</div>
+            <div className='py-3'><button onClick={handleTeamRegRequest} className='bg-blue-600 hover:bg-blue-700 px-4 py-2 text-white rounded-lg'>Send</button></div>
           </div>
         )}
 
-        {requestType === "TEAM_REGISTRATION" && (
-          <div className="px-4 py-3 flex items-center text-xs">
-            <div className="w-32">
-              <button onClick={handleSendTeamRegistrationRequestRequest} className="bg-blue-600 px-2 py-1.5 rounded-lg text-white hover:bg-blue-700 cursor-pointer">Send</button>
-            </div>
-            <div className="w-64 text-center text-red-600">{errorMessage}</div>
+        {decodedJwt.role === "TOURNAMENT_ORGANIZER" && (
+          <div className='px-5 py-3 text-base'>
+            <div className='w-auto'>Request Approval to Organize a Tournament</div>
+            <div className='py-3'><button onClick={handleTournamentOrgRequest} className='bg-blue-600 hover:bg-blue-700 px-4 py-2 text-white rounded-lg'>Send</button></div>
           </div>
         )}
 
-        {requestType === "TOURNAMENT_CREATION" && (
-          <div className="px-4 py-3 flex items-center text-xs">
-            <div className="w-32">
-              {successMessage ? (
-                <span className="text-green-400 text-base">Request sent!</span>
-              ) : (
-                <button
-                  onClick={handleSendTornamentOrganizationRequest}
-                  className="bg-blue-600 px-2 py-1.5 rounded-lg text-white hover:bg-blue-700 cursor-pointer"
-                >
-                  Send
-                </button>
-              )}
-            </div>
-            {errorMessage && (
-              <div className="w-64 text-center text-red-600">{errorMessage}</div>
-            )}
-          </div>
-        )}
 
 
       </div>

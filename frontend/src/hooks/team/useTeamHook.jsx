@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
-import { deleteTeamById, fetchAllTeams, fetchTeamsByTournament } from "../../service/teamService"
+import { deleteTeamById, fetchAllTeams, fetchTeamsByTournament, getTeamByTeamRepresentative } from "../../service/teamService"
+import { jwtDecode } from "jwt-decode";
 
 export const useFetchTeams = ( filters ) => {
   const [teams, setTeams] = useState({
@@ -30,6 +31,7 @@ export const useFetchTeams = ( filters ) => {
 };
 
 export const useFetchTeamsByTournament = (tournamentId, page) => {
+  console.log("CHECK: ", tournamentId)
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -48,22 +50,39 @@ export const useFetchTeamsByTournament = (tournamentId, page) => {
       }
     }
     getTeams();
-  }, []);
+  }, [tournamentId, page]);
 
   return { teams, loading, error };
 };
 
-/* export const useUpdateTeam = () => {
+export const useFetchTeamByTeamRepresentative = (representativeId) => {
+  console.log("I'm in useFetchTeamByTeamRepresentative")
+  const [team, setTeam] = useState("")
+  const [errorMessage, setErrorMessage] = useState("")
+
   useEffect(() => {
-    const updateTeam = async () => {
-      try {
-        console.log("first")
-      } catch (error) {
-        console.log("useFetchTeamsHook Error -> Couldn't update team")
-      }
+    if(!representativeId) {
+      return
     }
-  }, []);
-} */
+    const getTeam = async () => {
+      try {
+        const response = await getTeamByTeamRepresentative(representativeId)
+        setTeam(response.data)
+      } catch (error) {
+        console.log("Testing out - ", error.data.message)
+        setErrorMessage(error.data.message)
+      } 
+    }
+
+    getTeam()
+  }, [representativeId])
+
+  return { team, setTeam, errorMessage }
+};
+
+
+
+
   export const useDeleteTeam = (id) => {
     useEffect(() => {
       const deleteTeam = async () => {

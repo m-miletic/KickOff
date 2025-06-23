@@ -11,8 +11,10 @@ export const createMatch = async (matchObject) => {
       }
     );
     console.log("response match: ", response)
+    return response.data
   } catch (error) {
-    throw error;
+    console.log("a sta sad match error ", error)
+    throw error.response.data;
   }
 }
 
@@ -24,15 +26,11 @@ export const fetchMatchesByTournament = async (tournamentId) => {
         Authorization: `Bearer ${jwt}`
       }
     });
-    // Return the full API response object (success, data, message)
+    console.log("Service fetch matches by tournament response: ", response)
     return response.data;
   } catch (error) {
-    // Return a consistent error object to avoid unhandled exceptions in the UI
-    return {
-      success: false,
-      data: null,
-      message: error.response?.data?.message || error.message || "Unknown error"
-    };
+    console.log("Error while trying to fetch matches based on tournament id: ", error)
+    throw error.response.data
   }
 }
 

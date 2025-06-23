@@ -13,7 +13,6 @@ import { ActiveModalContext } from "../../../context/ActiveModalContext";
 const TeamList = () => {
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [filters, setFilters] = useState({
-    tournament: '',
     sortDirection: 'DESC',
     pageNumber: 1
   });

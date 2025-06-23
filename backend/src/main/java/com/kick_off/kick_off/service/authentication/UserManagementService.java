@@ -4,15 +4,15 @@ import com.kick_off.kick_off.configuration.JwtUtil;
 import com.kick_off.kick_off.dto.RequestResponse;
 import com.kick_off.kick_off.dto.auth.*;
 import com.kick_off.kick_off.dto.novo.UserDto;
+import com.kick_off.kick_off.exception.FieldValidationException;
+import com.kick_off.kick_off.exception.ForbiddenActionException;
 import com.kick_off.kick_off.model.Role;
 import com.kick_off.kick_off.model.authentication.RefreshToken;
 import com.kick_off.kick_off.model.authentication.User;
 import com.kick_off.kick_off.repository.authentication.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -36,75 +36,57 @@ public class UserManagementService {
         this.modelMapper = modelMapper;
     }
 
-    public RequestResponse register(RequestResponse registrationRequest) {
-        RequestResponse response = new RequestResponse();
-        try {
-            if (userRepository.existsByUsername(registrationRequest.getUsername())) {
-                response.setStatusCode(HttpStatus.CONFLICT.value());
-                response.setMessage("Username already taken..");
+    public void register(RegisterRequestDto registerRequestDto) {
+        String username = registerRequestDto.getUsername();
+        String password = registerRequestDto.getPassword();
+        String repeatedPassword = registerRequestDto.getRepeatPassword();
+        Role role = Role.valueOf(registerRequestDto.getRole());
 
-                return response;
-            } else {
-                User newUser = new User();
-                newUser.setUsername(registrationRequest.getUsername());
-                newUser.setRole(Role.valueOf("USER"));
-                newUser.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-
-                User savedUser = userRepository.save(newUser);
-                if (savedUser.getId() != null) {
-                    response.setUser(savedUser);  // mapirat u DTO - ne vracat bas sve od User-a
-                    response.setMessage("User saved successfully");
-                    response.setStatusCode(200);
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Error while registering user: " + e);
-            response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            response.setError(e.getMessage());
+        if (userRepository.existsByUsername(username)) {
+            throw new FieldValidationException("username", "Username already exists.");
+        }
+        if (!password.equals(repeatedPassword)) {
+            throw new FieldValidationException("repeatPassword", "Passwords don't match");
         }
 
-        return response;
+        User newUser = new User();
+        newUser.setUsername(username);
+        newUser.setPassword(passwordEncoder.encode(password));
+        newUser.setRole(role);
+
+        User savedUser = userRepository.save(newUser);
+
+        /* Ima li razloga za vratit registriranog user-a ? */
+        /*UserDto userDto = modelMapper.map(savedUser, UserDto.class);
+        return userDto;*/
     }
+
 
     public LoginResponseDto login(LoginRequestDto loginRequest) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsername(),
+                        loginRequest.getPassword()
+                )
+        );
+
+        User user = userRepository.findByUsername(loginRequest.getUsername())
+                .orElseThrow(() -> new EntityNotFoundException("User with username: " + loginRequest.getUsername() + " not found."));
+
+        String jwt = jwtUtil.generateToken(user);
+
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+        RefreshTokenDto refreshTokenDto = modelMapper.map(refreshToken, RefreshTokenDto.class);
+
         LoginResponseDto response = new LoginResponseDto();
+        response.setAccessToken(jwt);
+        response.setRefreshToken(refreshTokenDto);
 
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.getUsername(),
-                            loginRequest.getPassword()
-                    )
-            );
-            User user = userRepository.findByUsername(loginRequest.getUsername())
-                    .orElseThrow(() -> new EntityNotFoundException("User with username: " + loginRequest.getUsername() + " not found."));
-
-            String jwt = jwtUtil.generateToken(user);
-
-            RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
-
-            RefreshTokenDto refreshTokenDto = modelMapper.map(refreshToken, RefreshTokenDto.class);
-
-
-            response.setAccessToken(jwt);
-            response.setRefreshToken(refreshTokenDto);
-            response.setMessage("Successfully logged in");
-            response.setStatusCode(HttpStatus.OK.value());
-
-            // nece bacit EntityNotFoundException iako ga ne nade nego ce bacit BadCredentialsException - vidit kod za jwt !
-        } catch (BadCredentialsException e) {
-            response.setStatusCode(HttpStatus.UNAUTHORIZED.value());
-            response.setMessage("Invalid email or password.");
-        } catch (EntityNotFoundException e) {
-            response.setStatusCode(HttpStatus.NOT_FOUND.value());
-            response.setMessage("User not found.");
-        } catch (Exception e) {
-            response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            response.setMessage("Unexpected error occurred.");
-        }
+        System.out.println("Response from Login backend: " + response.toString());
 
         return response;
     }
+
 
     public RequestResponse getAllUsers() {
         RequestResponse response = new RequestResponse();

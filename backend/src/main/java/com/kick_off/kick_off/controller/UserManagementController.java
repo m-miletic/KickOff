@@ -2,23 +2,17 @@ package com.kick_off.kick_off.controller;
 
 import com.kick_off.kick_off.configuration.JwtUtil;
 import com.kick_off.kick_off.dto.RequestResponse;
-import com.kick_off.kick_off.dto.auth.LoginRequestDto;
-import com.kick_off.kick_off.dto.auth.LoginResponseDto;
-import com.kick_off.kick_off.dto.auth.TokenRefreshRequestDto;
-import com.kick_off.kick_off.dto.auth.TokenRefreshResponseDto;
+import com.kick_off.kick_off.dto.auth.*;
 import com.kick_off.kick_off.dto.novo.UserDto;
 import com.kick_off.kick_off.model.authentication.RefreshToken;
 import com.kick_off.kick_off.model.authentication.User;
 import com.kick_off.kick_off.repository.authentication.UserRepository;
+import com.kick_off.kick_off.response.ApiResponse;
 import com.kick_off.kick_off.service.authentication.RefreshTokenServiceImpl;
-import com.kick_off.kick_off.service.authentication.UserDetailsServiceImpl;
 import com.kick_off.kick_off.service.authentication.UserManagementService;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,24 +31,46 @@ public class UserManagementController {
     }
 
     @PostMapping("/auth/register")
-    public ResponseEntity<RequestResponse> register(@RequestBody RequestResponse registerData) {
-        return ResponseEntity.ok(userManagementService.register(registerData));
+    public ResponseEntity<ApiResponse<?>> register(@Validated @RequestBody RegisterRequestDto registerData) {
+        userManagementService.register(registerData);
+        ApiResponse<?> response = ApiResponse.builder()
+                .message("Successfully registered")
+                .data(null)
+                .success(true)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginData) {
-        return ResponseEntity.ok(userManagementService.login(loginData));
+    public ResponseEntity<ApiResponse<LoginResponseDto>> login(@RequestBody LoginRequestDto loginData) {
+        System.out.println("Login Data: " + loginData.toString());
+        LoginResponseDto loginResponseData = userManagementService.login(loginData);
+        ApiResponse<LoginResponseDto> response = ApiResponse.<LoginResponseDto>builder()
+                .message("Successfully logged in.")
+                .data(loginResponseData)
+                .success(true)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/auth/logout")
-    public ResponseEntity<String> logout(@RequestBody TokenRefreshRequestDto request) {
-        refreshTokenService.deleteByToken(request.getRefreshToken());
-        return ResponseEntity.status(HttpStatus.OK).body("Logout successful. Refresh token deleted.");
+    public ResponseEntity<ApiResponse<?>> logout(@RequestBody LogoutRequestDto logoutRequest) {
+        System.out.println("refresh token: " + logoutRequest.toString());
+        refreshTokenService.deleteByToken(logoutRequest.getRefreshToken());
+        ApiResponse<?> response = ApiResponse.builder()
+                .message("Successfully logged out.")
+                .data(null)
+                .success(true)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/auth/refresh-token")
-    public ResponseEntity<TokenRefreshResponseDto> refreshToken(@RequestBody TokenRefreshRequestDto request) {
-        String requestRefreshToken = request.getRefreshToken();
+    public ResponseEntity<TokenRefreshResponseDto> refreshToken(@RequestBody String refreshToken) {
+        String requestRefreshToken = refreshToken;
 
         return refreshTokenService.findByToken(requestRefreshToken)
                 .map(refreshTokenService::verifyExpiration)
@@ -66,6 +82,7 @@ public class UserManagementController {
                 .orElseThrow(() -> new RuntimeException(requestRefreshToken + " - Refresh token is not in database"));
     }
 
+/*
     @GetMapping("/users/me/{id}")
     public ResponseEntity<UserDto> getLoggedInUser(@PathVariable(name = "id") Long id) {
 
@@ -80,6 +97,7 @@ public class UserManagementController {
 
         return ResponseEntity.status(HttpStatus.OK).body(userDto);
     }
+*/
 
 
 

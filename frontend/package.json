@@ -39,7 +39,8 @@
     "react-scroll": "^1.9.0",
     "react-toastify": "^11.0.5",
     "sass": "^1.83.4",
-    "simple-datatables": "^10.0.0"
+    "simple-datatables": "^10.0.0",
+    "swiper": "^11.2.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

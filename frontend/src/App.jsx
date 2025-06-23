@@ -13,17 +13,27 @@ import { ActiveComponentProvider } from "./context/ActiveComponentContext";
 import { ActiveModalProvider } from "./context/ActiveModalContext";
 import { LoggedUserProvider } from "./context/LoggedUserContext";
 import UserPage from "./pages/UserPage";
-import 'flowbite';
+import Standings from "./components/ui/Standings";
+import { Calendar } from "./components/calendar/Calendar";
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   return (
     <>
+      <ToastContainer />
       <BrowserRouter>
         <AuthProvider>
           <LoggedUserProvider>
+
             <Routes>
               <Route path="/home" element={ <ActiveComponentProvider> <HomePage /> </ActiveComponentProvider> } />
+
+              
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/leaderboard" element={<Standings />} />
+              <Route path="/calendar" element={<Calendar />} />
               <Route path="/user" element={
                   <ActiveModalProvider>
                     <ActiveComponentProvider>

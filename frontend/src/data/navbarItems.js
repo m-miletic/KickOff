@@ -1,16 +1,15 @@
 export const GUEST_NAVBAR_ITEMS = [
-  "Home",
-  "Leaderboard",
-  "Explore Tournaments",
-  "About Us",
+  { key: "homepage", label: "Homepage", id: "homepage" },
+  { key: "leaderboard", label: "Leaderboard", id: "standings-section" },
+  { key: "about", label: "About Us", id: "footer-section" }
 ]
 
 export const TEAM_REPRESENTATIVE_NAVBAR_ITEMS = [
-  "Active Tournaments",
-  "Team Overview",
+  { key: "upcomingTournaments", label: "Upcoming Tournaments" },
+  { key: "teamOverview", label: "Team Overview"}
 ]
 
 export const TOURNAMENT_ORGANIZER_NAVBAR_ITEMS = [
-  "Match Scheduler",
-  "Tournament Dashboard",
+  { key: "matchScheduler", label: "Match Scheduler" },
+  { key: "tournamentOverview", label: "Tournament Overview"}
 ]

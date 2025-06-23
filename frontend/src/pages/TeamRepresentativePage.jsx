@@ -3,23 +3,20 @@ import Navbar from "../components/common/navigation/Navbar";
 import { ActiveComponentContext } from "../context/ActiveComponentContext";
 import { RequestProvider } from "../context/RequestContext";
 import RequestList from "../components/ui/request/RequestList";
-import TeamRepresentativeTournamentList from "../components/ui/tournaments/TeamRepresentativeTournamentList";
-import { LoggedUserContext } from "../context/LoggedUserContext";
+import UpcomingTournaments from "../components/ui/tournaments/UpcomingTournaments";
 import MyTeam from "../components/ui/team/MyTeam";
-import useRoleVerification from "../hooks/useRoleVerification";
 import Footer from "../components/common/footer/Footer";
 
 const TeamRepresentativePage = () => {
   const { activeComponent } = useContext(ActiveComponentContext);
-  const { decodedJwt, jwt } = useContext(LoggedUserContext);
-
-  useRoleVerification(decodedJwt, jwt);
 
   return (
-    <div className="min-h-screen flex flex-col"> {/* Make full height & flex column */}
+    <div className="min-h-screen flex flex-col"> 
+
       <Navbar />
 
       <main className="flex-grow">
+
         {(activeComponent === "sentRequests" || activeComponent === "recievedRequests") && 
           <div className="flex justify-center text-white mt-20">
             <RequestProvider>
@@ -27,19 +24,23 @@ const TeamRepresentativePage = () => {
             </RequestProvider>
           </div>
         }
-        {activeComponent === "Active Tournaments" && 
+
+        {activeComponent === "upcomingTournaments" && 
           <div className="flex justify-center">
-            <TeamRepresentativeTournamentList />
+            <UpcomingTournaments />
           </div>
         }
-        {activeComponent === "Team Overview" &&
+
+        { (activeComponent === "teamOverview" || activeComponent === "") &&
           <div className="flex justify-center mt-10">
             <MyTeam />
           </div>
         }
+
       </main>
 
       <Footer />
+
     </div>
   );
 };

@@ -1,12 +1,12 @@
 package com.kick_off.kick_off.service.impl;
 
+import com.kick_off.kick_off.dto.PlayerDto;
 import com.kick_off.kick_off.dto.match.LightMatchDto;
 import com.kick_off.kick_off.dto.match.MatchDto;
-import com.kick_off.kick_off.dto.team.CreateTeamDto;
-import com.kick_off.kick_off.dto.team.LightTeamDto;
-import com.kick_off.kick_off.dto.team.TeamDto;
+import com.kick_off.kick_off.dto.team.*;
 import com.kick_off.kick_off.dto.team.requestParams.TeamFilterParamsDto;
-import com.kick_off.kick_off.dto.team.TeamListDto;
+import com.kick_off.kick_off.dto.tournament.MyTeamTournamentDto;
+import com.kick_off.kick_off.dto.tournament.TournamentDto;
 import com.kick_off.kick_off.model.*;
 import com.kick_off.kick_off.model.authentication.User;
 import com.kick_off.kick_off.repository.*;
@@ -98,6 +98,59 @@ public class TeamServiceImpl implements TeamService {
         return teamDto;
     }
 
+    @Override
+    public MyTeamDto getMyTeam(Long id) {
+        MyTeamDto myTeamDto = new MyTeamDto();
+
+        Team team = teamRepository.findTeamByRepresentative_Id(id)
+                .orElseThrow(() -> new EntityNotFoundException("Team with id: " + id + " not found."));
+
+
+        Tournament tournament = team.getTournament();
+        MyTeamTournamentDto myTeamTournamentDto = new MyTeamTournamentDto();
+        if (tournament != null) {
+            myTeamTournamentDto = modelMapper.map(tournament, MyTeamTournamentDto.class);
+        }
+
+        List<Player> players = team.getPlayers();
+        List<PlayerDto> playerDtos = new ArrayList<PlayerDto>();
+        if (players != null) {
+            playerDtos = players.stream().map(player ->
+                        modelMapper.map(player, PlayerDto.class)
+                    ).toList();
+        }
+
+        List<LightMatchDto> allMatchesDto = new ArrayList<LightMatchDto>();
+
+        List<Match> homeMatches = team.getHomeMatches();
+        List<LightMatchDto> homeMatchesDto = new ArrayList<LightMatchDto>();
+        if (homeMatches != null) {
+            homeMatchesDto = homeMatches.stream().map(match ->
+                        modelMapper.map(match, LightMatchDto.class)
+                    ).toList();
+
+            allMatchesDto.addAll(homeMatchesDto);
+        }
+
+        List<Match> awayMatches = team.getAwayMatches();
+        List<LightMatchDto> awayMatchesDto = new ArrayList<LightMatchDto>();
+        if (awayMatches != null) {
+            awayMatchesDto = awayMatches.stream().map(match ->
+                        modelMapper.map(match, LightMatchDto.class)
+                    ).toList();
+
+            allMatchesDto.addAll(awayMatchesDto);
+        }
+
+        myTeamDto = modelMapper.map(team, MyTeamDto.class);
+        myTeamDto.setTournament(myTeamTournamentDto);
+        myTeamDto.setPlayers(playerDtos);
+        myTeamDto.setHomeMatches(homeMatchesDto);
+        myTeamDto.setAwayMatches(awayMatchesDto);
+        myTeamDto.setAllMatches(allMatchesDto);
+
+        return myTeamDto;
+    }
 
 
     @Override
@@ -121,6 +174,7 @@ public class TeamServiceImpl implements TeamService {
         Team team = new Team();
         team.setTeamName(teamDto.getTeamName());
         team.setCoach(teamDto.getCoach());
+        team.setPhotoUrl(teamDto.getPhotoUrl());
         team.setRepresentative(representative);
 
         Team savedTeam = teamRepository.save(team);
@@ -193,8 +247,9 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public TeamDto findTeamByRepresentativeId(Long representativeId) {
+        System.out.println("In findTeamByRepresentativeId service method");
         Team team = teamRepository.findTeamByRepresentative_Id(representativeId)
-                .orElseThrow(() -> new EntityNotFoundException("Representative with id: " + representativeId + " not found."));
+                .orElseThrow(() -> new EntityNotFoundException("Doesn't represent a team yet"));
 
         TeamDto teamDto = modelMapper.map(team, TeamDto.class);
         return teamDto;

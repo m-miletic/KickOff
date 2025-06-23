@@ -2,8 +2,8 @@ package com.kick_off.kick_off.service;
 
 import com.kick_off.kick_off.dto.novo.CreateEnrollTeamRequestDto;
 import com.kick_off.kick_off.dto.novo.CreateRoleChangeRequestDto;
+import com.kick_off.kick_off.dto.paginationFilters.PaginationFilters;
 import com.kick_off.kick_off.dto.request.*;
-import com.kick_off.kick_off.dto.tournament.TournamentCreationRequestDto;
 
 import java.util.List;
 
@@ -12,15 +12,15 @@ public interface RequestService {
 
     void createRoleChangeRequest(CreateRoleChangeRequestDto request);
 
-    void createEnrollTeamRequest(CreateEnrollTeamRequestDto request);
+    RequestDto createEnrollTeamRequest(CreateEnrollTeamRequestDto request);
 
-    void createTeamRegistrationRequest(TeamRegistrationRequestDto request);
+    void createTeamRegistrationRequest(Long requesterId);
 
-    void createTournamentCreationRequest(TournamentCreationRequestDto request);
+    void createTournamentCreationRequest(Long requesterId);
 
-    RequestListDto getRequestsByApproverId(GetRequestsDto getRequestsDto);
+    RequestListDto getRequestsByApproverId(Long id, PaginationFilters filters);
 
-    RequestListDto getRequestsByRequesterId(GetRequestsDto getRequestsDto);
+    RequestListDto getRequestsByRequesterId(Long id, PaginationFilters filters);
 
     List<RequestDto> getRequestsByApproverId(Long approverId);
 

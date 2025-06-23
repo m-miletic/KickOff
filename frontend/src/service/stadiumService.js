@@ -8,8 +8,10 @@ export const fetchStadiums = async () => {
         Authorization: `Bearer ${jwt}`
       }
     });
-    return response.data.data;
+    console.log("Fetch Stadiums Service Response: ", response)
+    return response.data;
   } catch (error) {
-    throw error
+    console.log("Error while trying to fetch stadiums: ", error)
+    throw error.response.data
   }
 }

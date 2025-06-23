@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { REQUEST_TIME_CREATED, REQUEST_STATUS } from '../../../data/requestFilters';
 import { DropdownButton } from '../../common/dropdown/DropdownButton';
 import { useFetchRequests } from '../../../hooks/requestHook';
@@ -16,12 +16,11 @@ const RequestList = () => {
   const { decodedJwt } = useContext(LoggedUserContext)
 
   const [selectedFilters, setSelectedFilters] = useState({
-    userId: decodedJwt.userId,
     status: 'PENDING',
     timeCreated: 'Last 7 days',
     sortDirection: 'DESC',
     pageNumber: 1,
-    pageSize: 2
+    pageSize: 5
   });
 
   const [isStatusDropdownOpen, setIsStatusOpen] = useState(false);
@@ -48,7 +47,7 @@ const RequestList = () => {
     setIsModalOpen(true);
   };
 
-  const { requests, setRequests, totalPages, error } = useFetchRequests(selectedFilters, activeComponent);
+  const { requests, setRequests, totalPages, error } = useFetchRequests(decodedJwt?.userId, selectedFilters, activeComponent);
 
   return (
     <div className={`text-black text-[12px] sm:text-xs xl:text-base`}>
@@ -92,7 +91,7 @@ const RequestList = () => {
         <table className="w-full">
           <thead className="bg-[#001E28] rounded-t-lg text-white text-[10px] sm:text-xs lg:text-base">
             <tr className="rounded-t-lg">
-              {(decodedJwt.role === 'ADMIN' || decodedJwt.role === 'TOURNAMENT_ORGANIZER') && (
+              {(decodedJwt?.role === 'ADMIN' || decodedJwt?.role === 'TOURNAMENT_ORGANIZER') && (
                 <th className="px-4 py-3 text-leftrounded-tl-lg">Requested by</th>
               )}
               <th className="px-4 py-3 text-left" data-type="date" data-format="YYYY/DD/MM">
@@ -123,7 +122,7 @@ const RequestList = () => {
             </tr>
           </thead>
           <tbody className='text-[9px] sm:text-[11px] lg:text-[12px] xl:text-[14px]'>
-            {requests.map((request, index) => (
+            {requests?.map((request, index) => (
               <tr
                 key={request.id}
                 className={`
@@ -132,7 +131,7 @@ const RequestList = () => {
                   ${index % 2 === 0 ? 'bg-[#00303f]' : 'bg-[#001E28]'}
                 `}
               >
-                {(decodedJwt.role === 'ADMIN' || decodedJwt.role === 'TOURNAMENT_ORGANIZER') && (
+                {(decodedJwt?.role === 'ADMIN' || decodedJwt?.role === 'TOURNAMENT_ORGANIZER') && (
                   <td className="px-2 sm:px-4 lg:px-6 xl:px-8 py-4 text-white">{request.requester.username}</td>
                 )}
                 <td className="px-2 sm:px-4 lg:px-6 xl:px-8 py-4 text-white">{request.timeCreated}</td>
@@ -149,7 +148,7 @@ const RequestList = () => {
                   ></span>
                 </td>
                 <td className="py-4 pr-1">
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-[10px] px-3 py-1">
+                  <button onClick={() => showRequestModal(request)} className="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-[10px] px-3 py-1">
                     Open
                   </button>
                 </td>

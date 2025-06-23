@@ -1,13 +1,15 @@
 import React, { useContext, useState } from "react";
-import AuthService from "../service/AuthService.js";
 import { useNavigate } from "react-router-dom";
 import image from '../assets/register-background.jpg'
 import { jwtDecode } from "jwt-decode";
 import { LoggedUserContext } from "../context/LoggedUserContext.jsx";
+import { login } from "../service/authenticationService.js";
 
 const LoginPage = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [loginCredentials, setLoginCredentials] = useState({
+    username: "",
+    password: ""
+  });
   const [error, setError] = useState("");
   let navigate = useNavigate();
 
@@ -16,14 +18,15 @@ const LoginPage = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const userData = await AuthService.login(username, password);
-      if (userData.accessToken) {
-        localStorage.setItem('token', userData.accessToken);
-        localStorage.setItem('refreshToken', userData.refreshToken.token);
+      const userData = await login(loginCredentials)
+      console.log("Login response: ", userData)
+      if (userData.data.accessToken) {
+        localStorage.setItem('token', userData.data.accessToken);
+        localStorage.setItem('refreshToken', userData.data.refreshToken.token);
 
-        setTokenFromLogin(userData.accessToken);
+        setTokenFromLogin(userData.data.accessToken);
 
-        const decodedToken = jwtDecode(userData.accessToken);
+        const decodedToken = jwtDecode(userData.data.accessToken);
         const loggedUserRole = decodedToken.role;
 
         if(loggedUserRole === 'ADMIN') {
@@ -39,10 +42,15 @@ const LoginPage = () => {
         setError(userData.message);
       }
     } catch (error) {
-        console.log(error);
         setError(error.message);
-        /* setTimeout(() => setError(''), 10000); */
     }
+  };
+
+  const handleChange = (e) => {
+    setLoginCredentials(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }))
   };
 
   return(
@@ -64,8 +72,8 @@ const LoginPage = () => {
                 type="text" 
                 className="rounded-md p-1 border-2 outline-none focus:border-black focus:bg-slate-50 text-md"
                 name="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={loginCredentials.username}
+                onChange={handleChange}
                 required
                 />
             </div>
@@ -76,12 +84,14 @@ const LoginPage = () => {
                 type="password" 
                 className="rounded-md p-1 border-2 outline-none focus:border-black focus:bg-slate-50"
                 name="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={loginCredentials.password}
+                onChange={handleChange}
                 autoComplete="off"
                 required
                 />
             </div>
+
+            <div className="text-red-600 mt-3">{error}</div>
 
             <button className="px-10 py-2 text-2xl rounded-md bg-gradient-to-tr bg-blue-500 mt-4
             text-white hover:px-11 hover:py-2.5">Login</button>

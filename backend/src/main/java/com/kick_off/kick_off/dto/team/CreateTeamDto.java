@@ -13,5 +13,6 @@ public class CreateTeamDto {
     private String coach;
     private Long requestId;
     private Long representativeId;
+    private String photoUrl;
 
 }

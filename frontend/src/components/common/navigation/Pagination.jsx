@@ -95,7 +95,7 @@ const Pagination = ({ totalPages, selectedFilters, handleSelectFilter }) => {
           </button>
         </li>
       </ul>
-      <div className="mt-2 text-white">
+      <div className="mt-2 text-black">
         {totalPages > 0 && <span>page {currentPage}/{totalPages}</span>}
       </div>
     </nav>

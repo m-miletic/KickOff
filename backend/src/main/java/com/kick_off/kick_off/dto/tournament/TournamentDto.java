@@ -1,5 +1,6 @@
 package com.kick_off.kick_off.dto.tournament;
 
+import com.kick_off.kick_off.dto.auth.UserDto;
 import com.kick_off.kick_off.dto.match.MatchDto;
 import com.kick_off.kick_off.dto.team.TeamDto;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class TournamentDto {
     private LocalDate startDate;
     private LocalDate endDate;
     private String details;
-    private Long organizerId;
+    private UserDto organizer;
 
     // ovo bi tribalo bit ok
     private List<TeamDto> teams;

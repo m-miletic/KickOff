@@ -11,6 +11,7 @@ class AuthService {
       throw err;
     }
   }
+  
 
   static async register(userData) {
     try {

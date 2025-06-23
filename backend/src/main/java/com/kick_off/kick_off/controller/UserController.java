@@ -1,7 +1,8 @@
 package com.kick_off.kick_off.controller;
 
-import com.kick_off.kick_off.dto.novo.UserFilterParamsDto;
+import com.kick_off.kick_off.dto.novo.UserDto;
 import com.kick_off.kick_off.dto.novo.UserListDto;
+import com.kick_off.kick_off.dto.paginationFilters.UserPaginationFilter;
 import com.kick_off.kick_off.dto.request.RequestDto;
 import com.kick_off.kick_off.dto.request.RoleChangeRequestDto;
 import com.kick_off.kick_off.model.Role;
@@ -27,8 +28,20 @@ public class UserController {
         this.requestService = requestService;
     }
 
+    @GetMapping("/{id}")
+    ResponseEntity<ApiResponse<UserDto>> getUser(@PathVariable Long id) {
+        UserDto user = userService.getUser(id);
+        ApiResponse<UserDto> response = ApiResponse.<UserDto>builder()
+                .message("Successfully retrieved user")
+                .data(user)
+                .success(true)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @GetMapping
-    ResponseEntity<ApiResponse<UserListDto>> getUsers(@ModelAttribute UserFilterParamsDto filters) {
+    ResponseEntity<ApiResponse<UserListDto>> getUsers(@ModelAttribute UserPaginationFilter filters) {
         try {
             UserListDto users = userService.getUsers(filters);
             return ResponseEntity.ok(ApiResponse.<UserListDto>builder()
@@ -46,25 +59,15 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<ApiResponse<UserListDto>> deleteUserById(@ModelAttribute UserFilterParamsDto filters, @PathVariable Long id) {
-        try {
-            userService.deleteUser(id);
-            ApiResponse<UserListDto> response = ApiResponse.<UserListDto>builder()
-                    .message("User deleted successfully.")
-                    .data(userService.getUsers(filters))
-                    .success(true)
-                    .build();
+    ResponseEntity<ApiResponse<UserDto>> deleteUserById(@PathVariable Long id) {
+        UserDto deletedUser = userService.deleteUser(id);
+        ApiResponse<UserDto> response = ApiResponse.<UserDto>builder()
+                .message("User deleted successfully.")
+                .data(deletedUser)
+                .success(true)
+                .build();
 
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (IllegalStateException e) {
-            ApiResponse<UserListDto> errorResponse = ApiResponse.<UserListDto>builder()
-                    .message(e.getMessage())
-                    .data(null)
-                    .success(false)
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.OK).body(errorResponse);
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PatchMapping("/role-change")

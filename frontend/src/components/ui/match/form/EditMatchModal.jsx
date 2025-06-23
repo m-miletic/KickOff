@@ -83,14 +83,15 @@ const EditMatchModal = ({ match, onClose, onSave }) => {
             </label>
           )}
 
-          
+
+          {/* nedaj prominit rez ako utak jos nije zapoceta ili gotova */}
           {new Date() >= new Date(match.matchDate) && (
             <div>
-              <label className="block mb-4 text-black">
-                Match Results:
+              <label className="block mb-4 text-black text-lg">
+                Match Results
               </label>
               <label className="block mb-4 text-black">
-                Home Team
+                {match.homeTeam.teamName} - Home Team 
               </label>
               <input
                 type="number"
@@ -101,7 +102,7 @@ const EditMatchModal = ({ match, onClose, onSave }) => {
               />
 
               <label className="block mb-4 text-black">
-                Away Team
+                {match.awayTeam.teamName} - Away Team
               </label>
               <input
                 type="number"

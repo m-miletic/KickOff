@@ -1,11 +1,11 @@
 package com.kick_off.kick_off.service.impl;
 
+import com.kick_off.kick_off.dto.auth.UserDto;
 import com.kick_off.kick_off.dto.request.RequestDto;
 import com.kick_off.kick_off.dto.request.RequestListDto;
 import com.kick_off.kick_off.dto.team.EnrollTeamDto;
+import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.dto.tournament.CreateTournamentDto;
-import com.kick_off.kick_off.dto.tournament.GetTournamentByOrganizer;
-import com.kick_off.kick_off.dto.tournament.GetTournamentsDto;
 import com.kick_off.kick_off.dto.tournament.TournamentDto;
 import com.kick_off.kick_off.dto.tournament.TournamentListDto;
 import com.kick_off.kick_off.exception.ForbiddenActionException;
@@ -18,18 +18,15 @@ import com.kick_off.kick_off.repository.RequestRepository;
 import com.kick_off.kick_off.repository.TeamRepository;
 import com.kick_off.kick_off.repository.TournamentRepository;
 import com.kick_off.kick_off.repository.authentication.UserRepository;
-import com.kick_off.kick_off.service.RequestService;
 import com.kick_off.kick_off.service.TournamentService;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -62,21 +59,36 @@ public class TournamentServiceImpl implements TournamentService {
 
 
     @Override
-    public TournamentListDto getTournaments(GetTournamentsDto request) {
+    public TournamentListDto getTournaments(int pageNumber) {
+        
+        int pageSize = 5;
 
         Page<Tournament> pageTournaments;
-        PageRequest pageRequest = PageRequest.of(request.getPageNumber() - 1, request.getPageSize());
+        PageRequest pageRequest = PageRequest.of(pageNumber- 1, pageSize);
         pageTournaments = tournamentRepository.findAll(pageRequest);
 
         long totalTournaments = pageTournaments.getTotalElements();
-        long totalPages = calculateTotalPages(totalTournaments, request.getPageSize());
+        long totalPages = calculateTotalPages(totalTournaments, pageSize);
 
         List<TournamentDto> tournamentDtos = pageTournaments
                 .stream()
                 .map(tournament -> {
-                  TournamentDto tournamentDto = modelMapper.map(tournament, TournamentDto.class);
-                  return tournamentDto;
+                    TournamentDto tournamentDto = modelMapper.map(tournament, TournamentDto.class);
+
+                    // Ensure nested User is mapped manually if ModelMapper doesn't handle it by default
+                    if (tournament.getOrganizer() != null) {
+                        UserDto userDto = modelMapper.map(tournament.getOrganizer(), UserDto.class);
+                        tournamentDto.setOrganizer(userDto);
+                    }
+
+                    return tournamentDto;
                 }).toList();
+
+
+        for (TournamentDto dto : tournamentDtos) {
+            System.out.println(dto);
+        }
+
 
         TournamentListDto tournamentListDto = TournamentListDto.builder()
                 .tournamentsList(tournamentDtos)
@@ -84,6 +96,102 @@ public class TournamentServiceImpl implements TournamentService {
                 .build();
 
         return tournamentListDto;
+    }
+
+    @Override
+    public TournamentListDto getUpcomingTournaments(int pageNumber) {
+
+        int pageSize = 6;
+
+        Page<Tournament> pageTournaments;
+        PageRequest pageRequest = PageRequest.of(pageNumber- 1, pageSize);
+        pageTournaments = tournamentRepository.findByStartDateAfter(LocalDate.now().plusDays(1), pageRequest);
+
+        long totalTournaments = pageTournaments.getTotalElements();
+        long totalPages = calculateTotalPages(totalTournaments, pageSize);
+
+        List<TournamentDto> tournamentDtos = pageTournaments
+                .stream()
+                .map(tournament -> {
+                    TournamentDto tournamentDto = modelMapper.map(tournament, TournamentDto.class);
+
+                    // Ensure nested User is mapped manually if ModelMapper doesn't handle it by default
+                    if (tournament.getOrganizer() != null) {
+                        UserDto userDto = modelMapper.map(tournament.getOrganizer(), UserDto.class);
+                        tournamentDto.setOrganizer(userDto);
+                    }
+
+                    return tournamentDto;
+                }).toList();
+
+
+        for (TournamentDto dto : tournamentDtos) {
+            System.out.println(dto);
+        }
+
+
+        TournamentListDto tournamentListDto = TournamentListDto.builder()
+                .tournamentsList(tournamentDtos)
+                .totalPages(totalPages)
+                .build();
+
+        return tournamentListDto;
+    }
+
+    @Override
+    public TournamentListDto getActiveTournaments(int pageNumber) {
+
+        int pageSize = 5;
+
+        Page<Tournament> pageTournaments;
+        PageRequest pageRequest = PageRequest.of(pageNumber- 1, pageSize);
+        pageTournaments = tournamentRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDate.now(), LocalDate.now(), pageRequest);
+
+        long totalTournaments = pageTournaments.getTotalElements();
+        long totalPages = calculateTotalPages(totalTournaments, pageSize);
+
+        List<TournamentDto> tournamentDtos = pageTournaments
+                .stream()
+                .map(tournament -> {
+                    TournamentDto tournamentDto = modelMapper.map(tournament, TournamentDto.class);
+
+                    // Ensure nested User is mapped manually if ModelMapper doesn't handle it by default
+                    if (tournament.getOrganizer() != null) {
+                        UserDto userDto = modelMapper.map(tournament.getOrganizer(), UserDto.class);
+                        tournamentDto.setOrganizer(userDto);
+                    }
+
+                    return tournamentDto;
+                }).toList();
+
+
+        for (TournamentDto dto : tournamentDtos) {
+            System.out.println(dto);
+        }
+
+
+        TournamentListDto tournamentListDto = TournamentListDto.builder()
+                .tournamentsList(tournamentDtos)
+                .totalPages(totalPages)
+                .build();
+
+        return tournamentListDto;
+    }
+
+    @Override
+    public List<TournamentDto> getActiveAndUpcomingTournaments() {
+
+        List<Tournament> activeTournaments = tournamentRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDate.now(), LocalDate.now());
+        List<Tournament> upcomingTournaments = tournamentRepository.findByStartDateAfter(LocalDate.now());
+
+        List<Tournament> activeAndUpcomingTournaments = new ArrayList<>();
+        activeAndUpcomingTournaments.addAll(activeTournaments);
+        activeAndUpcomingTournaments.addAll(upcomingTournaments);
+
+        List<TournamentDto> tournamentDtos = activeAndUpcomingTournaments.stream()
+                .map(tournament -> modelMapper.map(tournament, TournamentDto.class)).toList();
+
+        return tournamentDtos;
     }
 
 
@@ -117,7 +225,7 @@ public class TournamentServiceImpl implements TournamentService {
     }
 
     @Override
-    public RequestListDto enrollTeam(EnrollTeamDto teamDto) {
+    public TeamDto enrollTeam(EnrollTeamDto teamDto) {
         Long teamRepresentativeId = teamDto.getTeamRepresentativeId();
         Long tournamentOrganizerId = teamDto.getTournamentOrganizerId();
         Long requestId = teamDto.getRequestId();
@@ -138,65 +246,37 @@ public class TournamentServiceImpl implements TournamentService {
             requestRepository.save(request);
 
 
-            List<Request> updatedRequests = requestRepository.findAllByStatusAndApprover_Id(Status.PENDING, tournamentOrganizerId);
-
-            List<RequestDto> updatedRequestsDto = updatedRequests.stream()
-                    .map(req -> modelMapper.map(req, RequestDto.class)).toList();
-
-            return RequestListDto.builder()
-                    .requests(updatedRequestsDto)
-                    .totalRequests(updatedRequests.size())
-                    .build();
-
-        }
-
-        List<Tournament> allTournaments = tournamentRepository.findAll();
-
-        var counter = allTournaments.stream()
-                .filter(tournam -> tournam.getTeams().stream()
-                        .anyMatch(t -> t.getId().equals(team.getId()))
-                )
-                .count();
-
-        System.out.println("Counter: " + counter);
-
-
-        boolean alreadyEnrolled = tournament.getTeams().stream()
-                .anyMatch(t -> t.getId().equals(team.getId()));
-
-
-        if(alreadyEnrolled) {
-            throw new ForbiddenActionException("Team is already enrolled in the tournament.");
-        } else if (counter >= 2) {
-            throw new ForbiddenActionException("Team already enrolled in max number of tournaments.");
-        } else {
-            tournament.getTeams().add(team);
-            team.getTournaments().add(tournament);
-            tournamentRepository.save(tournament);
+        } else if (status.equals(Status.APPROVED)) {
             request.setStatus(Status.APPROVED);
             request.setRequestFulfilled(true);
             requestRepository.save(request);
 
+            team.setTournament(tournament);
+            teamRepository.save(team);
 
-            List<Request> updatedRequests = requestRepository.findAllByStatusAndApprover_Id(Status.PENDING, tournamentOrganizerId);
-
-            List<RequestDto> updatedRequestsDto = updatedRequests.stream()
-                    .map(req -> modelMapper.map(req, RequestDto.class)).toList();
-
-            return RequestListDto.builder()
-                    .requests(updatedRequestsDto)
-                    .totalRequests(updatedRequests.size())
-                    .build();
         }
+
+        return modelMapper.map(team, TeamDto.class);
 
     }
 
     @Override
-    public TournamentDto getTournamentByOrganizer(GetTournamentByOrganizer request) {
-        Long organizerId = request.getOrganizerId();
+    public TeamDto removeFromTournament(Long teamId) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new EntityNotFoundException("Team with id: " + teamId + " not found."));
 
-        Tournament tournament = tournamentRepository.findTournamentByOrganizer_Id(organizerId)
-                .orElseThrow(() -> new EntityNotFoundException("Tournament with organizer id: " + organizerId + " not found."));
+        team.setTournament(null);
+        Team removedTeam = teamRepository.save(team);
+
+        return modelMapper.map(removedTeam, TeamDto.class);
+    }
+
+
+    @Override
+    public TournamentDto getTournamentByOrganizer(Long id) {
+
+        Tournament tournament = tournamentRepository.findTournamentByOrganizer_Id(id)
+                .orElseThrow(() -> new EntityNotFoundException("Doesn't host a tournament yet."));
 
         TournamentDto tournamentDto = modelMapper.map(tournament, TournamentDto.class);
         return tournamentDto;

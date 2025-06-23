@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react"
-import { fetchAllTournaments } from "../../service/tournamentService";
+import { fetchAllActiveTournaments, fetchAllUpcomingTournaments } from "../../service/tournamentService";
 
-export const useFetchTournaments = () => {
+
+export const useFetchUpcomingTournaments = (pageNumber) => {
+
   const [tournaments, setTournaments] = useState({
     tournamentsList: [],
     totalPages: 0
@@ -9,12 +11,11 @@ export const useFetchTournaments = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-
   useEffect(() => {
     const getTournaments = async () => {
       setLoading(true);
       try {
-        const response = await fetchAllTournaments();
+        const response = await fetchAllUpcomingTournaments(pageNumber);
         setTournaments(response.data);
         setError(null);
       } catch (error) {
@@ -25,7 +26,40 @@ export const useFetchTournaments = () => {
     };
     
     getTournaments();
-  }, []);
+  }, [pageNumber]);
 
   return { tournaments, setTournaments, loading, error };
 };
+
+export const useFetchActiveTournaments = (pageNumber) => {
+
+  const [tournaments, setTournaments] = useState({
+    tournamentsList: [],
+    totalPages: 0
+  });
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getTournaments = async () => {
+      setLoading(true);
+      try {
+        const response = await fetchAllActiveTournaments(pageNumber);
+        setTournaments(response.data);
+        setError(null);
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    getTournaments();
+  }, [pageNumber]);
+
+  return { tournaments, setTournaments, loading, error };
+};
+
+
+
+

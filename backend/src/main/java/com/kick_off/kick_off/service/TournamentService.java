@@ -1,24 +1,31 @@
 package com.kick_off.kick_off.service;
 
-import com.kick_off.kick_off.dto.request.RequestDto;
 import com.kick_off.kick_off.dto.request.RequestListDto;
 import com.kick_off.kick_off.dto.team.EnrollTeamDto;
+import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.dto.tournament.CreateTournamentDto;
-import com.kick_off.kick_off.dto.tournament.GetTournamentByOrganizer;
-import com.kick_off.kick_off.dto.tournament.GetTournamentsDto;
 import com.kick_off.kick_off.dto.tournament.TournamentDto;
 import com.kick_off.kick_off.dto.tournament.TournamentListDto;
 
 import java.util.List;
 
+
 public interface TournamentService {
-    TournamentListDto getTournaments(GetTournamentsDto request);
+    TournamentListDto getTournaments(int pageNumber);
+
+    TournamentListDto getUpcomingTournaments(int pageNumber);
+
+    TournamentListDto getActiveTournaments(int pageNumber);
+
+    List<TournamentDto> getActiveAndUpcomingTournaments();
 
     TournamentDto createTournament(CreateTournamentDto tournamentDto);
 
-    RequestListDto enrollTeam(EnrollTeamDto teamDto);
+    TeamDto enrollTeam(EnrollTeamDto teamDto);
 
-    TournamentDto getTournamentByOrganizer(GetTournamentByOrganizer request);
+    TeamDto removeFromTournament(Long teamId);
+
+    TournamentDto getTournamentByOrganizer(Long id);
 
     TournamentDto updateTournament(Long id, TournamentDto updatedTournament);
 }

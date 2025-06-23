@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import useFetchUsers from "../../../hooks/users/useFetchUsers";
 import { ROLES } from "../../../data/roles";
 import { TbCaretUpDownFilled } from "react-icons/tb";
@@ -9,27 +9,28 @@ import { DropdownButton } from "../../common/dropdown/DropdownButton";
 import { DeleteUserModal } from "./modal/DeleteUserModal";
 import Pagination from "../../common/navigation/Pagination";
 import PreviewUserModal from "./modal/PreviewUserModal";
-import { jwtDecode } from "jwt-decode";
+import { LoggedUserContext } from "../../../context/LoggedUserContext";
 
 
 const UserList = () => {
-  const jwt = localStorage.getItem('token');
-  let decodedJwt = null;
-  if (jwt != null ) {
-    decodedJwt = jwtDecode(jwt);
-  };
+
+  const { decodedJwt } = useContext(LoggedUserContext) 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const [filter, setFilter] = useState({
-    role: "USER", // koristit jwTDecoded.role a ne hardcode
+    role: "ALL", // samo za inicijalni prikaz
     sortDirection: 'DESC',
     sortField: 'username',
     pageNumber: 1
   });
+
   const [selectedUser, setSelectedUser] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
 
-  const { users, setUsers } = useFetchUsers(filter);
+  const { users, setUsers, error } = useFetchUsers(filter);
+
+  console.log("Users: ", users)
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -78,9 +79,9 @@ const UserList = () => {
         />
       )}
 
-      <div className="text-white mt-2">
+      <div className="text-black mt-2">
 
-        <div className="flex justify-between bg-[#001E28] px-2 py-1.5 rounded-md text-xs xl:text-sm 2xl:text-base font-medium w-[340px] sm:w-[380px] lg:w-[530px] xl:w-[560px] 2xl:py-2.5">
+        <div className="flex justify-between bg-[#001E28] text-white px-2 py-1.5 rounded-md text-xs xl:text-sm 2xl:text-base font-medium w-[340px] sm:w-[380px] lg:w-[530px] xl:w-[560px] 2xl:py-2.5">
 
           <div className="flex items-center">
             <span>Username</span>
@@ -141,8 +142,6 @@ const UserList = () => {
         </div>
       )}
 
-
-   {/*  paginacija mi ne radi za sve komponente */}
 
       <div className='text-center mt-5'>
         <Pagination totalPages={users.totalPages} selectedFilters={filter} handleSelectFilter={handleSelectFilter} />

@@ -7,18 +7,20 @@ const useFetchUsers = (filter) => {
     totalPages: 0
   });
 
+  const [error, setError] = useState("")
+
   useEffect(() => {
     const getUsers = async () => {
       try {
         const response = await fetchUsers(filter);
         setUsers(response.data);
       } catch (error) {
-        console.log("error: ", error);
+        setError(error.data.message)
       }
     }
     getUsers();
   }, [filter]);
 
-  return {users, setUsers};
+  return {users, setUsers, error};
 };
 export default useFetchUsers;

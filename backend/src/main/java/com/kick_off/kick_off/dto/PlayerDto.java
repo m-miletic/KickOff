@@ -28,7 +28,7 @@ public class PlayerDto {
     private Integer goals;
     @Min(value = 0, message = "Negative numbers not allowed")
     private Integer assists;
-    @Pattern(regexp = "^(http|https)://.*$", message = "Must be a valid URL")
+
     private String photoUrl;
     @NotNull(message = "Must provide with team id")
     private String teamId;

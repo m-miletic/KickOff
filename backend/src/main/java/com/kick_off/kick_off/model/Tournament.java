@@ -27,14 +27,9 @@ public class Tournament {
     @Column(name = "details")
     private String details;
 
-    // @JoinTable & @JoinColumn are not required but are used, so I can name table and fields as I want
-    @ManyToMany
-    @JoinTable(
-            name = "team_tournament",
-            joinColumns = @JoinColumn(name = "tournament_id"),
-            inverseJoinColumns = @JoinColumn(name = "team_id")
-    )
+    @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Team> teams;
+
 
     // @JoinTable & @JoinColumn are not required but are used, so I can name table and fields as I want
     @ManyToMany(cascade = CascadeType.PERSIST)

@@ -1,9 +1,11 @@
 import apiClient from "./apis/apiClient";
 
-export const fetchRequestsByApprover = async ( selectedFilters ) => {
+export const fetchRequestsByApprover = async ( userId, selectedFilters ) => {
+  console.log("I'm in fetchRequestsByApprover")
+  console.log("userId: ", userId)
   const jwt = localStorage.getItem('token');
   try {
-    const response = await apiClient.get('/requests/by-approver', {
+    const response = await apiClient.get(`/requests/approver/${userId}`, {
       params: {
         ...selectedFilters
       },
@@ -11,17 +13,18 @@ export const fetchRequestsByApprover = async ( selectedFilters ) => {
         Authorization: `Bearer ${jwt}`
       }
     });
-    console.log("fetchRequestsByApprover response: ", response);
-    return response.data.data;
+    console.log("Request Service Response: ", response)
+    return response.data;
   } catch (error) {
-    throw error;
+    console.log("Service Error while trying to fetch requests by approver - ", error)
+    throw error.response.data;
   }
 }
 
-export const fetchRequestsByRequester = async ( selectedFilters ) => {
+export const fetchRequestsByRequester = async ( userId, selectedFilters ) => {
   const jwt = localStorage.getItem('token');
   try {
-    const response = await apiClient.get('/requests/by-requester', {
+    const response = await apiClient.get(`/requests/requester/${userId}`, {
       params: {
         ...selectedFilters
       }, 
@@ -29,17 +32,18 @@ export const fetchRequestsByRequester = async ( selectedFilters ) => {
         Authorization: `Bearer ${jwt}`
       }
     });
-    console.log("fetchRequestsByRequester response: ", response);
-    return response.data.data;
+    console.log("Response By Requester: ", response)
+    return response.data;
   } catch (error) {
-    console.log("error", error)
-    throw error;
+
+    console.error("Error while fetching requests by requester - api error response: ", error.response.data)
+    throw error.response.data;
   }
 }
 
-export const fetchAllRequestsByUserId = async ( selectedFilters, userId ) => {
+export const fetchAllRequestsByUserId = async ( userId, selectedFilters ) => {
   try {
-    const response = await apiClient.get(`/requests/${userId}`, {
+    const response = await apiClient.get(`/requests/approver/${userId}`, {
       params: {
         ...selectedFilters
       }
@@ -59,9 +63,9 @@ export const updateRequest = async ( updateObject ) => {
       }
     });
     console.log("response: ", response);
-    return response;
+    return response.data;
   } catch (error) {
-    throw error;
+    throw error.response.data;
   }
 }
 
@@ -86,50 +90,57 @@ export const createRoleChangeRequest = async ( requestObject ) => {
 export const createEnrollTeamRequest = async ( requestObject ) => {
   const jwt = localStorage.getItem('token');
   try {
-    const response = await apiClient.post(`/requests/enroll-team`,
-      requestObject, {
+    const response = await apiClient.post(`/requests/enroll-team`, 
+      requestObject,
+      {
         headers: {
           Authorization: `Bearer ${jwt}`
         }
       }
     );
-    return response;
+    console.log("createEnrollTeamRequest u tryu response: ", response)
+    console.log("test: ", response.data)
+    return response.data;
   } catch (error) {
-    throw error.response.data.message;
+    console.log("createEnrollTeamRequest u catch error-u: ", error)
+    throw error.response.data;
   }
 }
 
 
-export const createTeamRegistrationRequest = async ( requestObject ) => {
+export const createTeamRegistrationRequest = async ( requesterId ) => {
   const jwt = localStorage.getItem('token');
   try {
-    const response = await apiClient.post(`/requests/team-creation`, 
-      requestObject, {
+    const response = await apiClient.post(`/requests/team/${requesterId}`,
+      {
         headers: {
           Authorization: `Bearer ${jwt}`
         }
       }
     );
-    return response;
+    console.log("Create Request For Team Registration Service Response: ", response)
+    return response.data;
   } catch (error) {
-    throw (error.response.data.message);
+    console.log("Error while creating request for creating a tournament - api error response: ", error)
+    throw error.response.data;
   }
 }
 
-export const createTournamentCreationRequest = async ( requestObject ) => {
+export const createTournamentCreationRequest = async ( requesterId ) => {
   const jwt = localStorage.getItem('token');
   try {
-    const response = await apiClient.post(`/requests/tournament-creation`,
-      requestObject, {
+    const response = await apiClient.post(`/requests/tournament/${requesterId}`,
+      {
         headers: {
           Authorization: `Bearer ${jwt}`
         }
       }
     );
-    return response;
+    console.log("createTournamentCreationRequest: ", response)
+    return response.data;
   } catch (error) {
-    console.log("error when creating tournament creation request: ", error)
-    throw error.response.data.message;
+    console.log("Error while creating request for creating a tournament - api error response: ", error)
+    throw error.response.data;
   }
 }
 

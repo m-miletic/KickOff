@@ -1,34 +1,36 @@
 import { useEffect, useState } from "react";
-
 import { fetchRequestsByApprover, fetchRequestsByRequester } from "../service/requestService";
 
-export const useFetchRequests = ( selectedFilters, activeComponent ) => {
+export const useFetchRequests = ( userId, selectedFilters, activeComponent ) => {
   const [requests, setRequests] = useState([]);
   const [error, setError] = useState(null);
   const [totalPages, setTotalPages] = useState(null);
 
+  console.log("TEST inside Hook - userID: ", userId)
 
   useEffect(() => {
     const getRequests = async () => {
+      if (!userId) return
+
       let response;
       try {
         if(activeComponent === "recievedRequests") {
-          response = await fetchRequestsByApprover(selectedFilters);
-          console.log("rq: ", response);
-          setRequests(response.requests);
-          setTotalPages(response.totalPages);
+          response = await fetchRequestsByApprover(userId, selectedFilters);
+          setRequests(response.data.requests);
+          setTotalPages(response.data.totalPages);
         } else if (activeComponent === "sentRequests") {
-          response = await fetchRequestsByRequester(selectedFilters);
-          setRequests(response.requests);
-          setTotalPages(response.totalPages);
+          response = await fetchRequestsByRequester(userId, selectedFilters);
+          setRequests(response.data.requests);
+          setTotalPages(response.data.totalPages);
         }
       } catch (error) {
-        setError(error);
+        console.error("Fetch requests by approver/requester error message: " + error.data.message)
+        setError(error.data.message)
       }
     };
 
     getRequests();
-  }, [selectedFilters, activeComponent]);
+  }, [selectedFilters, activeComponent, userId]);
 
   return { requests, setRequests, totalPages, error };
 };

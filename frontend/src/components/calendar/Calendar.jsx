@@ -22,6 +22,7 @@ export const Calendar = () => {
 
   const [loadingTournament, setLoadingTournament] = useState(true);
   const [tournament, setTournament] = useState(null);
+  const [teams, setTeams] = useState()
 
   const [events, setEvents] = useState([]);
   const [loadingMatches, setLoadingMatches] = useState(false);
@@ -37,8 +38,6 @@ export const Calendar = () => {
   const [individualMatchEvents, setIndividualMatchEvents] = useState([]);
 
   const [currentView, setCurrentView] = useState("dayGridMonth");
-
-  console.log("matchToEdit: ", matchToEdit);
 
 
   const handleDatesSet = (arg) => {
@@ -60,7 +59,6 @@ export const Calendar = () => {
 
 
   const handleEventClick = (clickInfo) => {
-    console.log("clickInfo: ", clickInfo)
     const { matches, match } = clickInfo.event.extendedProps;
   
     if (matches) {
@@ -79,16 +77,13 @@ export const Calendar = () => {
   
 
   const handleDateClick = (arg) => {
-    console.log("HandleDeleteClick arg: ", arg)
     if (loadingTournament) {
       alert("Tournament data is loading, please wait");
       return;
     }
 
     const now = new Date()
-    console.log("Now: ", now)
     const clickedDate = new Date(arg.date)
-    console.log("Clicked Date: ", clickedDate)
 
     if (clickedDate < now) {
       alert("You can create a match on day of the match or in the past.");
@@ -120,13 +115,16 @@ export const Calendar = () => {
 
   // Fetch tournament by organizer
   useEffect(() => {
+    console.log("I'm here #1")
     if (!decodedJwt) return;
 
     const fetchTournament = async () => {
       try {
         setLoadingTournament(true);
-        const response = await fetchOrganizersTournament({ organizerId: decodedJwt.userId });
-        setTournament(response);
+        const response = await fetchOrganizersTournament(decodedJwt.userId);
+        console.log("What's the response?: ", response)
+        setTournament(response.data);
+        setTeams(response.data.teams)
       } catch (error) {
         console.error("Error fetching tournament:", error);
       } finally {
@@ -137,7 +135,11 @@ export const Calendar = () => {
     fetchTournament();
   }, [decodedJwt]); // jer ce na prvi load stranice decodedJwt iz LocalStorage-a bit null
 
+
+  console.log("Kakav je teams: ", teams)
+
   // Fetch matches after tournament loads
+  // prikazivanje meceva u kalendaru *************************** !!!
   useEffect(() => {
     if (!tournament) return;
 
@@ -157,7 +159,6 @@ export const Calendar = () => {
             grouped[dateKey].push(match); // nadodajem mec odgovarajucoj grupi meceva
           });
 
-          console.log("Grouped: ", grouped)
 
           const mappedGroupedEvents = Object.entries(grouped).map(([date, matches]) => ({ // Object.entried pretvara grouped objekt u key(date):value(matches) parove
             title: "See Matches",
@@ -282,7 +283,6 @@ export const Calendar = () => {
             end: "today prev next"
           }}
           eventContent={(eventInfo) => { // override-am kako event izgleda u kalendaru, samo malo style-anja
-            console.log("eventInfo from eventContent: ", eventInfo)
             if (currentView === "dayGridMonth") {
               const matches = eventInfo.event.extendedProps.matches || [];
               return (

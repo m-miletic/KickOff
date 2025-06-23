@@ -2,16 +2,15 @@ package com.kick_off.kick_off.dto.novo;
 
 import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.dto.tournament.TournamentDto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
-@AllArgsConstructor
 public class UserDto {
+
+    // Bitno za Login ************************
 
     private Long id;
     private String username;

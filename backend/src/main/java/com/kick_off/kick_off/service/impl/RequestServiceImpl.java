@@ -2,8 +2,9 @@ package com.kick_off.kick_off.service.impl;
 
 import com.kick_off.kick_off.dto.novo.CreateEnrollTeamRequestDto;
 import com.kick_off.kick_off.dto.novo.CreateRoleChangeRequestDto;
+import com.kick_off.kick_off.dto.paginationFilters.PaginationFilters;
 import com.kick_off.kick_off.dto.request.*;
-import com.kick_off.kick_off.dto.tournament.TournamentCreationRequestDto;
+import com.kick_off.kick_off.exception.ForbiddenActionException;
 import com.kick_off.kick_off.model.*;
 import com.kick_off.kick_off.model.authentication.User;
 import com.kick_off.kick_off.model.Request;
@@ -12,6 +13,7 @@ import com.kick_off.kick_off.repository.TeamRepository;
 import com.kick_off.kick_off.repository.TournamentRepository;
 import com.kick_off.kick_off.repository.authentication.UserRepository;
 import com.kick_off.kick_off.service.RequestService;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -79,7 +81,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public void createEnrollTeamRequest(CreateEnrollTeamRequestDto request) {
+    public RequestDto createEnrollTeamRequest(CreateEnrollTeamRequestDto request) {
         Long requesterId = request.getTeamRepresentativeId();
         Long tournamentId = request.getTournamentId();
 
@@ -94,42 +96,34 @@ public class RequestServiceImpl implements RequestService {
         User approver = userRepository.findById(approverId)
                 .orElseThrow(() -> new EntityNotFoundException("User with id: " + approverId + " not found."));
 
-        List<Request> requests = requestRepository.findAllByRequester_IdAndRequestTypeAndStatusNot(requesterId, RequestType.TOURNAMENT_ENROLLMENT, Status.DECLINED);
+        Optional<Request> checkIfRequestExists = requestRepository.findByRequester_IdAndRequestType(requesterId, RequestType.TOURNAMENT_ENROLLMENT);
 
-        int count = requests.size();
 
-        // ako vec postoji zahtjev gdje npr. requesterId=2 zeli sudjelovat u turniru(approverId=5) nacit poruku da je vec posla zahtjev za pristupit turniru
-        Optional<Request> req = requestRepository.findByRequester_IdAndApprover_Id(requesterId, approverId);
+        Request newRequest = new Request();
 
-        if (req.isPresent()) {
-            if(req.get().getStatus().toString().equals("DECLINED")) {
-                System.out.println("In declined");
-                throw new RuntimeException("Enrollment request was declined");
-            } else if (req.get().getStatus().toString().equals("APPROVED")) {
-                System.out.println("In approved");
-                throw new RuntimeException("Already enrolled to tournament");
-            } else {
-                System.out.println("In already sent");
-                throw new IllegalStateException("Enrollment request already sent.");
+        if (checkIfRequestExists.isPresent()) {
+            if (checkIfRequestExists.get().getStatus().equals(Status.PENDING)) {
+                throw new ForbiddenActionException("Request already pending.");
+            } else if (checkIfRequestExists.get().getStatus().equals(Status.DECLINED)) {
+                throw new ForbiddenActionException("Tournament enrollment already declined.");
+            } else if (checkIfRequestExists.get().getStatus().equals(Status.APPROVED)) {
+                throw new ForbiddenActionException("Already enrolled in tournament.");
             }
-
-        } else if (count >= 2) {
-            throw new IllegalStateException("max number of tournament participation per team is 2");
         } else {
-            Request newRequest = new Request();
             newRequest.setRequester(requester);
             newRequest.setApprover(approver);
-            newRequest.setTimeCreated(LocalDateTime.now());
-            newRequest.setStatus(Status.PENDING);
-            newRequest.setRequestType(RequestType.TOURNAMENT_ENROLLMENT);
             newRequest.setMessage("I want to enroll my team to your tournament");
+            newRequest.setRequestType(RequestType.TOURNAMENT_ENROLLMENT);
+            newRequest.setStatus(Status.PENDING);
+
             requestRepository.save(newRequest);
         }
+
+        return modelMapper.map(newRequest, RequestDto.class);
     }
 
     @Override
-    public void createTeamRegistrationRequest(TeamRegistrationRequestDto request) {
-        Long requesterId = request.getTeamRepresentativeId();
+    public void createTeamRegistrationRequest(Long requesterId) {
         /*String desiredTeamName = request.getTeamName();*/
 
         User representative = userRepository.findById(requesterId)
@@ -145,9 +139,9 @@ public class RequestServiceImpl implements RequestService {
         boolean alreadyHasPendingReq = requestRepository.existsByRequester_IdAndRequestTypeAndStatus(requesterId, RequestType.TEAM_REGISTRATION, Status.PENDING);
 
         if(alreadyRepresentsTeam) {
-            throw new RuntimeException("You already represent a team.");
+            throw new ForbiddenActionException("You already represent a team.");
         } else if (alreadyHasPendingReq) {
-            throw new RuntimeException("Team registration request already pending.");
+            throw new ForbiddenActionException("Team registration request already pending.");
         }
         /*else if (teamNameExists) {
             throw new RuntimeException("Team with this name already exists");
@@ -165,8 +159,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public void createTournamentCreationRequest(TournamentCreationRequestDto request) {
-        Long requesterId = request.getTournamentOrganizerId();
+    public void createTournamentCreationRequest(Long requesterId) {
 
         User tournamentOrganizer = userRepository.findById(requesterId)
                 .orElseThrow(() -> new EntityNotFoundException("User(organizer) with id: " + requesterId + " not found."));
@@ -179,10 +172,10 @@ public class RequestServiceImpl implements RequestService {
         boolean alreadyHasPendingReq = requestRepository.existsByRequester_IdAndRequestTypeAndStatus(requesterId, RequestType.TOURNAMENT_CREATION, Status.PENDING);
 
         if(alreadyHostsATournament) {
-            throw new RuntimeException("You already host a tournament.");
+            throw new ForbiddenActionException("You already host a tournament.");
 
         } else if (alreadyHasPendingReq) {
-            throw new RuntimeException("Tournament creation request already pending.");
+            throw new ForbiddenActionException("Tournament creation request already pending.");
         } else {
             Request newRequest = new Request();
             newRequest.setRequester(tournamentOrganizer);
@@ -209,7 +202,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public RequestListDto getRequestsByApproverId(GetRequestsDto filters) {
+    public RequestListDto getRequestsByApproverId(Long id, PaginationFilters filters) {
         Page<Request> pageRequests;
 
         Sort.Direction direction = filters.getSortDirection().equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
@@ -223,7 +216,7 @@ public class RequestServiceImpl implements RequestService {
             case "Last year" -> LocalDateTime.now().minusYears(1);
             default -> null;
         };
-        Long approverId = filters.getUserId();
+        Long approverId = id;
 
         if(startDate != null) {
             pageRequests = (enumStatus != null) ?
@@ -256,8 +249,11 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public RequestListDto getRequestsByRequesterId(GetRequestsDto filters) {
+    public RequestListDto getRequestsByRequesterId(Long id, PaginationFilters filters) {
         Page<Request> pageRequests;
+
+        User requester = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Requester with id: " + id + " not found."));
 
         Sort.Direction direction = filters.getSortDirection().equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Status enumStatus = (!filters.getStatus().equals("ALL")) ? Status.valueOf(filters.getStatus()) : null;
@@ -270,7 +266,7 @@ public class RequestServiceImpl implements RequestService {
             case "Last year" -> LocalDateTime.now().minusYears(1);
             default -> null;
         };
-        Long requesterId = filters.getUserId();
+        Long requesterId = id;
 
         if(startDate != null) {
             pageRequests = (enumStatus != null) ?
@@ -292,6 +288,7 @@ public class RequestServiceImpl implements RequestService {
                 .stream()
                 .map(r ->
                         modelMapper.map(r, RequestDto.class)).toList();
+
 
         return RequestListDto.builder()
                 .requests(requestsDto)

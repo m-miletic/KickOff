@@ -1,7 +1,6 @@
-import js from "@eslint/js";
 import apiClient from "./apis/apiClient";
 
-export const fetchAllTeams = async ( filters ) => {
+export const fetchAllTeams = async (filters) => {
   const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.get("/teams", {
@@ -18,12 +17,33 @@ export const fetchAllTeams = async ( filters ) => {
   } 
 };
 
+export const getMyTeam = async (representativeId) => {
+  const jwt = localStorage.getItem('token')
+  try {
+    const response = await apiClient.get(`/teams/myTeam/${representativeId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`
+        }
+      }
+    );
+    console.log("SERVICE ***** Get My Team Data Response: ", response)
+    return response.data;
+  } catch (error) {
+    console.log("SERVICE ***** Error while trying to retrieve my team data: ", error)
+    throw error.response.data
+    
+  }
+}
+
 export const fetchTeamsByTournament = async (tournamentId, page) => {
   const jwt = localStorage.getItem('token')
   try {
     const response = await apiClient.get(`/teams/tournament/${tournamentId}`,
-      page,
       {
+        params: {
+          page: page
+        },
         headers: {
           Authorization: `Bearer ${jwt}`
         }
@@ -49,21 +69,30 @@ export const deleteTeamById = async ( id ) => {
   }
 }
 
-export const createTeam = async (teamObject) => {
+export const createTeam = async (formData) => {
+  console.log("FormData: ", formData)
+
   const jwt = localStorage.getItem('token');
   try {
-    const response = await apiClient.post(`/teams`, teamObject, {
-      headers: {
-        Authorization: `Bearer ${jwt}`
+    const response = await apiClient.post(`/teams`, 
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`
+        }
       }
-    });
-    return response;
+    );
+    console.log("Create Team Service Response: ", response)
+    return response.data;
   } catch (error) {
+    console.log("Error while creating team: ", error)
     throw error;
   }
 };
 
 export const getTeamByTeamRepresentative = async (userId) => {
+  console.log("I'm in getTeamByTeamRepresentative")
+  console.log("Check UserID - ", userId)
   const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.get(`/teams/user/${userId}`, 
@@ -73,9 +102,11 @@ export const getTeamByTeamRepresentative = async (userId) => {
         }
       }
     );
+    console.log("Service response: ", response.data)
     return response.data;
   } catch (error) {
-    throw error;
+    console.log("Service Error while trying to fetch team by representative error - ", error)
+    throw error.response.data
   }
 };
 
@@ -90,9 +121,25 @@ export const updateTeamImage = async (id, payload) => {
         }
       }
     );
-    return response.data;
+    return response.data
   } catch (error) {
-    throw error;
+    throw error
+  }
+};
+
+export const getTeam = async (teamId) => {
+  const jwt = localStorage.getItem('token');
+  try {
+    const response = await apiClient.get(`/teams/${teamId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`
+        }
+      }
+    );
+    return response.data
+  } catch (error) {
+    throw error
   }
 };
 

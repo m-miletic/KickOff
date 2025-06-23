@@ -1,89 +1,142 @@
 import React, { useState } from "react";
 import { createTeam } from "../../../../service/teamService";
+import FileUpload from "../../files/FileUpload";
+import { toast } from "react-toastify";
 
 const CreateTeamForm = ({ setIsModalOpen, selectedRequest, setRequests, decodedJwt  }) => {
 
-  const [teamObject, setTeamObject] = useState({
+  const [formData, setFormData] = useState({
     teamName: '',
     coach: '',
     requestId: selectedRequest.id,
-    representativeId: decodedJwt.userId
+    representativeId: decodedJwt.userId,
+    photoUrl: ''
   });
 
   const [errorMessage, setErrorMessage] = useState('');
 
 
   const handleInputChange = (e) => {
-    setTeamObject((prev) => ({
+    setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value
     }))
   };
 
-  const handleCreateButtonClick = async () => {
-    try {
-      const response = await createTeam(teamObject);
-      console.log("resss- ", response);
-      if (response.data.success === true) {
-        setRequests((prevRequests) =>
-          prevRequests.map((request) =>
-            request.id === selectedRequest.id ? { ...request, requestFulfilled: true } : request
-          )
-        )
-      } 
-      setIsModalOpen(false);
-      
-    } catch (error) {
-      setErrorMessage(error.response.data.message);
-    }
-  };
+  const [previewTeamImage, setPreviewTeamImage] = useState(false) 
+  const [selectedTeamImage, setSelectedTeamImage] = useState("")
 
-  return(
+  const handleCreateTeam = async (e) => {
+    e.preventDefault()
+
+    try {
+      console.log("Entered try block")
+      let imageUrl = "";
+
+      if (selectedTeamImage) {
+        const data = new FormData();
+        data.append("file", selectedTeamImage);
+        data.append("upload_preset", "app_images");
+        data.append("cloud_name", "dcjkglnuw");
+
+        const res = await fetch("https://api.cloudinary.com/v1_1/dcjkglnuw/image/upload", {
+          method: "POST",
+          body: data,
+        });
+
+        const uploadResult = await res.json();
+        imageUrl = uploadResult.url;
+      }
+
+      console.log("ImageUrl: ", imageUrl)
+
+      const fullFormData = {
+        ...formData,
+        photoUrl: imageUrl
+      }
+
+
+      const response = await createTeam(fullFormData)
+
+      if (response.success) {
+        setIsModalOpen(false)
+        toast.success("Team Created!",
+          {
+            autoClose: 2500
+          }
+        )
+        setPreviewTeamImage('')
+        setSelectedTeamImage('')
+      } else {
+        console.error("Failed to create team");
+      }
+
+/*       setTeam((prevTeam) => ({
+        ...prevTeam,
+        photoUrl: imageUrl,
+      })); */
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return (
     <div className='text-black w-[400px]'>
 
-      <div className="flex items-center p-4 space-x-1">
-        <div className="w-24">
-          <span className="text-sm">Team Name</span>
+      <form onSubmit={handleCreateTeam}>
+  
+        <div className="flex items-center p-4 space-x-1">
+          <div className="w-24">
+            <span className="text-sm">Team Name</span>
+          </div>
+          <div>
+            <input
+              type="text"
+              name="teamName"
+              className="text-xs w-64 h-8 px-2 py-1 border border-gray-300 rounded"
+              onChange={handleInputChange}  
+              placeholder="enter team name"
+            />
+          </div>
         </div>
-        <div>
-          <input
-            type="text"
-            name="teamName"
-            className="text-xs w-64 h-8 px-2 py-1 border border-gray-300 rounded"
-            onChange={handleInputChange}  
-            placeholder="enter team name"
-          />
-        </div>
-      </div>
 
-      <div className="flex items-center p-4 space-x-1">
-        <div className="w-24"> 
-          <span className="text-sm">Coach</span>
+        <div className="flex items-center p-4 space-x-1">
+          <div className="w-24">
+            <span className="text-sm">Team Image</span>
+          </div>
+          <div className='pl-3'>
+            <FileUpload
+              buttonStyle={"px-3 py-1 bg-gray-500 hover:bg-gray-600 text-white text-sm rounded transition"}
+              previewUrl={previewTeamImage}
+              setPreviewUrl={setPreviewTeamImage}
+              setSelectedFile={setSelectedTeamImage}
+              label='Choose Team Image'
+            />
+          </div>
         </div>
-        <div>
-          <input
-            type="text"
-            name="coach"
-            className="text-xs w-64 h-8 px-2 py-1 border border-gray-300 rounded"
-            onChange={handleInputChange}  
-            placeholder="enter coach"
-          />
+
+        <div className="flex justify-start ml-7 mt-2 pt-4 pb-2">
+          <button
+            type="submit"
+            className="bg-blue-700 hover:bg-blue-800 transition px-6 py-2 rounded-md text-sm text-white shadow-sm"
+          >
+            Create
+          </button>
         </div>
-      </div>
-      
-      {errorMessage ? (
-        <div className="p-3">
-          <span className="text-sm">{errorMessage}</span>
-        </div>
-      ) : (
-        <div className="p-3">
-          <button onClick={() => handleCreateButtonClick()} className="bg-blue-700 rounded-lg p-1 text-sm text-white">Create</button>
-        </div>
+
+      </form>
+
+
+  
+      {errorMessage && (
+        <div className="text-red-600 text-sm px-4 pt-2">{errorMessage}</div>
       )}
+  
 
-
-
+  
     </div>
   );
+  
 }
 export default CreateTeamForm;

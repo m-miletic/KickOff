@@ -1,6 +1,3 @@
-// FileUpload.js
-import { useState } from "react";
-
 const FileUpload = ({ label = "Add Image", buttonStyle, previewUrl, setPreviewUrl, setSelectedFile }) => {
   const handleImageSelection = (e) => {
     const file = e.target.files[0];

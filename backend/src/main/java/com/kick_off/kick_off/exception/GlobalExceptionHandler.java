@@ -5,11 +5,10 @@ import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -75,6 +74,38 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
+
+    // dole san maka error vidit ocu li tako svugdi maknit ocu samo svoje poruke
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleBadCredentials(BadCredentialsException ex) {
+
+        ApiResponse<Map<String, String>> response = ApiResponse.<Map<String, String>>builder()
+                .message("Invalid username or password")
+                .data(null)
+                .success(false)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(FieldValidationException.class)
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleFieldValidationException(FieldValidationException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put(ex.getField(), ex.getMessage());
+
+        ApiResponse<Map<String, String>> response = ApiResponse.<Map<String, String>>builder()
+                .success(false)
+                .message("Validation failed")
+                .data(errors)
+                .build();
+
+        return ResponseEntity.badRequest().body(response);
+    }
+
+
+
+
 
 
 }

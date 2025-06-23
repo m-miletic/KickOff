@@ -1,9 +1,9 @@
 package com.kick_off.kick_off.service.impl;
 
+import com.kick_off.kick_off.dto.paginationFilters.UserPaginationFilter;
 import com.kick_off.kick_off.dto.request.RoleChangeRequestDto;
 import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.dto.novo.UserDto;
-import com.kick_off.kick_off.dto.novo.UserFilterParamsDto;
 import com.kick_off.kick_off.dto.novo.UserListDto;
 import com.kick_off.kick_off.dto.tournament.TournamentDto;
 import com.kick_off.kick_off.model.Request;
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserListDto getUsers(UserFilterParamsDto filter) {
+    public UserListDto getUsers(UserPaginationFilter filter) {
         Page<User> pageUsers;
 
         Sort.Direction sortDirection = filter.getSortDirection().equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
@@ -95,17 +95,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto getUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User with id: " + id + " not found."));
+
+        UserDto userDto = modelMapper.map(user, UserDto.class);
+        return userDto;
+    }
+
+    @Override
     @Transactional
-    public void deleteUser(Long id) {
+    public UserDto deleteUser(Long id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User doesn't exists."));
+
         if (teamRepository.existsByRepresentative(userRepository.findById(id).orElseThrow())) {
             throw new IllegalStateException("User is a team representative.Please provide with a new team representative or deactivate the team first.");
         } else if (tournamentRepository.existsByOrganizer(userRepository.findById(id).orElseThrow())) {
             throw new IllegalStateException("User is a tournament organizer.Please provide with a new tournament host or deactivate the tournament first.");
-        } else {
-            requestRepository.deleteByRequester_Id(id); // s brisanjem user-a brisa odma i sve njegive requestove - da/ne ?
-            userRepository.deleteById(id);
         }
 
+        requestRepository.deleteByRequester_Id(id); // s brisanjem user-a brisa odma i sve njegive requestove - da/ne ?
+
+        UserDto userDto = modelMapper.map(user, UserDto.class);
+
+        userRepository.deleteById(id);
+
+        return userDto;
     }
 
     @Transactional

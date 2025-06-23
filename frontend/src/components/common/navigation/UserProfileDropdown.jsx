@@ -4,8 +4,8 @@ import { RxCaretUp } from "react-icons/rx";
 import { CiLogout } from "react-icons/ci";
 import { ActiveComponentContext } from '../../../context/ActiveComponentContext';
 import { useNavigate } from 'react-router-dom';
-import UserService from '../../../service/AuthService';
 import { LoggedUserContext } from '../../../context/LoggedUserContext';
+import { logout } from '../../../service/authenticationService';
 
 const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
   const [isUserProfileDropdownOpen, setIsUserProfileDropdownOpen] = useState(false);
@@ -13,7 +13,6 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
   const { setJwt, setDecodedJwt, decodedJwt } = useContext(LoggedUserContext)
   const nav = useNavigate();
   const firstLetter = name.charAt(0).toUpperCase();
-
 
   const handleSendRequestClick = () => {
     handleIsRequestModalOpen();
@@ -29,16 +28,18 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
     handleIsUserProfileDropdownOpen();
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    UserService.logout(localStorage.getItem('refreshToken'));
-    localStorage.removeItem('refreshToken');
-
-    // prilikom redirect-a na /home jos vata stari jwt pa bi display-a umisto logina user dropdown - zato ga setiram na null
-    setJwt(null);
-    setDecodedJwt(null);
-
-    nav("/home");
+  const handleLogout = async () => {
+    try {
+      let refreshToken = localStorage.getItem('refreshToken')
+      await logout(refreshToken)
+      localStorage.removeItem('token')
+      localStorage.removeItem('refreshToken')
+      setJwt(null)            // hvata iz localstrorage-a stare podatke pa setirma na null da immam navbar UI za gosta
+      setDecodedJwt(null)   // hvata iz localstrorage-a stare podatke pa setirma na null da immam navbar UI za gosta
+      nav("/home")
+    } catch (error) {
+      console.error("Error while trying to log out: ", error.message)
+    }
   };
 
   return (
@@ -70,23 +71,11 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
             <button>Send Request</button>
           </div>
 
-          {decodedJwt.role === "TOURNAMENT_ORGANIZER" ? (
-            <div></div>
-          ) : (
-            <div
-              className='cursor-pointer hover:bg-[#005571] rounded-md px-2 py-1'
-              onClick={() => handleSelectItem("recievedRequests")}
-              >
-              <button>Recieved Requests</button>
-            </div>
-          )}
-
-
           <div
             className='cursor-pointer hover:bg-[#005571] rounded-md px-2 py-1'
             onClick={() => handleSelectItem("sentRequests")}
             >
-            <button>Sent Requests</button>
+            <button>Answered Requests</button>
           </div>
 
           <div className='flex items-center cursor-pointer hover:bg-[#005571] rounded-md px-2 py-1'>
