@@ -24,8 +24,7 @@ public class RequestController {
     @GetMapping("/approver/{userId}")
     public ResponseEntity<ApiResponse<RequestListDto>> fetchRequestsByApproverId(@PathVariable Long userId, @ModelAttribute PaginationFilters filters) {
 
-        System.out.println("Am I at backend");
-        System.out.println("If yes: " + filters.toString());
+        System.out.println("Pagination Filters: " + filters.toString());
 
         RequestListDto requests = requestService.getRequestsByApproverId(userId, filters);
         ApiResponse<RequestListDto> response = ApiResponse.<RequestListDto>builder()
@@ -49,27 +48,6 @@ public class RequestController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping("/role-change")
-    public ResponseEntity<ApiResponse<Void>> createRoleChangeRequest(@RequestBody CreateRoleChangeRequestDto request) {
-        try {
-            requestService.createRoleChangeRequest(request);
-            ApiResponse<Void> response = ApiResponse.<Void>builder()
-                    .message("Successfully created request for changing a role.")
-                    .data(null)
-                    .success(true)
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e) {
-            ApiResponse<Void> errorResponse = ApiResponse.<Void>builder()
-                    .message(e.getMessage())
-                    .data(null)
-                    .success(false)
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        }
-    }
 
     @PostMapping("/enroll-team")
     public ResponseEntity<ApiResponse<RequestDto>> createEnrollTeamRequest(@RequestBody CreateEnrollTeamRequestDto request) {
@@ -110,25 +88,15 @@ public class RequestController {
 
     @PatchMapping
     public ResponseEntity<ApiResponse<RequestDto>> updateRequest(@RequestBody UpdateRequestStatusDto request) {
-        try {
-            RequestDto requestDto = requestService.updateRequest(request);
-            System.out.println("RequestDto: " + requestDto);
-            ApiResponse<RequestDto> response = ApiResponse.<RequestDto>builder()
-                    .message("Request status updated.")
-                    .data(requestDto)
-                    .success(true)
-                    .build();
+        RequestDto requestDto = requestService.updateRequest(request);
+        System.out.println("RequestDto: " + requestDto);
+        ApiResponse<RequestDto> response = ApiResponse.<RequestDto>builder()
+                .message("Request status updated.")
+                .data(requestDto)
+                .success(true)
+                .build();
 
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e) {
-            ApiResponse<RequestDto> errorResponse = ApiResponse.<RequestDto>builder()
-                    .message(e.getMessage())
-                    .data(null)
-                    .success(false)
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.OK).body(errorResponse);
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }

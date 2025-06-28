@@ -18,7 +18,7 @@ public class Tournament {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "tournament_name")
+    @Column(name = "tournament_name", unique = true)
     private String tournamentName;
     @Column(name = "start_date")
     private LocalDate startDate;
@@ -26,6 +26,8 @@ public class Tournament {
     private LocalDate endDate;
     @Column(name = "details")
     private String details;
+    @Column(name = "max_teams")
+    private int maxTeams;
 
     @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Team> teams;

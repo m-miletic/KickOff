@@ -15,3 +15,21 @@ export const fetchStadiums = async () => {
     throw error.response.data
   }
 }
+
+export const addStadium = async () => {
+  const jwt = localStorage.getItem('token')
+  try {
+    const response = await apiClient.post("/stadiums", 
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`
+        }
+      }
+    )
+    console.log("Add Stadium Response: ", response)
+    return response.data
+  } catch (error) {
+    console.log("Error While trying to create stadium: ", error)
+    throw error.response.data
+  }
+}

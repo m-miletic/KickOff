@@ -29,4 +29,12 @@ public class StadiumServiceImpl implements StadiumService {
 
         return stadiumDtos;
     }
+
+    @Override
+    public StadiumDto createStadium(StadiumDto stadiumDto) {
+
+        Stadium stadium = modelMapper.map(stadiumDto, Stadium.class);
+        Stadium savedStadium = stadiumRepository.save(stadium);
+        return modelMapper.map(savedStadium, StadiumDto.class);
+    }
 }

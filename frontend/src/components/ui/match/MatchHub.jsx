@@ -21,7 +21,7 @@ const MatchHub = ({ selectedTournament }) => {
 
   return (
     <div className="flex justify-center items-center">
-      <div className="bg-[#001E30] w-[50%] rounded-lg py-4 pb-12 px-8 space-y-4">
+      <div className="bg-[#001E30] w-[43%] ml-64 rounded-lg py-4 pb-12 px-8 space-y-4">
         <div className="text-center text-2xl mr-6">Match Hub</div>
 
         {matches.length === 0 && (
@@ -31,7 +31,7 @@ const MatchHub = ({ selectedTournament }) => {
         {matches.map(match => (
           <div key={match.id}>
             <div className="text-start px-2">
-              <span className="ml-2">{match.matchDate.substring(11, 16)}</span>
+              <span>{match.matchDate.substring(0, 10)} {match.matchDate.substring(11, 16)}</span>
             </div>
             <div className="flex justify-center items-center gap-x-12 py-8 bg-[#2b536c2c] rounded-lg">
 

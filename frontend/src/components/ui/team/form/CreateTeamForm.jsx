@@ -70,14 +70,8 @@ const CreateTeamForm = ({ setIsModalOpen, selectedRequest, setRequests, decodedJ
       } else {
         console.error("Failed to create team");
       }
-
-/*       setTeam((prevTeam) => ({
-        ...prevTeam,
-        photoUrl: imageUrl,
-      })); */
-
     } catch (error) {
-      console.error(error);
+      setErrorMessage(error.data.message)
     }
   }
 
@@ -98,6 +92,12 @@ const CreateTeamForm = ({ setIsModalOpen, selectedRequest, setRequests, decodedJ
               onChange={handleInputChange}  
               placeholder="enter team name"
             />
+          </div>
+        </div>
+        <div className='flex'>
+          <div className='w-32'></div>
+          <div className="text-red-500 text-xs mt-1">
+            {errorMessage} 
           </div>
         </div>
 
@@ -129,9 +129,9 @@ const CreateTeamForm = ({ setIsModalOpen, selectedRequest, setRequests, decodedJ
 
 
   
-      {errorMessage && (
+{/*       {errorMessage && (
         <div className="text-red-600 text-sm px-4 pt-2">{errorMessage}</div>
-      )}
+      )} */}
   
 
   

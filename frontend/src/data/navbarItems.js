@@ -11,5 +11,5 @@ export const TEAM_REPRESENTATIVE_NAVBAR_ITEMS = [
 
 export const TOURNAMENT_ORGANIZER_NAVBAR_ITEMS = [
   { key: "matchScheduler", label: "Match Scheduler" },
-  { key: "tournamentOverview", label: "Tournament Overview"}
+  { key: "tournamentOverview", label: "Tournament Overview"},
 ]

@@ -14,5 +14,5 @@ public class PaginationFilters {
     private String sortField = "timeCreated";
     private String sortDirection = "DESC";
     private int pageNumber = 1;
-    private int pageSize = 5;
+    private int pageSize = 4;
 }

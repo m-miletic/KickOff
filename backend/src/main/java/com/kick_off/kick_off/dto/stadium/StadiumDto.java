@@ -12,4 +12,5 @@ public class StadiumDto {
     private Long id;
     private String stadiumName;
     private String location;
+    private String photoUrl;
 }

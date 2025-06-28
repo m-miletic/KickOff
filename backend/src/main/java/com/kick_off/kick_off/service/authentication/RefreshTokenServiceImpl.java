@@ -32,9 +32,13 @@ public class RefreshTokenServiceImpl {
     }
 
     public RefreshToken createRefreshToken(Long userId) {
-        RefreshToken refreshToken = new RefreshToken();
+
         User user = userRepository.findById(userId)
                         .orElseThrow(() -> new EntityNotFoundException("User with id: " + userId + " not found."));
+
+        refreshTokenRepository.deleteByUser(user); // ako dode do prekida nekakvog tipa - ako izade iz browsera bez da se log out-a moram izbisat staru refresj-token jer mora bit unique
+
+        RefreshToken refreshToken = new RefreshToken();
 
         refreshToken.setUser(user);
         refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenExpirationMs)); // Instant je bolji od LocalDateTime jer racuna vremenske zone

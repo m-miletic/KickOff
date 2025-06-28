@@ -73,7 +73,7 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
 
           <div
             className='cursor-pointer hover:bg-[#005571] rounded-md px-2 py-1'
-            onClick={() => handleSelectItem("sentRequests")}
+            onClick={() => handleSelectItem("answeredRequests")}
             >
             <button>Answered Requests</button>
           </div>

@@ -6,9 +6,7 @@ import com.kick_off.kick_off.response.ApiResponse;
 import com.kick_off.kick_off.service.StadiumService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,6 +26,18 @@ public class StadiumController {
         ApiResponse<List<StadiumDto>> response = ApiResponse.<List<StadiumDto>>builder()
                 .message("Successfully retrieved all stadiums.")
                 .data(stadiums)
+                .success(true)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping
+    ResponseEntity<ApiResponse<StadiumDto>> createStadium(@RequestBody StadiumDto stadium) {
+        StadiumDto stadiumDto = stadiumService.createStadium(stadium);
+        ApiResponse<StadiumDto> response = ApiResponse.<StadiumDto>builder()
+                .message("Successfully created stadium!")
+                .data(stadiumDto)
                 .success(true)
                 .build();
 

@@ -6,6 +6,7 @@ import RequestList from "../components/ui/request/RequestList";
 import UpcomingTournaments from "../components/ui/tournaments/UpcomingTournaments";
 import MyTeam from "../components/ui/team/MyTeam";
 import Footer from "../components/common/footer/Footer";
+import WeatherWidget from "../components/weather/WeatherWidget";
 
 const TeamRepresentativePage = () => {
   const { activeComponent } = useContext(ActiveComponentContext);
@@ -16,9 +17,10 @@ const TeamRepresentativePage = () => {
       <Navbar />
 
       <main className="flex-grow">
+        
 
         {(activeComponent === "sentRequests" || activeComponent === "recievedRequests") && 
-          <div className="flex justify-center text-white mt-20">
+          <div className="flex justify-center text-white pt-48">
             <RequestProvider>
               <RequestList />
             </RequestProvider>

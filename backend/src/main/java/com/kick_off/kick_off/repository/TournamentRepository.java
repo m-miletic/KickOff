@@ -22,7 +22,7 @@ public interface TournamentRepository extends JpaRepository<Tournament, Long> {
 
     Page<Tournament> findAll(Pageable pageable);
 
-    Page<Tournament> findByStartDateAfter(LocalDate date, Pageable pageable);
+    Page<Tournament> findByStartDateGreaterThanEqual(LocalDate date, Pageable pageable);
 
     List<Tournament> findByStartDateAfter(LocalDate date);
 

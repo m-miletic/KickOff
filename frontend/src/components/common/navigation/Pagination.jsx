@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 
-const Pagination = ({ totalPages, selectedFilters, handleSelectFilter }) => {
+const Pagination = ({ 
+  totalPages,
+  selectedFilters,
+  handleSelectFilter,
+  navButtonStyle = 'text-white',
+  totalPagesStyle = 'text-white'
+  }) => {
+
   const [currentPage, setCurrentPage] = useState(1);
   const [previousPage, setPreviousPage] = useState();
   const [nextPage, setNextPage] = useState();
@@ -66,12 +73,10 @@ const Pagination = ({ totalPages, selectedFilters, handleSelectFilter }) => {
 
   return(
     <nav>
-      <ul className="inline-flex -space-x-px text-2xs sm:text-xs xl:text-sm mt-2">
+      <ul className="inline-flex text-2xs sm:text-xs xl:text-sm mt-2">
         <li>
-          <button disabled={currentPage === 1} onClick={() => handleNextPrev('prev')} className={`flex items-center justify-center w-12 xl:w-14 h-5 sm:h-6 xl:h-8 px-3 ms-0 leading-tight text-white bg-[#001E28] border border-e-0 border-gray-300 rounded-s-lg 
-            ${currentPage === 1 ? 'opacity-50 cursor-default' : 'hover:bg-gray-700 hover:text-white'}
-            ${totalPages === 0 && 'hidden'}
-            `}>
+          <button disabled={currentPage === 1} onClick={() => handleNextPrev('prev')} className={`${navButtonStyle} flex items-center justify-center hover:text-base 
+          ${totalPages === 0 && 'hidden'}`}>
             Prev
           </button>
         </li>
@@ -79,7 +84,8 @@ const Pagination = ({ totalPages, selectedFilters, handleSelectFilter }) => {
         {navigationNumbers.map((num, index) => {
           return(
             <li key={index}>
-              <button onClick={() => { handleSelectFilter('pageNumber', num); handleClickPageNumber(num); }} className={`flex items-center justify-center w-10 h-5 sm:h-6 xl:h-8 leading-tight text-white bg-[#001E28] border border-gray-300 hover:bg-gray-700 hover:text-white ${currentPage === num && 'bg-gray-700'}`}>
+              <button onClick={() => { handleSelectFilter('pageNumber', num); handleClickPageNumber(num); }} className={`${navButtonStyle} flex items-center justify-center bg-transparent
+                hover:text-lg  ${currentPage === num && ''}`}>
                 {num}
               </button>
             </li>
@@ -87,16 +93,14 @@ const Pagination = ({ totalPages, selectedFilters, handleSelectFilter }) => {
         })}
 
         <li>
-          <button disabled={currentPage === totalPages} onClick={() => handleNextPrev('next')} className={`flex items-center justify-center w-12 xl:w-14 h-5 sm:h-6 xl:h-8 px-4 leading-tight text-white bg-[#001E28] border border-gray-300 rounded-e-lg
-           ${currentPage === totalPages ? 'opacity-50 cursor-default' : 'hover:bg-gray-700 hover:text-white'}
-           ${totalPages === 0 && 'hidden'}
-          `}>
+          <button disabled={currentPage === totalPages} onClick={() => handleNextPrev('next')} className={`${navButtonStyle} flex items-center justify-center hover:text-base 
+           ${totalPages === 0 && 'hidden'}`}>
             Next
           </button>
         </li>
       </ul>
-      <div className="mt-2 text-black">
-        {totalPages > 0 && <span>page {currentPage}/{totalPages}</span>}
+      <div className={`text-xs ml-1 mt-2`}>
+        {totalPages > 0 && <span className={`${totalPagesStyle}`}>{currentPage}/{totalPages}</span>}
       </div>
     </nav>
   );

@@ -40,7 +40,11 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     boolean existsByRequester_IdAndRequestTypeAndStatus(Long requesterId, RequestType requestType, Status status);
 
-    Optional<Request> findByRequester_IdAndRequestType(Long requesterId, RequestType requestType);
+    boolean existsByRequester_IdAndRequestTypeAndStatusAndRequestFulfilledFalse(Long requesterId, RequestType requestType, Status status);
+
+    Optional<Request> findByRequester_IdAndRequestTypeAndTournament_Id(Long requesterId, RequestType requestType, Long tournamentId);
+
+    void deleteAllByTournament_Id(Long tournamentId);
 
 
 }

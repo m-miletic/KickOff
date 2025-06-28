@@ -1,6 +1,5 @@
 package com.kick_off.kick_off.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.kick_off.kick_off.model.authentication.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -40,5 +39,10 @@ public class Request {
     @ManyToOne
     @JoinColumn(name = "approver_id")
     private User approver;
+
+    // ubacit vezu na turnir
+    @ManyToOne
+    @JoinColumn(name = "tournament_id")
+    private Tournament tournament;
 
 }

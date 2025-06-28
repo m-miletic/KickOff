@@ -8,4 +8,6 @@ import java.util.List;
 public interface StadiumService {
 
     List<StadiumDto> fetchAllStadiums();
+
+    StadiumDto createStadium(StadiumDto stadiumDto);
 }

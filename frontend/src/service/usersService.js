@@ -19,13 +19,10 @@ export const fetchUsers = async (filter) => {
   }
 };
 
-export const deleteUser = async ( filter, id ) => {
+export const deleteUser = async ( id ) => {
   const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.delete(`/users/${id}`, {
-      params: {
-        ...filter
-      },
       headers: {
         Authorization: `Bearer ${jwt}`
       }
@@ -34,7 +31,7 @@ export const deleteUser = async ( filter, id ) => {
     return response.data;
   } catch (error) {
     console.log("Delete User Service Error: ", error);
-    return error.response.data;
+    throw error.response.data;
   }
 };
 

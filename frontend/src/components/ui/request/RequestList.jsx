@@ -16,7 +16,7 @@ const RequestList = () => {
   const { decodedJwt } = useContext(LoggedUserContext)
 
   const [selectedFilters, setSelectedFilters] = useState({
-    status: 'PENDING',
+    status: 'ALL',
     timeCreated: 'Last 7 days',
     sortDirection: 'DESC',
     pageNumber: 1,

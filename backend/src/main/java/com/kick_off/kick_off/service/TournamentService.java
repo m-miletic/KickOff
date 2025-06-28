@@ -28,4 +28,6 @@ public interface TournamentService {
     TournamentDto getTournamentByOrganizer(Long id);
 
     TournamentDto updateTournament(Long id, TournamentDto updatedTournament);
+
+    TournamentDto deleteTournament(Long id);
 }

@@ -14,5 +14,5 @@ public class UserPaginationFilter {
     private String sortDirection;
     private String sortField;
     private int pageNumber;
-    private int pageSize = 5;
+    private int pageSize = 4;
 }

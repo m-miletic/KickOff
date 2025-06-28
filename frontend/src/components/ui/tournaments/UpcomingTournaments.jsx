@@ -7,6 +7,7 @@ import { LoggedUserContext } from '../../../context/LoggedUserContext';
 import Pagination from '../../common/navigation/Pagination';
 import DeleteTournamentModal from './modal/DeleteTournamentModal';
 import { RiDeleteBin6Line } from "react-icons/ri";
+import WeatherWidget from '../../weather/WeatherWidget';
 
 const UpcomingTournaments = () => {
 
@@ -44,20 +45,25 @@ const UpcomingTournaments = () => {
   console.log("tournaments: ", tournaments)
 
   return (  
-    <div className="w-[60%] mt-20">
+    <div className="w-[80%] mt-20">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {tournaments?.tournamentsList?.length > 0 ? (
               tournaments.tournamentsList.map((tournament) => (
                 <PreviewTournamentCard key={tournament.id} tournament={tournament} />
               ))
             ) : (
-              <div>Nema nista</div>
+              <div>No Upcoming Tournaments</div>
             )}
           </div>
 
-        <div className='text-center mt-5'>
+        <div className='text-center mt-36'>
           <Pagination totalPages={tournaments.totalPages} selectedFilters={filters} handleSelectFilter={handleSelectFilter} />
         </div>
+
+        <div className='mt-[80px]'>
+          <WeatherWidget city="Split" style="p-4 m-8 bg-sky-100 rounded-lg shadow w-full text-center mt-[40px]" />
+        </div>
+
       </div>
 
 

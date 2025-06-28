@@ -10,8 +10,6 @@ import java.util.List;
 public interface RequestService {
 /*    RequestDto createRequest(CreateRequestDto request);*/
 
-    void createRoleChangeRequest(CreateRoleChangeRequestDto request);
-
     RequestDto createEnrollTeamRequest(CreateEnrollTeamRequestDto request);
 
     void createTeamRegistrationRequest(Long requesterId);

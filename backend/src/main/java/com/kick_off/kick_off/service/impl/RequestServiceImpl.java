@@ -40,45 +40,6 @@ public class RequestServiceImpl implements RequestService {
         this.tournamentRepository = tournamentRepository;
     }
 
-    @Override
-    public void createRoleChangeRequest(CreateRoleChangeRequestDto request) {
-        // requester == team_representative
-        Long requesterId = request.getRequesterId();
-        Role desiredRole = request.getDesiredRole();
-
-        User requester = userRepository.findById(requesterId)
-                .orElseThrow(() -> new EntityNotFoundException("Requester with id: " + requesterId + " not found."));
-
-        User approver = userRepository.findByRole(Role.ADMIN)
-                .orElseThrow(() -> new EntityNotFoundException("User with role " + Role.ADMIN + " not found"));
-
-        boolean representsTeam = teamRepository.existsByRepresentative(requester);
-        if (representsTeam) {
-            throw new RuntimeException("Can't change a role while still representing a team.");
-        }
-
-        boolean hostsTournament = tournamentRepository.existsByOrganizer(requester);
-        if (hostsTournament) {
-            throw new RuntimeException("Can't change a role while hosting a tournament");
-        }
-
-        boolean alreadyHasPendingReq = requestRepository.existsByRequester_IdAndRequestTypeAndStatus(requesterId, RequestType.ROLE_CHANGE, Status.PENDING);
-        if (alreadyHasPendingReq) {
-            throw new RuntimeException("Role change request already pending");
-        }
-
-        Request newRequest = new Request();
-        newRequest.setDesiredRole(desiredRole);
-        newRequest.setRequestType(RequestType.ROLE_CHANGE);
-        newRequest.setRequester(requester);
-        newRequest.setApprover(approver);
-        newRequest.setMessage("I would like to change my role.");
-        newRequest.setRequestFulfilled(false);
-        newRequest.setTimeCreated(LocalDateTime.now());
-        newRequest.setStatus(Status.PENDING);
-
-        requestRepository.save(newRequest);
-    }
 
     @Override
     public RequestDto createEnrollTeamRequest(CreateEnrollTeamRequestDto request) {
@@ -96,28 +57,34 @@ public class RequestServiceImpl implements RequestService {
         User approver = userRepository.findById(approverId)
                 .orElseThrow(() -> new EntityNotFoundException("User with id: " + approverId + " not found."));
 
-        Optional<Request> checkIfRequestExists = requestRepository.findByRequester_IdAndRequestType(requesterId, RequestType.TOURNAMENT_ENROLLMENT);
+        Team team = teamRepository.findTeamByRepresentative_Id(requesterId)
+                .orElseThrow(() -> new EntityNotFoundException("Team with representative id: " + requesterId + " not found."));
+
+        Optional<Request> requestExists = requestRepository.findByRequester_IdAndRequestTypeAndTournament_Id(requesterId, RequestType.TOURNAMENT_ENROLLMENT, tournamentId);
+
+        if (requestExists.isPresent()) {
+            if ( ((requestExists.get().getStatus().equals(Status.APPROVED)) && (requestExists.get().getRequestFulfilled() == true) && (team.getTournament() == null) )  ) {
+                throw new ForbiddenActionException("Team disqualified.Can't enroll again.");
+            } else if ((requestExists.get().getStatus().equals(Status.APPROVED)) && (requestExists.get().getRequestFulfilled() == true) && (requestExists.get().getTournament() != null)) {
+                throw new ForbiddenActionException("You already participate in tournament.");
+            } else if (requestExists.get().getStatus().equals(Status.PENDING) && (requestExists.get().getRequestFulfilled() == false)) {
+                throw new ForbiddenActionException("Request pending.");
+            } else if (requestExists.get().getStatus().equals(Status.DECLINED) && (requestExists.get().getRequestFulfilled() == true)) {
+                throw new ForbiddenActionException("Your request was declined.");
+            }
+        }
+
 
 
         Request newRequest = new Request();
+        newRequest.setRequester(requester);
+        newRequest.setApprover(approver);
+        newRequest.setMessage("I want to enroll my team to your tournament");
+        newRequest.setRequestType(RequestType.TOURNAMENT_ENROLLMENT);
+        newRequest.setStatus(Status.PENDING);
+        newRequest.setTournament(tournament);
 
-        if (checkIfRequestExists.isPresent()) {
-            if (checkIfRequestExists.get().getStatus().equals(Status.PENDING)) {
-                throw new ForbiddenActionException("Request already pending.");
-            } else if (checkIfRequestExists.get().getStatus().equals(Status.DECLINED)) {
-                throw new ForbiddenActionException("Tournament enrollment already declined.");
-            } else if (checkIfRequestExists.get().getStatus().equals(Status.APPROVED)) {
-                throw new ForbiddenActionException("Already enrolled in tournament.");
-            }
-        } else {
-            newRequest.setRequester(requester);
-            newRequest.setApprover(approver);
-            newRequest.setMessage("I want to enroll my team to your tournament");
-            newRequest.setRequestType(RequestType.TOURNAMENT_ENROLLMENT);
-            newRequest.setStatus(Status.PENDING);
-
-            requestRepository.save(newRequest);
-        }
+        requestRepository.save(newRequest);
 
         return modelMapper.map(newRequest, RequestDto.class);
     }
@@ -138,14 +105,15 @@ public class RequestServiceImpl implements RequestService {
 
         boolean alreadyHasPendingReq = requestRepository.existsByRequester_IdAndRequestTypeAndStatus(requesterId, RequestType.TEAM_REGISTRATION, Status.PENDING);
 
+        boolean alreadyHasApprovedReq = requestRepository.existsByRequester_IdAndRequestTypeAndStatusAndRequestFulfilledFalse(requesterId, RequestType.TEAM_REGISTRATION, Status.APPROVED);
+
         if(alreadyRepresentsTeam) {
             throw new ForbiddenActionException("You already represent a team.");
         } else if (alreadyHasPendingReq) {
             throw new ForbiddenActionException("Team registration request already pending.");
-        }
-        /*else if (teamNameExists) {
-            throw new RuntimeException("Team with this name already exists");
-        }*/ else {
+        } else if (alreadyHasApprovedReq) {
+            throw new ForbiddenActionException("Already has an approved request. Proceed to create team");
+        }  else {
             Request newRequest = new Request();
             newRequest.setRequester(representative);
             newRequest.setApprover(approver);
@@ -171,11 +139,15 @@ public class RequestServiceImpl implements RequestService {
 
         boolean alreadyHasPendingReq = requestRepository.existsByRequester_IdAndRequestTypeAndStatus(requesterId, RequestType.TOURNAMENT_CREATION, Status.PENDING);
 
+        boolean alreadyHasApprovedReq = requestRepository.existsByRequester_IdAndRequestTypeAndStatusAndRequestFulfilledFalse(requesterId, RequestType.TOURNAMENT_CREATION, Status.APPROVED);
+
         if(alreadyHostsATournament) {
             throw new ForbiddenActionException("You already host a tournament.");
 
         } else if (alreadyHasPendingReq) {
             throw new ForbiddenActionException("Tournament creation request already pending.");
+        } else if (alreadyHasApprovedReq) {
+            throw new ForbiddenActionException("Already has an approved request. Proceed to create tournament");
         } else {
             Request newRequest = new Request();
             newRequest.setRequester(tournamentOrganizer);

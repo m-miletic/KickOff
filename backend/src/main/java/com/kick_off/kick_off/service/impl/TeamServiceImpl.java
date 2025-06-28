@@ -7,6 +7,7 @@ import com.kick_off.kick_off.dto.team.*;
 import com.kick_off.kick_off.dto.team.requestParams.TeamFilterParamsDto;
 import com.kick_off.kick_off.dto.tournament.MyTeamTournamentDto;
 import com.kick_off.kick_off.dto.tournament.TournamentDto;
+import com.kick_off.kick_off.exception.ForbiddenActionException;
 import com.kick_off.kick_off.model.*;
 import com.kick_off.kick_off.model.authentication.User;
 import com.kick_off.kick_off.repository.*;
@@ -159,8 +160,14 @@ public class TeamServiceImpl implements TeamService {
         Request updatedRequest = requestRepository.findById(requestId)
                 .orElseThrow(() -> new EntityNotFoundException("Request with id: " + requestId + " not found."));
 
+
         if(Boolean.TRUE.equals(updatedRequest.getRequestFulfilled())) {
-            throw new IllegalStateException("User already took action.");
+            throw new ForbiddenActionException("User already took action.");
+        }
+
+        boolean nameTaken = teamRepository.existsByTeamName(teamDto.getTeamName());
+        if (nameTaken) {
+            throw new ForbiddenActionException("Team name already exists.");
         }
 
         updatedRequest.setRequestFulfilled(true);
@@ -169,6 +176,7 @@ public class TeamServiceImpl implements TeamService {
         Long representativeId = teamDto.getRepresentativeId();
         User representative = userRepository.findById(representativeId)
                 .orElseThrow(() -> new EntityNotFoundException("User with id: " + representativeId + " not found."));
+
 
 
         Team team = new Team();

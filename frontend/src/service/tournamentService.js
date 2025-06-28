@@ -20,12 +20,13 @@ export const fetchAllTournaments = async (pageNumber) => {
   }
 };
 
-export const fetchAllUpcomingTournaments = async (pageNumber) => {
+export const fetchAllUpcomingTournaments = async (representativeId, pageNumber) => {
   const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.get("/tournaments/upcoming", {
       params: {
-        pageNumber
+        pageNumber,
+        representativeId,
       }
     },
       {
@@ -92,7 +93,7 @@ export const createTournament = async ( tournamentObject ) => {
     console.log("Create Tournament response: ", response);
     return response.data;
   } catch (error) {
-    console.error("Error while trying to create tournament - api error response: ", error.response.data)
+    console.error("Error while trying to create tournament - api error response: ", error)
     throw error.response.data
   }
 }
@@ -118,6 +119,7 @@ export const enrollTeam = async (enrollTeamObj) => {
 }
 
 export const removeTeamFromTournament = async (teamId) => {
+  console.log("Kicked success!")
   const jwt = localStorage.getItem('token')
   try {
     const response = await apiClient.patch(`/tournaments/teams/${teamId}/remove`,
@@ -130,6 +132,7 @@ export const removeTeamFromTournament = async (teamId) => {
     console.log("removeTeamFromTournament response: ", response)
     return response.data
   } catch (error) {
+    console.log("removeTeamFromTournament Error: ", error)
     throw error.response.data
   }
 }
@@ -144,13 +147,16 @@ export const fetchOrganizersTournament = async ( userId ) => {
         }
       }
     );
+    console.log("Fetch Organizers Tournament Service Response: ", response)
     return response.data;
   } catch (error) { 
+    console.log("Fetch Organizers Tournament Error: ", error)
     throw error.response.data
   } 
 }
 
 export const updateTournament = async (id, updateTournamentObj) => {
+  console.log("update Tournament obj: ", updateTournamentObj)
   const jwt = localStorage.getItem('token');
 
   try {
@@ -160,12 +166,13 @@ export const updateTournament = async (id, updateTournamentObj) => {
       },
     });
 
-    console.log("Update success:", response);
-    return response;
+    console.log("Update Tournament Service Response:", response);
+    return response.data;
   } catch (error) {
-    console.error("Update error:", error);
+    console.log("Update Tournament Error: ", error)
+    throw error.response.data
 
-    // Optional enhancement: attach backend message to the error
+/*     // Optional enhancement: attach backend message to the error
     if (error.response) {
       throw {
         message: error.response.data?.message || "Unexpected error",
@@ -174,8 +181,25 @@ export const updateTournament = async (id, updateTournamentObj) => {
       };
     }
 
-    throw error; // Re-throw for unknown/unstructured errors
+    throw error; // Re-throw for unknown/unstructured errors */
   }
 };
+
+export const deactivateTournament = async (id) => {
+  const jwt = localStorage.getItem('token')
+  try {
+    const response = await apiClient.delete(`/tournaments/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`
+        }
+      }
+    )
+    return response.data
+  } catch (error) {
+    console.log("Deactivate tournament error: ", error)
+    throw error.response.data
+  }
+} 
 
 

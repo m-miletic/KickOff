@@ -4,6 +4,8 @@ import { toast } from 'react-toastify';
 
 const CreateTournamentForm = ({ setIsModalOpen, selectedRequest, decodedJwt }) => { // s {} destrukturiram props objekt -  slucaj bez {} bi izgleda setIsModalOpen.setIsModalOpen
 
+  const [validationErrors, setValidationErrors] = useState({})
+
   const [formData, setFormData] = useState({
     tournamentName: '',
     startDate: null,
@@ -25,11 +27,18 @@ const CreateTournamentForm = ({ setIsModalOpen, selectedRequest, decodedJwt }) =
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await createTournament(formData);  // wait for the async call
-      toast.success("Tournament created!");
-      setIsModalOpen(false);
+      const response = await createTournament(formData);  // wait for the async call
+      if (response.success = true) {
+        toast.success("Tournament created!", {
+          autoClose: 2000
+        });
+        setIsModalOpen(false);
+      }
     } catch (error) {
-      toast.error("Something went wrong. Try again.");
+      setValidationErrors(error.data)
+      toast.error(error.data.message, {
+        autoClose: 2000
+      });
     }
   }
 
@@ -51,6 +60,14 @@ const CreateTournamentForm = ({ setIsModalOpen, selectedRequest, decodedJwt }) =
           required
         />
       </div>
+      {validationErrors?.tournamentName && (
+        <div className='flex'>
+          <div className='w-32'></div>
+          <div className="text-red-500 text-xs mt-1">
+            {validationErrors?.tournamentName} 
+          </div>
+        </div>
+      )}
 
       {/* Start Date */}
       <div className='flex items-center'>
@@ -77,6 +94,26 @@ const CreateTournamentForm = ({ setIsModalOpen, selectedRequest, decodedJwt }) =
           required
         />
       </div>
+
+      <div className='flex items-center'>
+        <label htmlFor='endDate' className='w-32'>Number of Teams</label>
+        <input
+          type='number'
+          id='maxTeams'
+          name='maxTeams'
+          className='text-xs w-64 h-8 px-2 py-1 border border-gray-300 rounded'
+          onChange={handleInputChange}
+          required
+        />
+      </div>
+      {validationErrors?.maxTeams && (
+        <div className='flex'>
+          <div className='w-32'></div>
+          <div className="text-red-500 text-xs mt-1">
+            {validationErrors?.maxTeams} 
+          </div>
+        </div>
+        )}
 
       {/* Details */}
       <div className='flex items-center'>

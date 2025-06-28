@@ -10,7 +10,8 @@ import java.time.Instant;
 @Getter
 @Setter
 @ToString
-@Entity(name = "refreshToken")
+@Entity
+@Table(name = "refresh_token", uniqueConstraints = @UniqueConstraint(columnNames = "user_id"))
 public class RefreshToken {
 
     @Id

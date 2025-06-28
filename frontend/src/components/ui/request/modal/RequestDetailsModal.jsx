@@ -100,10 +100,10 @@ export const RequestDetailsModal = ({ selectedRequest, setIsModalOpen, setReques
 
   return (
     <>
-      {/* Main Modal */}
+
       <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-30 backdrop-blur-sm">
         <div className="relative bg-white rounded-lg shadow-sm p-4 w-[90%] max-w-[550px]">
-          {/* Top Bar */}
+    
           <div className="flex items-center justify-between border-b pb-3 mb-3">
             <h2 className="text-lg font-semibold text-gray-900">Request Details</h2>
             <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-800">
@@ -111,12 +111,12 @@ export const RequestDetailsModal = ({ selectedRequest, setIsModalOpen, setReques
             </button>
           </div>
 
-          {/* Error */}
+    
           {errorMessage && (
             <div className="text-center text-red-500 mb-4">{errorMessage}</div>
           )}
 
-          {/* Request Details */}
+    
           {selectedRequest.requester.id === decodedJwt.userId ? (
             <div>
               {selectedRequest.status === "PENDING" && (
@@ -181,7 +181,7 @@ export const RequestDetailsModal = ({ selectedRequest, setIsModalOpen, setReques
                 </div>
               </div>
 
-              {/* Buttons for approver */}
+
               {selectedRequest.status === "PENDING" && (
                 <div className="text-white flex items-center justify-center space-x-4 p-4">
                   {selectedRequest.requestType === "TOURNAMENT_ENROLLMENT" && (
@@ -221,8 +221,6 @@ export const RequestDetailsModal = ({ selectedRequest, setIsModalOpen, setReques
           )}
         </div>
       </div>
-
-      {/* Optional: Additional blur/form overlay logic could go here if needed */}
     </>
   );
 };

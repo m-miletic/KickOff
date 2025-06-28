@@ -20,5 +20,4 @@ public class RequestDto {
     private UserDto approver;
     private RequestType requestType;
     private Boolean requestFulfilled;
-    private Role desiredRole;
 }

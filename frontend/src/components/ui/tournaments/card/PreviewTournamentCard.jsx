@@ -62,6 +62,10 @@ const PreviewTournamentCard = ({ tournament }) => {
             <div className=''>
               <div className='w-auto font-semibold'>Tournament Details: </div> <div className='mt-2'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit, molestias. Repellat ea dolores ullam veritatis dicta saepe amet vitae, optio possimus, atque accusamus cumque aspernatur distinctio quasi animi illo nemo.</div>
             </div>
+
+            <div className='flex justify-start items-center'>
+              <div className='w-24 font-semibold'>Team Limit : </div> <div>{tournament.maxTeams}</div>
+            </div>
             
             <div>
               <div className='w-auto font-semibold'>Teams Enrolled:</div>

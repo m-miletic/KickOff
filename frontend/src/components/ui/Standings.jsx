@@ -39,6 +39,9 @@ const Standings = ({selectedTournament, setSelectedTournament}) => {
     navigate(`/teams/${id}`)
   };
 
+
+  console.log("****** SELECTED TOURNAMENT **********", selectedTournament)
+
   return (
     <div className="flex justify-center">
 

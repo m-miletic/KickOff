@@ -50,7 +50,7 @@ const Sidebar = () => {
                   <span>{item.icon}</span>
                   <span className="ms-3">{item.label}</span>
                   {item.value === 'requests' && (
-                    <span className="inline-flex items-center justify-center w-2 h-2 p-2 ml-3 text-sm 2xl:w-4 2xl:h-4 2xl:p-3 2xl:text-base font-medium text-blue-800 bg-blue-100 rounded-full">{/* {reqContext.totalPendingRequests} */}</span>
+                    <span className="inline-flex items-center justify-center w-2 h-2 p-2 ml-3 text-sm 2xl:w-4 2xl:h-4 2xl:p-3 2xl:text-base font-medium text-blue-800 bg-blue-100 rounded-full"></span>
                   )}
                 </button>
               </li>

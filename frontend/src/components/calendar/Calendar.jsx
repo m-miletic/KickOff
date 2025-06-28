@@ -11,6 +11,7 @@ import { deleteMatch, fetchMatchesByTournament } from "../../service/matchServic
 import { IoCloseSharp } from "react-icons/io5";
 import EditMatchModal from "../ui/match/form/EditMatchModal";
 import DeleteMatchModal from "../ui/match/form/DeleteMatchModal";
+import WeatherWidget from "../weather/WeatherWidget";
 
 export const Calendar = () => {
   const [selectedDate, setSelectedDate] = useState("");
@@ -135,9 +136,6 @@ export const Calendar = () => {
     fetchTournament();
   }, [decodedJwt]); // jer ce na prvi load stranice decodedJwt iz LocalStorage-a bit null
 
-
-  console.log("Kakav je teams: ", teams)
-
   // Fetch matches after tournament loads
   // prikazivanje meceva u kalendaru *************************** !!!
   useEffect(() => {
@@ -194,32 +192,45 @@ export const Calendar = () => {
     loadMatches();
   }, [tournament]);
 
+  const scrollToForecast = () => {
+    const el = document.getElementById("weather-widget")
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" })
+    }
+  };
+
   return (
     
-    <div className="relative flex mx-2 my-6 sm:mx-10 sm:my-10 lg:mx-24 xl:mx-40 2xl:mx-40 transition-all text-[9px] sm:text-xs 2xl:text-sm min-h-[85vh]">
-
+    <div className="relative flex mx-2 my-6 sm:mx-10 sm:my-10 lg:mx-24 xl:mx-40 2xl:mx-50 transition-all text-[9px] sm:text-xs 2xl:text-sm min-h-[85vh]">
       {/* Sidebar legend only if wide screen */}
       {isWideScreen ? (
-        <aside className="w-64 mr-6 p-4 bg-gray-100 rounded shadow-sm text-gray-700 text-xs sm:text-sm sticky top-6 self-start">
-          <h3 className="font-semibold mb-3 text-gray-900">Calendar Actions</h3>
-          <ul className="list-disc list-inside space-y-2">
-            <li>Click anywhere on the date to create a new match</li>
-            <li className="font-medium text-gray-800">
-                Two teams can play a max of 2 matches against each other, with each team hosting one match
-            </li>
-            <li>Click on the <span className="font-bold">"See Matches"</span> to preview, edit and delete matches on that day</li>
-            <li>Altering match results is available only after the scheduled match time</li>
-            <li className="italic text-red-600">
-              Note: Matches can't be created in the past or on the day of playing the match
-            </li>
-            <li className="italic text-red-600">
-              Note: Be advised that match dates may only be modified at least 24 hours before the scheduled start time.
-            </li>
-            <li className="italic text-red-600">
-              Note: A stadium can host multiple matches, but there can be a 2-hour gap between them
-            </li>
-          </ul>
-        </aside>
+        <div>
+          <aside className="w-80 mr-6 p-4 bg-gray-100 rounded shadow-sm text-gray-700 text-xs sm:text-sm top-6 self-start">
+            <h3 className="font-semibold mb-3 text-gray-900">Calendar Actions</h3>
+            <ul className="list-disc list-inside space-y-2">
+              <li>Click anywhere on the date to create a new match</li>
+              <li className="font-medium text-gray-800">
+                  Two teams can play a max of 2 matches against each other, with each team hosting one match
+              </li>
+              <li>Click on the <span className="font-bold">"See Matches"</span> to preview, edit and delete matches on that day</li>
+              <li>Altering match results is available only after the scheduled match time</li>
+              <li className="italic text-red-600">
+                Note: Matches can't be created in the past or on the day of playing the match
+              </li>
+              <li className="italic text-red-600">
+                Note: Be advised that match dates may only be modified at least 24 hours before the scheduled start time.
+              </li>
+              <li className="italic text-red-600">
+                Note: A stadium can host multiple matches, but there can be a 2-hour gap between them
+              </li>
+            </ul>
+          </aside>
+
+          <div>
+            <button onClick={scrollToForecast} className="bg-sky-500 hover:bg-sky-600 px-3 py-2 text-white font-semibold rounded mt-6">Check Weather Forecast</button>
+          </div>
+
+        </div>
       ) : (
         // Button that opens the legend modal on small screens
         <div className="mr-4">
@@ -269,7 +280,7 @@ export const Calendar = () => {
         </div>
       )}
 
-      <div className={`${isCreateMatchModalOpen ? 'blur-sm pointer-events-none' : ''} flex-1`}>  {/* pointer-events-none ako je modal otvoren onemoguci klikanje kalendara */}
+      <div className={`${isCreateMatchModalOpen ? 'blur-sm pointer-events-none' : ''} w-full`}>
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
@@ -282,7 +293,7 @@ export const Calendar = () => {
             start: "dayGridMonth timeGridWeek timeGridDay",
             end: "today prev next"
           }}
-          eventContent={(eventInfo) => { // override-am kako event izgleda u kalendaru, samo malo style-anja
+          eventContent={(eventInfo) => {
             if (currentView === "dayGridMonth") {
               const matches = eventInfo.event.extendedProps.matches || [];
               return (
@@ -292,7 +303,6 @@ export const Calendar = () => {
                 </div>
               );
             } else {
-              // For week/day views, show match name and time
               return (
                 <div className="text-[9px] cursor-pointer">
                   <strong>{eventInfo.event.title}</strong>
@@ -302,7 +312,12 @@ export const Calendar = () => {
           }}
         />
 
+        {/* Weather widget goes below calendar */}
+        <div className="flex justify-center" id="weather-widget">
+          <WeatherWidget city="Split" style="p-4 mt-8 bg-sky-100 rounded-lg shadow w-full text-center" />
+        </div>
       </div>
+
 
       {/* Modals */}
 
@@ -407,8 +422,6 @@ export const Calendar = () => {
         }}
       />
     )}
-
-
     </div>
   );
 };

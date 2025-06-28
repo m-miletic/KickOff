@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { deleteTeamById, fetchAllTeams, fetchTeamsByTournament, getTeamByTeamRepresentative } from "../../service/teamService"
-import { jwtDecode } from "jwt-decode";
 
 export const useFetchTeams = ( filters ) => {
   const [teams, setTeams] = useState({
@@ -15,11 +14,12 @@ export const useFetchTeams = ( filters ) => {
       setLoading(true); // zbog mogućnosti promjene filtera, s obzirom da u finally bloku setam na false pa ako opet krene fetcha-at neće mi prikazivat "loading...""
       try {
         const response = await fetchAllTeams(filters);
+        console.log("In Hook - response.data.teamsList - ", response.data)
         setTeams(response.data);
         setError(null);
       } catch (error) {
         console.error("useFetchTeamsHook Error -> Couldn't fetch teams");
-        setError(error);
+        setError(error.response.data);
       } finally {
         setLoading(false);
       }

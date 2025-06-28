@@ -19,8 +19,9 @@ public class Stadium {
     private String stadiumName;
     @Column(name = "location")
     private String location;
+    @Column(name = "photo_url")
+    private String photoUrl;
 
-    // @JoinTable & @JoinColumn are not required but are used so that I can name table and fields as I want
     @ManyToMany(mappedBy = "stadiums")
     private List<Tournament> tournaments;
 

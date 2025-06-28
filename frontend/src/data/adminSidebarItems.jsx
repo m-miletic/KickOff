@@ -1,24 +1,8 @@
-import { LuLayoutDashboard } from "react-icons/lu";
-import { HiInboxArrowDown } from "react-icons/hi2";
 import { ImUsers } from "react-icons/im";
 import { PiMicrosoftTeamsLogo } from "react-icons/pi";
 import { MdOutlineLogout } from "react-icons/md";
 
 export const adminSidebarItems = [
-  {
-    label: "Dashboard",
-    value: "dashboard",
-    icon: (
-      <LuLayoutDashboard className="text-gray-400 w-5 h-5" />
-    ),  
-  },
-  {
-    label: "Pending Requests",
-    value: "recievedRequests",
-    icon: (
-      <HiInboxArrowDown className="text-gray-400 w-5 h-5" />
-    ),  
-  },
   {
     label: "Users",
     value: "users",

@@ -11,8 +11,10 @@ export const fetchAllTeams = async (filters) => {
         Authorization: `Bearer ${jwt}`
       }
     });
+    console.log("Fetch All Teams Service response: ", response)
     return response.data;
   } catch (error) {
+    console.log("Fetch All Teams Service error: ", error)
     throw error;
   } 
 };
@@ -63,9 +65,11 @@ export const deleteTeamById = async ( id ) => {
         Authorization: `Bearer ${jwt}`
       }
     });
-    return response;
+    console.log("Delete Team Service response: ", response)
+    return response.data;
   } catch (error) {
-    throw error;
+    console.log("Delete Team Service Error: ", error)
+    throw error.response.data;
   }
 }
 
@@ -86,7 +90,7 @@ export const createTeam = async (formData) => {
     return response.data;
   } catch (error) {
     console.log("Error while creating team: ", error)
-    throw error;
+    throw error.response.data;
   }
 };
 

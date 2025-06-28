@@ -1,20 +1,19 @@
 package com.kick_off.kick_off.controller;
 
-import com.kick_off.kick_off.dto.request.RequestListDto;
 import com.kick_off.kick_off.dto.team.EnrollTeamDto;
 import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.dto.tournament.CreateTournamentDto;
 import com.kick_off.kick_off.dto.tournament.TournamentDto;
 import com.kick_off.kick_off.dto.tournament.TournamentListDto;
+import com.kick_off.kick_off.model.Tournament;
 import com.kick_off.kick_off.response.ApiResponse;
 import com.kick_off.kick_off.service.TeamService;
 import com.kick_off.kick_off.service.TournamentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/api/tournaments")
@@ -31,8 +30,6 @@ public class TournamentController {
     @GetMapping
     public ResponseEntity<ApiResponse<TournamentListDto>> fetchAllTournaments(@RequestParam(defaultValue = "1") int pageNumber) {
 
-        System.out.println("Page number: " + pageNumber);
-
         TournamentListDto tournaments = tournamentService.getTournaments(pageNumber);
         ApiResponse<TournamentListDto> response = ApiResponse.<TournamentListDto>builder()
                 .message("Successfully retrieved tournaments.")
@@ -44,7 +41,10 @@ public class TournamentController {
     }
 
     @GetMapping("/upcoming")
-    public ResponseEntity<ApiResponse<TournamentListDto>> fetchAllUpcomingTournaments(@RequestParam(defaultValue = "1") int pageNumber) {
+    public ResponseEntity<ApiResponse<TournamentListDto>> fetchAllUpcomingTournaments(
+            @RequestParam(defaultValue = "1") int pageNumber,
+            @RequestParam Long representativeId
+    ) {
 
         TournamentListDto tournaments = tournamentService.getUpcomingTournaments(pageNumber);
         ApiResponse<TournamentListDto> response = ApiResponse.<TournamentListDto>builder()
@@ -82,7 +82,7 @@ public class TournamentController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<TournamentDto>> createTournament(@RequestBody CreateTournamentDto tournamentDto) {
+    public ResponseEntity<ApiResponse<TournamentDto>> createTournament(@Validated @RequestBody CreateTournamentDto tournamentDto) {
         TournamentDto createdTournamentDto = tournamentService.createTournament(tournamentDto);
         ApiResponse<TournamentDto> response = ApiResponse.<TournamentDto>builder()
                 .message("Successfully created a tournament")
@@ -136,7 +136,8 @@ public class TournamentController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ApiResponse<TournamentDto>> editTournament(@PathVariable(name = "id") Long id, @RequestBody TournamentDto updatedTournament) {
+    public ResponseEntity<ApiResponse<TournamentDto>> editTournament(@PathVariable(name = "id") Long id, @Validated @RequestBody TournamentDto updatedTournament) {
+        System.out.println("updatedTournament: " + updatedTournament.toString());
 
         TournamentDto tournament = tournamentService.updateTournament(id, updatedTournament);
         ApiResponse<TournamentDto> response = ApiResponse.<TournamentDto>builder()
@@ -147,4 +148,39 @@ public class TournamentController {
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<TournamentDto>> deleteTournament(@PathVariable Long id) {
+        TournamentDto deactivatedTournament = tournamentService.deleteTournament(id);
+        ApiResponse<TournamentDto> response = ApiResponse.<TournamentDto>builder()
+                .message("Successfully deleted tournament.")
+                .data(deactivatedTournament)
+                .success(true)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

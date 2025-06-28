@@ -8,6 +8,7 @@ import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.dto.tournament.CreateTournamentDto;
 import com.kick_off.kick_off.dto.tournament.TournamentDto;
 import com.kick_off.kick_off.dto.tournament.TournamentListDto;
+import com.kick_off.kick_off.exception.FieldValidationException;
 import com.kick_off.kick_off.exception.ForbiddenActionException;
 import com.kick_off.kick_off.model.Request;
 import com.kick_off.kick_off.model.Status;
@@ -20,7 +21,9 @@ import com.kick_off.kick_off.repository.TournamentRepository;
 import com.kick_off.kick_off.repository.authentication.UserRepository;
 import com.kick_off.kick_off.service.TournamentService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.ValidationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -105,7 +108,7 @@ public class TournamentServiceImpl implements TournamentService {
 
         Page<Tournament> pageTournaments;
         PageRequest pageRequest = PageRequest.of(pageNumber- 1, pageSize);
-        pageTournaments = tournamentRepository.findByStartDateAfter(LocalDate.now().plusDays(1), pageRequest);
+        pageTournaments = tournamentRepository.findByStartDateGreaterThanEqual(LocalDate.now().plusDays(1), pageRequest);
 
         long totalTournaments = pageTournaments.getTotalElements();
         long totalPages = calculateTotalPages(totalTournaments, pageSize);
@@ -199,6 +202,7 @@ public class TournamentServiceImpl implements TournamentService {
     public TournamentDto createTournament(CreateTournamentDto tournamentDto) {
         Long requestId = tournamentDto.getRequestId();
         Long organizerId = tournamentDto.getOrganizerId();
+        String desiredTournamentName = tournamentDto.getTournamentName();
         
         Request updateRequest = requestRepository.findById(requestId)
                 .orElseThrow(() -> new EntityNotFoundException("Request with id: " + requestId + " not found."));
@@ -206,6 +210,16 @@ public class TournamentServiceImpl implements TournamentService {
         if(Boolean.TRUE.equals(updateRequest.getRequestFulfilled())) {
             throw new IllegalStateException("User already took action.");
         }
+
+        List<Tournament> tournaments = tournamentRepository.findAll();
+
+        for (Tournament tournament : tournaments) {
+            if (tournament.getTournamentName().equals(desiredTournamentName)) {
+                throw new FieldValidationException("tournamentName", "Tournament with same name already exists.");
+            }
+        }
+
+
 
         updateRequest.setRequestFulfilled(true);
         requestRepository.save(updateRequest);
@@ -217,6 +231,7 @@ public class TournamentServiceImpl implements TournamentService {
         tournament.setTournamentName(tournamentDto.getTournamentName());
         tournament.setStartDate(tournamentDto.getStartDate());
         tournament.setEndDate(tournamentDto.getEndDate());
+        tournament.setMaxTeams(tournamentDto.getMaxTeams());
         tournament.setDetails(tournamentDto.getDetails());
         tournament.setOrganizer(organizer);
         Tournament savedTournament = tournamentRepository.save(tournament);
@@ -224,6 +239,7 @@ public class TournamentServiceImpl implements TournamentService {
         return modelMapper.map(savedTournament, TournamentDto.class);
     }
 
+    @Transactional
     @Override
     public TeamDto enrollTeam(EnrollTeamDto teamDto) {
         Long teamRepresentativeId = teamDto.getTeamRepresentativeId();
@@ -260,12 +276,15 @@ public class TournamentServiceImpl implements TournamentService {
 
     }
 
+    @Transactional
     @Override
     public TeamDto removeFromTournament(Long teamId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new EntityNotFoundException("Team with id: " + teamId + " not found."));
 
+
         team.setTournament(null);
+
         Team removedTeam = teamRepository.save(team);
 
         return modelMapper.map(removedTeam, TeamDto.class);
@@ -282,6 +301,7 @@ public class TournamentServiceImpl implements TournamentService {
         return tournamentDto;
     }
 
+    @Transactional
     @Override
     public TournamentDto updateTournament(Long id, TournamentDto updatedTournament) {
 
@@ -293,15 +313,19 @@ public class TournamentServiceImpl implements TournamentService {
         LocalDate editEndDate = updatedTournament.getEndDate();
 
         if(editEndDate.isBefore(editStartDate)) {
-            throw new ForbiddenActionException("End date can't be before start date");
+            throw new FieldValidationException("endDate", "End date can't be before start date");
         }
 
         if(editStartDate.isBefore(now) || editEndDate.isBefore(now)) {
-            throw new ForbiddenActionException("Can't set dates in past");
+            throw new FieldValidationException("endDate", "Can't set dates in past");
+        }
+
+        if(editStartDate.equals(LocalDate.now())) {
+            throw new FieldValidationException("startDate", "Too early! The tournament can't start on the current day.");
         }
 
         if(editEndDate.isAfter(editStartDate.plusMonths(1))) {
-            throw new ForbiddenActionException("Tournament can't last longer than a month");
+            throw new FieldValidationException("endDate", "Tournament can't last longer than a month");
         }
 
         tournament.setTournamentName(updatedTournament.getTournamentName());
@@ -314,4 +338,28 @@ public class TournamentServiceImpl implements TournamentService {
         TournamentDto tournamentDto = modelMapper.map(saveUpdatedTournament, TournamentDto.class);
         return tournamentDto;
     }
+
+    @Transactional
+    @Override
+    public TournamentDto deleteTournament(Long id) {
+
+        Tournament tournamentToDelete = tournamentRepository.findById(id)
+                        .orElseThrow(() -> new EntityNotFoundException("Tournament with id: " + id + " not found."));
+
+        requestRepository.deleteAllByTournament_Id(id);
+        tournamentRepository.delete(tournamentToDelete);
+
+        return modelMapper.map(tournamentToDelete, TournamentDto.class);
+    }
 }
+
+
+
+
+
+
+
+
+
+
+

@@ -6,6 +6,7 @@ import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.dto.novo.UserDto;
 import com.kick_off.kick_off.dto.novo.UserListDto;
 import com.kick_off.kick_off.dto.tournament.TournamentDto;
+import com.kick_off.kick_off.exception.ForbiddenActionException;
 import com.kick_off.kick_off.model.Request;
 import com.kick_off.kick_off.model.Role;
 import com.kick_off.kick_off.model.Status;
@@ -110,10 +111,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User doesn't exists."));
 
+        refreshTokenService.deleteByUserId(user.getId());
+
         if (teamRepository.existsByRepresentative(userRepository.findById(id).orElseThrow())) {
-            throw new IllegalStateException("User is a team representative.Please provide with a new team representative or deactivate the team first.");
+            throw new ForbiddenActionException("User currently representing a team. Delete team first.");
         } else if (tournamentRepository.existsByOrganizer(userRepository.findById(id).orElseThrow())) {
-            throw new IllegalStateException("User is a tournament organizer.Please provide with a new tournament host or deactivate the tournament first.");
+            throw new ForbiddenActionException("User is currently hosting a tournament. Delete tournament first.");
         }
 
         requestRepository.deleteByRequester_Id(id); // s brisanjem user-a brisa odma i sve njegive requestove - da/ne ?

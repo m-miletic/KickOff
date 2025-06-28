@@ -1,8 +1,7 @@
 import apiClient from "./apis/apiClient";
 
 export const fetchRequestsByApprover = async ( userId, selectedFilters ) => {
-  console.log("I'm in fetchRequestsByApprover")
-  console.log("userId: ", userId)
+  console.log("Uđe li u servis")
   const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.get(`/requests/approver/${userId}`, {
@@ -66,24 +65,6 @@ export const updateRequest = async ( updateObject ) => {
     return response.data;
   } catch (error) {
     throw error.response.data;
-  }
-}
-
-export const createRoleChangeRequest = async ( requestObject ) => {
-  const jwt = localStorage.getItem('token');
-  try {
-    const response = await apiClient.post('/requests/role-change',
-      requestObject,
-      {
-        headers: {
-          Authorization: `Bearer ${jwt}`
-        }
-      }
-
-    );
-    return response;
-  } catch (error) {
-    throw error.response.data.message;
   }
 }
 
