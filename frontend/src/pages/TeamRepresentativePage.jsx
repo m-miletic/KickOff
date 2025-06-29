@@ -19,7 +19,7 @@ const TeamRepresentativePage = () => {
       <main className="flex-grow">
         
 
-        {(activeComponent === "sentRequests" || activeComponent === "recievedRequests") && 
+        {(activeComponent === "myRequests") && 
           <div className="flex justify-center text-white pt-48">
             <RequestProvider>
               <RequestList />

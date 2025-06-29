@@ -11,7 +11,6 @@ import { GUEST_NAVBAR_ITEMS, TEAM_REPRESENTATIVE_NAVBAR_ITEMS, TOURNAMENT_ORGANI
 import logoWhite from '../../../assets/logoWhite.png';
 import { useNavigate } from "react-router-dom";
 
-
 const Navbar = () => {
   const [isSideBarActive, setIsSideBarActive] = useState(false);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
@@ -135,14 +134,9 @@ const Navbar = () => {
 
         </div>
       ) : (
-        
 
-          
         <div className={`flex justify-between items-center bg-[#001E28] text-white h-20 lg:h-[78px] xl:h-[88px] 2xl:h-[94px] px-4`}>
-
-
           <div><img src={logoWhite} alt="Logo" className="w-[85px] h-12 mt-2 " /></div>
-
           {decodedJwt === null ? (
             <>
               <div className={`flex justify-center items-center space-x-2`}>
@@ -158,7 +152,6 @@ const Navbar = () => {
             </>
           ) : (
             <>
-
               {decodedJwt.role === "TEAM_REPRESENTATIVE" && (
                 <>
                   <div className={`flex justify-center items-center space-x-2`}>

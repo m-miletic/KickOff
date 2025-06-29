@@ -1,15 +1,9 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 
 const ActiveComponentContext = createContext();
 
 const ActiveComponentProvider = ({ children }) => {
-  const [activeComponent, setActiveComponent] = useState(() => {
-    return localStorage.getItem("activeComponent") || "";
-  });
-
-  useEffect(() => {
-    localStorage.setItem("activeComponent", activeComponent)
-  }, [activeComponent])
+  const [activeComponent, setActiveComponent] = useState("");
 
   return(
     <ActiveComponentContext.Provider value={{ activeComponent, setActiveComponent }}>

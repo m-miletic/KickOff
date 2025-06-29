@@ -58,8 +58,15 @@ const CreateTeamForm = ({ setIsModalOpen, selectedRequest, setRequests, decodedJ
 
       const response = await createTeam(fullFormData)
 
+      console.log("Response of creating a team: ", response)
+      console.log("And Request: ", selectedRequest)
+
       if (response.success) {
         setIsModalOpen(false)
+        setRequests(prevRequests => 
+        prevRequests.map(req => 
+          req.id === selectedRequest.id ? {...req, requestFulfilled: true} : req))
+
         toast.success("Team Created!",
           {
             autoClose: 2500

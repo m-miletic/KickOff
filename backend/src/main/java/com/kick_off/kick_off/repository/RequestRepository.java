@@ -36,7 +36,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     Optional<Request> findByRequester_IdAndApprover_Id(Long requesterId, Long approverId);
 
-/*    boolean existsByRequester_IdAndRequestTypeAndStatusNot(Long requesterId, RequestType requestType, Status status);*/
+    /*    boolean existsByRequester_IdAndRequestTypeAndStatusNot(Long requesterId, RequestType requestType, Status status);*/
 
     boolean existsByRequester_IdAndRequestTypeAndStatus(Long requesterId, RequestType requestType, Status status);
 

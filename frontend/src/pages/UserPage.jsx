@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
 import Navbar from "../components/common/navigation/Navbar";
-import Standings from "../components/ui/Standings";
+import Standings from "../components/ui/standings/Standings";
 import { apiAuthClient } from "../service/apis/apiClient";
 import { LoggedUserContext } from "../context/LoggedUserContext";
 

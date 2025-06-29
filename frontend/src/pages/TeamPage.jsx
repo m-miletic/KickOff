@@ -41,7 +41,6 @@ const TeamPage = () => {
             <div className="w-24 h-24">
               <img
                 src={team.photoUrl}
-                alt="Team Logo"
                 className="w-full h-full object-contain rounded-md"
               />
             </div>

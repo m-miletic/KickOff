@@ -1,22 +1,29 @@
 import { useState } from "react";
 import { editMatch } from "../../../../service/matchService";
+import { toast } from "react-toastify";
 
-const EditMatchModal = ({ match, onClose, onSave }) => {
+const EditMatchModal = ({ match, onClose, setSelectedMatches, setEvents }) => {
+  console.log("Match: ", match)
   const [editMatchForm, setEditMatchForm] = useState({
     matchDate: new Date(match.matchDate).toISOString().slice(0, 16),
-    homeTeamGoals: "",
-    awayTeamGoals: ""
+    homeTeamGoals: match.homeTeamGoals,
+    awayTeamGoals: match.awayTeamGoals,
+    homeTeam: match.homeTeam,
+    awayTeam: match.awayTeam
   });
 
   const [errorMessage, setErrorMessage] = useState('');
 
 
+
+
   const handleChange = (e) => {
     setEditMatchForm((prevValues) => ({
       ...prevValues,
-      [e.target.name]: e.target.value
+      [e.target.name]: Number(e.target.value)
     }));
   }
+
   
 
   const handleSubmit = async (e) => {
@@ -39,17 +46,38 @@ const EditMatchModal = ({ match, onClose, onSave }) => {
       if (response && response.success) {
         if (new Date() >= new Date(match.matchDate)) {
           // Editing results only, don't update matchDate locally
-          onSave({
-            ...match,
-            homeTeamGoals: editMatchForm.homeTeamGoals,
-            awayTeamGoals: editMatchForm.awayTeamGoals,
-          });
+          toast.success("Match Edited!", {
+            autoClose: 2500
+          })
+          setSelectedMatches((prevMatches) =>
+            prevMatches.map((match) => 
+              match.id === response.data.id ? { ...match, homeTeamGoals: response.data.homeTeamGoals, awayTeamGoals: response.data.awayTeamGoals } : match
+            )
+          )
+          setEvents((prevEvents) =>
+            prevEvents.map((event) => {
+              const updatedMatches = event.extendedProps.matches.map((match) => 
+                match.id === response.data.id 
+                  ? { ...match, homeTeamGoals: response.data.homeTeamGoals, awayTeamGoals: response.data.awayTeamGoals } 
+                  : match
+              );
+          
+              return {
+                ...event,
+                extendedProps: {
+                  ...event.extendedProps,
+                  matches: updatedMatches,
+                },
+              };
+            })
+          );
+          
         } else {
           // Editing date only
-          onSave({
+          /* onSave({
             ...match,
             matchDate: editMatchForm.matchDate,
-          });
+          }); */
         }
         onClose();
       } else {

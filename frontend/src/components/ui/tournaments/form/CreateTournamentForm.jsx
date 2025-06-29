@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { createTournament } from '../../../../service/tournamentService';
 import { toast } from 'react-toastify';
 
-const CreateTournamentForm = ({ setIsModalOpen, selectedRequest, decodedJwt }) => { // s {} destrukturiram props objekt -  slucaj bez {} bi izgleda setIsModalOpen.setIsModalOpen
+const CreateTournamentForm = ({ setIsModalOpen, selectedRequest, setRequests, decodedJwt }) => { // s {} destrukturiram props objekt -  slucaj bez {} bi izgleda setIsModalOpen.setIsModalOpen
 
   const [validationErrors, setValidationErrors] = useState({})
 
@@ -33,6 +33,9 @@ const CreateTournamentForm = ({ setIsModalOpen, selectedRequest, decodedJwt }) =
           autoClose: 2000
         });
         setIsModalOpen(false);
+        setRequests(prevRequests => 
+          prevRequests.map(req => 
+            req.id === selectedRequest.id ? {...req, requestFulfilled: true} : req))
       }
     } catch (error) {
       setValidationErrors(error.data)

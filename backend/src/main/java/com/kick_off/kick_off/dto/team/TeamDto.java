@@ -24,6 +24,7 @@ public class TeamDto {
     private Integer goalsAgainst;
     private List<PlayerDto> players;
     private String photoUrl;
+    private int points;
 
     // nadodat u posebni dto za posbne slucjajeve
     private List<LightMatchDto> homeMatches;

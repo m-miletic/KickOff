@@ -22,8 +22,8 @@ public class Team {
     private String teamName;
     @Column(name = "coach")
     private String coach;
-    @Column(name = "matches_played")
-    private Integer matchesPlayed = 0;
+/*    @Column(name = "matches_played")
+    private Integer matchesPlayed = 0;*/
     @Column(name = "wins")
     private Integer wins = 0;
     @Column(name = "draws")
@@ -36,6 +36,8 @@ public class Team {
     private Integer goalsAgainst = 0;
     @Column(name = "photo_url")
     private String photoUrl;
+    @Column(name = "points")
+    private int points;
 
     // brisanjem tema brisu se svi njegovi igraci pomocu cascade = {CascadeType.REMOVE} - vidit jos ocu jel to zelin
     @OneToMany(mappedBy = "team", cascade = {CascadeType.REMOVE}, orphanRemoval = true) // orphan mi omogucava da iz team-a izbrisem player-a

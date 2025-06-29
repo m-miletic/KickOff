@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from "react";
 
 const Pagination = ({ 
+  pagesBeforeToday,
   totalPages,
   selectedFilters,
   handleSelectFilter,
   navButtonStyle = 'text-white',
-  totalPagesStyle = 'text-white'
+  totalPagesStyle = 'text-white',
   }) => {
 
-  const [currentPage, setCurrentPage] = useState(1);
+    console.log("Pagination pages before today: ", pagesBeforeToday)
+
+  const [currentPage, setCurrentPage] = useState(null);
   const [previousPage, setPreviousPage] = useState();
   const [nextPage, setNextPage] = useState();
   const [navigationNumbers, setNavigationNumbers] = useState([]);
+
+  console.log("currentPage -> ", currentPage)
 
   console.log("Pagination total pages: ", totalPages);
 
@@ -71,11 +76,20 @@ const Pagination = ({
     setNextPage(2);
   }, [selectedFilters.status, selectedFilters.timeCreated, selectedFilters.role])
 
+
+  useEffect(() => {
+    if (pagesBeforeToday != null) {
+      setCurrentPage(pagesBeforeToday)
+      setPreviousPage(pagesBeforeToday-1)
+      setNextPage(pagesBeforeToday+1)
+    }
+  }, [pagesBeforeToday])
+
   return(
     <nav>
-      <ul className="inline-flex text-2xs sm:text-xs xl:text-sm mt-2">
+      <ul className="inline-flex text-2xs sm:text-xs xl:text-lg mt-2">
         <li>
-          <button disabled={currentPage === 1} onClick={() => handleNextPrev('prev')} className={`${navButtonStyle} flex items-center justify-center hover:text-base 
+          <button disabled={currentPage === 1} onClick={() => handleNextPrev('prev')} className={`${navButtonStyle} flex items-center justify-center hover:text-xl 
           ${totalPages === 0 && 'hidden'}`}>
             Prev
           </button>
@@ -85,7 +99,7 @@ const Pagination = ({
           return(
             <li key={index}>
               <button onClick={() => { handleSelectFilter('pageNumber', num); handleClickPageNumber(num); }} className={`${navButtonStyle} flex items-center justify-center bg-transparent
-                hover:text-lg  ${currentPage === num && ''}`}>
+                hover:text-2xl  ${currentPage === num && ''}`}>
                 {num}
               </button>
             </li>
@@ -93,7 +107,7 @@ const Pagination = ({
         })}
 
         <li>
-          <button disabled={currentPage === totalPages} onClick={() => handleNextPrev('next')} className={`${navButtonStyle} flex items-center justify-center hover:text-base 
+          <button disabled={currentPage === totalPages} onClick={() => handleNextPrev('next')} className={`${navButtonStyle} flex items-center justify-center hover:text-xl 
            ${totalPages === 0 && 'hidden'}`}>
             Next
           </button>

@@ -7,13 +7,12 @@ import OrganizerPage from "./pages/OrganizerPage";
 import TeamRepresentativePage from "./pages/TeamRepresentativePage";
 import AdminPage from "./pages/AdminPage";
 import HomePage from "./pages/HomePage";
-
 import { AuthProvider } from "./context/AuthContext";
 import { ActiveComponentProvider } from "./context/ActiveComponentContext";
 import { ActiveModalProvider } from "./context/ActiveModalContext";
 import { LoggedUserProvider } from "./context/LoggedUserContext";
 import UserPage from "./pages/UserPage";
-import Standings from "./components/ui/Standings";
+import Standings from "./components/ui/standings/Standings";
 import { Calendar } from "./components/calendar/Calendar";
 
 import { ToastContainer } from 'react-toastify';

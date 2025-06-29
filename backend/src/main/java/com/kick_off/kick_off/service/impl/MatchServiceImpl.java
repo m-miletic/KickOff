@@ -3,7 +3,9 @@ package com.kick_off.kick_off.service.impl;
 import com.kick_off.kick_off.dto.match.CreateMatchDto;
 import com.kick_off.kick_off.dto.match.EditMatchDto;
 import com.kick_off.kick_off.dto.match.MatchDto;
+import com.kick_off.kick_off.dto.match.MatchListDto;
 import com.kick_off.kick_off.dto.stadium.StadiumDto;
+import com.kick_off.kick_off.dto.team.MyTeamDto;
 import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.exception.ForbiddenActionException;
 import com.kick_off.kick_off.model.Match;
@@ -19,6 +21,8 @@ import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.apache.coyote.BadRequestException;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -41,6 +45,17 @@ public class MatchServiceImpl implements MatchService {
         this.modelMapper = modelMapper;
         this.tournamentRepository = tournamentRepository;
         this.stadiumRepository = stadiumRepository;
+    }
+
+    private long calculateTotalPages(long totalElements, int pageSize) {
+        long totalPages = 0;
+        long reminder = 0;
+        totalPages = totalElements / pageSize;
+        reminder = totalElements % pageSize;
+        if(reminder > 0) {
+            totalPages += 1;
+        }
+        return totalPages;
     }
 
 
@@ -104,8 +119,6 @@ public class MatchServiceImpl implements MatchService {
         }
 
 
-
-
         match.setMatchDate(parsedDate);
         match.setHomeTeam(homeTeam);
         match.setAwayTeam(awayTeam);
@@ -129,17 +142,88 @@ public class MatchServiceImpl implements MatchService {
     }
 
     @Override
-    public List<MatchDto> findMatchesByTournament(Long tournamentId) {
-        List<Match> matches = matchRepository.findByTournamentId(tournamentId);
+    public MatchListDto findMatchesByTournamentPagination(Long tournamentId, int pageNumber) {
 
-        List<MatchDto> matchDtos = matches.stream()
+        int pageSize = 3;
+
+        Page<Match> pageMatches;
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
+        pageMatches = matchRepository.findByTournamentId(tournamentId, pageRequest);
+
+        long totalMatches = pageMatches.getTotalElements();
+        long totalPages = calculateTotalPages(totalMatches, pageSize);
+
+        List<MatchDto> matchDtos = pageMatches
+                .stream()
                 .map(match -> modelMapper.map(match, MatchDto.class)).toList();
 
-        return matchDtos;
+
+        Page<Match> beforeToday = matchRepository.findByTournamentIdAndMatchDateBeforeOrderByMatchDateDesc(tournamentId, LocalDate.now().atStartOfDay(), pageRequest);
+
+
+        MatchListDto matchListDto = MatchListDto.builder()
+                .matchesList(matchDtos)
+                .totalPages(totalPages)
+                .pagesBeforeToday(beforeToday.getTotalPages())
+                .build();
+
+        return matchListDto;
     }
 
     @Override
+    public List<MatchDto> findMatchesByTournament(Long tournamentId) {
+
+        List<Match> allMatches = matchRepository.findAll();
+
+        List<MatchDto> matchDtos = allMatches.stream().map(match -> modelMapper.map(match, MatchDto.class)).toList();
+        return matchDtos;
+    }
+
+
+    @Override
     public MatchDto updateMatch(Long matchId, EditMatchDto editMatchDto) {
+
+        System.out.println("editMatchDto Object: " + editMatchDto.toString());
+
+        TeamDto homeTeam = editMatchDto.getHomeTeam();
+        TeamDto awayTeam = editMatchDto.getAwayTeam();
+
+        Team updateHomeTeam = teamRepository.findById(homeTeam.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Team with id: " + homeTeam.getId() + " not found."));
+
+        Team updateAwayTeam = teamRepository.findById(awayTeam.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Team with id: " + awayTeam.getId() + " not found."));
+
+
+        int homeTeamGoals = editMatchDto.getHomeTeamGoals();
+        int awayTeamGoals = editMatchDto.getAwayTeamGoals();
+
+        if (homeTeamGoals > awayTeamGoals) {
+            updateHomeTeam.setWins(homeTeam.getWins() + 1);
+            updateAwayTeam.setLosses(awayTeam.getLosses() + 1);
+            updateHomeTeam.setPoints(homeTeam.getPoints() + 3);
+        } else if (homeTeamGoals == awayTeamGoals)  {
+            updateHomeTeam.setDraws(homeTeam.getDraws() + 1);
+            updateAwayTeam.setDraws(awayTeam.getDraws() + 1);
+            updateHomeTeam.setPoints(homeTeam.getPoints() + 1);
+            updateAwayTeam.setPoints(awayTeam.getPoints() + 1);
+        } else if (homeTeamGoals < awayTeamGoals) {
+            updateHomeTeam.setLosses(homeTeam.getLosses() + 1);
+            updateAwayTeam.setWins(awayTeam.getWins() + 1);
+            updateAwayTeam.setPoints(awayTeam.getPoints() + 3);
+        }
+
+        updateHomeTeam.setGoalsScored(homeTeam.getGoalsScored() + homeTeamGoals);
+        updateHomeTeam.setGoalsAgainst(homeTeam.getGoalsAgainst() + awayTeamGoals);
+
+        updateAwayTeam.setGoalsScored(awayTeam.getGoalsScored() + awayTeamGoals);
+        updateAwayTeam.setGoalsAgainst(awayTeam.getGoalsAgainst() + homeTeamGoals);
+
+
+        teamRepository.save(updateHomeTeam);
+        teamRepository.save(updateAwayTeam);
+
+
 
         Match match = matchRepository.findById(matchId)
                 .orElseThrow(() -> new EntityNotFoundException("Match with id: " + matchId + " doesn't exist."));

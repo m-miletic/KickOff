@@ -6,7 +6,6 @@ import { ActiveComponentContext } from "../context/ActiveComponentContext";
 import OrganizersTournament from "../components/ui/tournaments/OrganizersTournament";
 import { Calendar } from "../components/calendar/Calendar";
 import Footer from "../components/common/footer/Footer";
-import AnsweredRequests from "../components/ui/request/AnsweredRequests";
 
 const OrganizerPage = () => {
   const { activeComponent } = useContext(ActiveComponentContext);
@@ -18,19 +17,14 @@ const OrganizerPage = () => {
 
       <main className="flex-grow">
 
-{/*         {(activeComponent === "sentRequests" || activeComponent === "recievedRequests") && 
+        {(activeComponent === "myRequests") && 
           <div className="flex justify-center text-white mt-20">
             <RequestProvider>
               <RequestList />
             </RequestProvider>
           </div>
-        } */}
-
-        {(activeComponent === "answeredRequests") &&
-          <div className="flex justify-center text-white mt-20">
-            <AnsweredRequests />
-          </div>
         }
+
 
         { (activeComponent === "matchScheduler" || activeComponent === "") && (
           <Calendar />

@@ -3,10 +3,9 @@ package com.kick_off.kick_off.controller;
 import com.kick_off.kick_off.dto.match.CreateMatchDto;
 import com.kick_off.kick_off.dto.match.EditMatchDto;
 import com.kick_off.kick_off.dto.match.MatchDto;
+import com.kick_off.kick_off.dto.match.MatchListDto;
 import com.kick_off.kick_off.response.ApiResponse;
 import com.kick_off.kick_off.service.MatchService;
-import lombok.Getter;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +33,19 @@ public class MatchController {
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/pagination/tournament/{tournamentId}")
+    public ResponseEntity<ApiResponse<MatchListDto>> getMatchesByTournamentIdPagination(@PathVariable Long tournamentId, @RequestParam(defaultValue = "1") int pageNumber) {
+        System.out.println("TESTESTTES");
+        MatchListDto matches = matchService.findMatchesByTournamentPagination(tournamentId, pageNumber);
+        ApiResponse<MatchListDto> response = ApiResponse.<MatchListDto>builder()
+                .message("Matches fetched successfully.")
+                .data(matches)
+                .success(true)
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/tournament/{tournamentId}")

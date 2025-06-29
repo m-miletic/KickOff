@@ -1,6 +1,7 @@
 export const GUEST_NAVBAR_ITEMS = [
   { key: "homepage", label: "Homepage", id: "homepage" },
   { key: "leaderboard", label: "Leaderboard", id: "standings-section" },
+  { key: "matchHub", label: "Match Hub", id: "match-hub" },
   { key: "about", label: "About Us", id: "footer-section" }
 ]
 

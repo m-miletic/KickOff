@@ -73,9 +73,9 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
 
           <div
             className='cursor-pointer hover:bg-[#005571] rounded-md px-2 py-1'
-            onClick={() => handleSelectItem("answeredRequests")}
+            onClick={() => handleSelectItem("myRequests")}
             >
-            <button>Answered Requests</button>
+            <button>My Requests</button>
           </div>
 
           <div className='flex items-center cursor-pointer hover:bg-[#005571] rounded-md px-2 py-1'>

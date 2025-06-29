@@ -10,6 +10,7 @@ import { RequestContext } from '../../../../context/RequestContext';
 import { toast } from 'react-toastify';
 
 export const RequestDetailsModal = ({ selectedRequest, setIsModalOpen, setRequests }) => {
+  console.log("Selected Request: ", selectedRequest)
   const requContext = useContext(RequestContext);
   const { decodedJwt } = useContext(LoggedUserContext);
   const [isProceedButtonClicked, setIsProceedButtonClicked] = useState(false);
@@ -24,7 +25,7 @@ export const RequestDetailsModal = ({ selectedRequest, setIsModalOpen, setReques
     try {
       const response = await enrollTeam(enrollTeamObject);
       const value = response.data.data.status;
-      setRequests(prev => prev.map(req => req.id === selectedRequest.id ? { ...req, status: value } : req));
+      setRequests(prev => prev.map(req => req.id === selectedRequest.id ? { ...req, status: value} : req));
       setIsModalOpen(false);
     } catch (error) {
       console.log("Enroll team error:", error);
@@ -141,11 +142,9 @@ export const RequestDetailsModal = ({ selectedRequest, setIsModalOpen, setReques
                         <CreateTournamentForm
                           setIsModalOpen={setIsModalOpen}
                           selectedRequest={selectedRequest}
+                          setRequests={setRequests}
                           decodedJwt={decodedJwt}
                         />
-                      )}
-                      {selectedRequest.requestType === 'ROLE_CHANGE' && (
-                        <div><span>Change role (TODO)</span></div>
                       )}
                       {selectedRequest.requestType === 'TOURNAMENT_ENROLLMENT' && (
                         <div><span>Enroll tournament (TODO)</span></div>

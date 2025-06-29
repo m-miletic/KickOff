@@ -62,6 +62,13 @@ public class RequestServiceImpl implements RequestService {
 
         Optional<Request> requestExists = requestRepository.findByRequester_IdAndRequestTypeAndTournament_Id(requesterId, RequestType.TOURNAMENT_ENROLLMENT, tournamentId);
 
+        int teamsEnrolledNum = tournament.getTeams().size();
+        int maxAllowedToEnroll = tournament.getMaxTeams();
+
+        if (teamsEnrolledNum >= maxAllowedToEnroll) {
+            throw new ForbiddenActionException("Can't enroll. Tournament full.");
+        }
+
         if (requestExists.isPresent()) {
             if ( ((requestExists.get().getStatus().equals(Status.APPROVED)) && (requestExists.get().getRequestFulfilled() == true) && (team.getTournament() == null) )  ) {
                 throw new ForbiddenActionException("Team disqualified.Can't enroll again.");
@@ -81,6 +88,7 @@ public class RequestServiceImpl implements RequestService {
         newRequest.setApprover(approver);
         newRequest.setMessage("I want to enroll my team to your tournament");
         newRequest.setRequestType(RequestType.TOURNAMENT_ENROLLMENT);
+        newRequest.setTimeCreated(LocalDateTime.now());
         newRequest.setStatus(Status.PENDING);
         newRequest.setTournament(tournament);
 

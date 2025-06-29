@@ -40,7 +40,6 @@ public class AdminUserInitializer implements ApplicationRunner {
             stadium1.setLocation("8 Mediteranskih Igara 2, Split");
             stadiumRepository.save(stadium1);
 
-            stadium2 = new Stadium();
             stadium2.setStadiumName("Park Mladeži");
             stadium2.setLocation("Ul. Hrvatske Mornarice 10, Split");
             stadiumRepository.save(stadium2);

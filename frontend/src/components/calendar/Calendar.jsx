@@ -40,6 +40,9 @@ export const Calendar = () => {
 
   const [currentView, setCurrentView] = useState("dayGridMonth");
 
+  console.log("Match To Edit: ", matchToEdit);
+  console.log("selectedMatches: ", selectedMatches);
+
 
   const handleDatesSet = (arg) => {
     setCurrentView(arg.view.type);
@@ -48,7 +51,6 @@ export const Calendar = () => {
   const handleEditClick = (match) => {
     setMatchToEdit(match);
     setIsEditModalOpen(true);
-    setIsMatchesModalOpen(false); // optionally close the list modal when editing
   };
 
   // Replace this function in your code:
@@ -149,7 +151,9 @@ export const Calendar = () => {
         if (response.success && response.data) {
           const grouped = {}; // za grupirat Match objekte po date-u
 
-          response.data.forEach((match) => {
+          console.log("reponse for matches: ", response)
+
+          response.data.map((match) => {
             const dateKey = match.matchDate.slice(0, 10); // "YYYY-MM-DD" // micem ure jer cu grupirat po cilom danu a ne po satima, minutama...
             if (!grouped[dateKey]) {  // provjerava postoji li grouped array s ovim key-om, dakle array di cu pohranit sve meceve od tog datuma
               grouped[dateKey] = [] // ako nema stvori ga s tm datumom
@@ -199,9 +203,12 @@ export const Calendar = () => {
     }
   };
 
+  console.log("events: ", events)
+  console.log("individualMatchEvents: ", individualMatchEvents)
+
   return (
     
-    <div className="relative flex mx-2 my-6 sm:mx-10 sm:my-10 lg:mx-24 xl:mx-40 2xl:mx-50 transition-all text-[9px] sm:text-xs 2xl:text-sm min-h-[85vh]">
+    <div className="relative flex mx-2 my-6 sm:mx-10 sm:my-10 lg:mx-16 xl:mx-20 2xl:mx-50 transition-all text-[9px] sm:text-xs 2xl:text-sm min-h-[85vh]">
       {/* Sidebar legend only if wide screen */}
       {isWideScreen ? (
         <div>
@@ -375,18 +382,8 @@ export const Calendar = () => {
       <EditMatchModal
         match={matchToEdit}
         onClose={() => setIsEditModalOpen(false)}
-        onSave={(updatedMatch) => {
-          // Update matches in your state and refresh calendar events if needed
-          // For example:
-          setSelectedMatches((prev) =>
-            prev.map((m) => (m.id === updatedMatch.id ? updatedMatch : m))
-          );
-
-          // Also update the events array if you want changes reflected on calendar immediately
-          // You might want to refetch matches or update events state here
-
-          setIsEditModalOpen(false);
-        }}
+        setSelectedMatches={setSelectedMatches}
+        setEvents={setEvents}
       />
     )}
 

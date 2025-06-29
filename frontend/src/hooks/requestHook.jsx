@@ -18,7 +18,7 @@ export const useFetchRequests = ( userId, selectedFilters, activeComponent ) => 
           response = await fetchRequestsByApprover(userId, selectedFilters);
           setRequests(response.data.requests);
           setTotalPages(response.data.totalPages);
-        } else if (activeComponent === "sentRequests") {
+        } else if (activeComponent === "myRequests") {
           response = await fetchRequestsByRequester(userId, selectedFilters);
           setRequests(response.data.requests);
           setTotalPages(response.data.totalPages);

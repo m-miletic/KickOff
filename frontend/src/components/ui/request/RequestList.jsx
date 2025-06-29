@@ -49,6 +49,9 @@ const RequestList = () => {
 
   const { requests, setRequests, totalPages, error } = useFetchRequests(decodedJwt?.userId, selectedFilters, activeComponent);
 
+
+  console.log("************** requests: ", requests)
+
   return (
     <div className={`text-black text-[12px] sm:text-xs xl:text-base`}>
 
@@ -91,7 +94,7 @@ const RequestList = () => {
         <table className="w-full">
           <thead className="bg-[#001E28] rounded-t-lg text-white text-[10px] sm:text-xs lg:text-base">
             <tr className="rounded-t-lg">
-              {(decodedJwt?.role === 'ADMIN' || decodedJwt?.role === 'TOURNAMENT_ORGANIZER') && (
+              {(decodedJwt?.role === 'ADMIN') && (
                 <th className="px-4 py-3 text-leftrounded-tl-lg">Requested by</th>
               )}
               <th className="px-4 py-3 text-left" data-type="date" data-format="YYYY/DD/MM">
@@ -131,10 +134,10 @@ const RequestList = () => {
                   ${index % 2 === 0 ? 'bg-[#00303f]' : 'bg-[#001E28]'}
                 `}
               >
-                {(decodedJwt?.role === 'ADMIN' || decodedJwt?.role === 'TOURNAMENT_ORGANIZER') && (
+                {(decodedJwt?.role === 'ADMIN') && (
                   <td className="px-2 sm:px-4 lg:px-6 xl:px-8 py-4 text-white">{request.requester.username}</td>
                 )}
-                <td className="px-2 sm:px-4 lg:px-6 xl:px-8 py-4 text-white">{request.timeCreated}</td>
+                <td className="px-2 sm:px-4 lg:px-6 xl:px-8 py-4 text-white">{request.timeCreated.split('T')[0]} {request.timeCreated.split('T')[1].slice(0, 5)}</td>
                 <td className="px-2 sm:px-4 lg:px-6 xl:px-8 py-4 text-white">{request.status}</td>
                 <td>
                   <span
@@ -164,7 +167,7 @@ const RequestList = () => {
     </div>
 
       <div className='text-center mt-4'>
-        <Pagination totalPages={totalPages} selectedFilters={selectedFilters} handleSelectFilter={handleSetSelectedFilter} />
+        <Pagination totalPages={totalPages} selectedFilters={selectedFilters} handleSelectFilter={handleSetSelectedFilter} navButtonStyle="text-black w-5 h-5 px-4" totalPagesStyle="text-black" />
       </div>
     </div>
   )

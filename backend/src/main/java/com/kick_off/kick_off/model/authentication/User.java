@@ -27,8 +27,6 @@ public class User implements UserDetails {
     // prije je bia string sada je role kada san radia dohvacanje usera po filterima vidit kasnije jesan li sjeba ista za auth
     @Enumerated(EnumType.STRING)
     private Role role;
-    @Column(name = "request_count")
-    private Integer reqCount;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -27,14 +27,20 @@ const WeatherWidget = ({ city, style = "" }) => {
 
       <h3 className="mt-4 font-semibold">7-day forecast:</h3>
       <div className="flex justify-evenly mt-2">
-        {weather.forecast.forecastday.map(day => (
-          <div key={day.date} className="text-center p-2 bg-white rounded shadow w-20">
-            <p className="text-sm">{day.date}</p>
+      {weather.forecast.forecastday.map(day => {
+        const dateObj = new Date(day.date);
+        const weekday = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+        return (
+          <div key={day.date} className="text-center p-2 bg-white rounded shadow w-32 py-4 px-2">
+            <p className="text-sm">{day.date.slice(5, 10)}</p> 
+            <p className="text-sm font-medium">{weekday}</p> 
             <img src={day.day.condition.icon} alt={day.day.condition.text} className="mx-auto" />
             <p>{day.day.avgtemp_c}°C</p>
             <p className="text-xs">{day.day.condition.text}</p>
           </div>
-        ))}
+        );
+      })}
+
       </div>
     </div>
   );

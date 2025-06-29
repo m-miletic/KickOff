@@ -1,6 +1,8 @@
 package com.kick_off.kick_off.repository;
 
 import com.kick_off.kick_off.model.Match;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -34,7 +36,10 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
                                               @Param("end") LocalDateTime end);
 
 
-    List<Match> findByTournamentId(Long tournamentId);
+    Page<Match> findByTournamentId(Long tournamentId, Pageable pageable);
+
+    Page<Match> findByTournamentIdAndMatchDateBeforeOrderByMatchDateDesc(Long tournamentId, LocalDateTime dateTime, Pageable pageable);
+
 
     @Query("""
         SELECT COUNT(m) > 0 FROM Match m

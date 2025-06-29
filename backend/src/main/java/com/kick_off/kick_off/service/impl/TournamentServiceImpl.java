@@ -88,11 +88,6 @@ public class TournamentServiceImpl implements TournamentService {
                 }).toList();
 
 
-        for (TournamentDto dto : tournamentDtos) {
-            System.out.println(dto);
-        }
-
-
         TournamentListDto tournamentListDto = TournamentListDto.builder()
                 .tournamentsList(tournamentDtos)
                 .totalPages(totalPages)

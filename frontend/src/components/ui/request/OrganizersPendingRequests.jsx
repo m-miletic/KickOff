@@ -50,12 +50,12 @@ const OrganizersPendingRequests = ({ setTournament }) => {
         setPendingRequests((prevPenRequests) =>
           prevPenRequests.filter((req) => req.id !== request.id)
         )
-        setTournament((prevTournament) => ({
-          ...prevTournament,
-          teams: [...(prevTournament.teams || []), response.data] // u slucaju da tournament jos nema timova tj. da su null/undefined osigurat se s []
-        }))
         setTotalPendingRequests(totalPendingRequests-1)
         if (statusValue === "APPROVED") {
+          setTournament((prevTournament) => ({
+            ...prevTournament,
+            teams: [...(prevTournament.teams || []), response.data] // u slucaju da tournament jos nema timova tj. da su null/undefined osigurat se s []
+          }))
           toast.success("Approved request to join tournament", {
             autoClose: 2500
           })

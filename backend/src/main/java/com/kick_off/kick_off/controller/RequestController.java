@@ -5,6 +5,8 @@ import com.kick_off.kick_off.dto.novo.CreateRoleChangeRequestDto;
 import com.kick_off.kick_off.dto.paginationFilters.PaginationFilters;
 import com.kick_off.kick_off.dto.request.*;
 import com.kick_off.kick_off.dto.tournament.TournamentDto;
+import com.kick_off.kick_off.model.RequestType;
+import com.kick_off.kick_off.model.Role;
 import com.kick_off.kick_off.response.ApiResponse;
 import com.kick_off.kick_off.service.RequestService;
 import org.springframework.http.HttpStatus;
@@ -38,7 +40,11 @@ public class RequestController {
 
     @GetMapping("/requester/{userId}")
     public ResponseEntity<ApiResponse<RequestListDto>> fetchRequestsByRequesterId(@PathVariable Long userId, @ModelAttribute PaginationFilters filters) {
+        System.out.println("UserId: " + userId);
         RequestListDto requests = requestService.getRequestsByRequesterId(userId, filters);
+        for(RequestDto r : requests.getRequests()) {
+            System.out.println("RequestDto: " + r.toString());
+        }
         ApiResponse<RequestListDto> response = ApiResponse.<RequestListDto>builder()
                 .message("Successfully retrieved all requests by requester.")
                 .data(requests)
