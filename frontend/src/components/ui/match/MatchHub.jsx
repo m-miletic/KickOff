@@ -93,8 +93,6 @@ const MatchHub = ({ selectedTournament }) => {
         </div>
       )}
 
-
-
     </>
   );
 };

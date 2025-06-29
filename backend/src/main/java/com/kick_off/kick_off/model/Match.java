@@ -34,6 +34,9 @@ public class Match {
     @Column(name = "away_team_goals", columnDefinition = "integer default 0")
     private Integer awayTeamGoals;
 
+    @Enumerated(EnumType.STRING)
+    private MatchOutcome matchOutcome;
+
     @ManyToOne
     @JoinColumn(name = "tournament_id")
     private Tournament tournament;

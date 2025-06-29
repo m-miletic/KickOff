@@ -50,8 +50,6 @@ const RequestList = () => {
   const { requests, setRequests, totalPages, error } = useFetchRequests(decodedJwt?.userId, selectedFilters, activeComponent);
 
 
-  console.log("************** requests: ", requests)
-
   return (
     <div className={`text-black text-[12px] sm:text-xs xl:text-base`}>
 

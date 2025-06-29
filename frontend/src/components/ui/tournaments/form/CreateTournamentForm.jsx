@@ -45,6 +45,8 @@ const CreateTournamentForm = ({ setIsModalOpen, selectedRequest, setRequests, de
     }
   }
 
+  console.log("validationErrors: ", validationErrors)
+
 
   return (
     <form onSubmit={handleSubmit} className='text-black text-start text-sm space-y-4 p-2'>
@@ -84,6 +86,14 @@ const CreateTournamentForm = ({ setIsModalOpen, selectedRequest, setRequests, de
           required
         />
       </div>
+      {validationErrors?.startDate && (
+        <div className='flex'>
+          <div className='w-32'></div>
+          <div className="text-red-500 text-xs mt-1">
+            {validationErrors?.startDate} 
+          </div>
+        </div>
+      )}
 
       {/* End Date */}
       <div className='flex items-center'>
@@ -97,6 +107,15 @@ const CreateTournamentForm = ({ setIsModalOpen, selectedRequest, setRequests, de
           required
         />
       </div>
+      {validationErrors?.endDate && (
+        <div className='flex'>
+          <div className='w-32'></div>
+          <div className="text-red-500 text-xs mt-1">
+            {validationErrors?.endDate} 
+          </div>
+        </div>
+      )}
+      
 
       <div className='flex items-center'>
         <label htmlFor='endDate' className='w-32'>Number of Teams</label>

@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const WeatherWidget = ({ city, style = "" }) => {
   const [weather, setWeather] = useState(null);
-  const apiKey = '9dd8473281d540aa81b192822252306'; // Replace with your WeatherAPI key
+  const apiKey = '9dd8473281d540aa81b192822252306'; // my WeatherAPI key
 
   useEffect(() => {
     axios.get(`https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=7`)

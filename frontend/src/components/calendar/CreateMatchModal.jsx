@@ -6,8 +6,6 @@ import { toast } from "react-toastify";
 
 export const CreateMatchModal = ({ selectedDate, setIsCreateMatchModalOpen, tournament }) => {
 
-  console.log("CreateMatchModal -- ", tournament)
-
   // ako user (organizator) ima account ali nije jos kreira nikakva turnir i pokusa kreirat utakmicu daj upozorenje i onemoguci kreiranje
   if (!tournament) {
     return (
@@ -25,7 +23,7 @@ export const CreateMatchModal = ({ selectedDate, setIsCreateMatchModalOpen, tour
       </div>
     );
   }
-  
+
 
   const [teams, setTeams] = useState(tournament?.teams)
   const [errors, setErrors] = useState({});
@@ -40,36 +38,6 @@ export const CreateMatchModal = ({ selectedDate, setIsCreateMatchModalOpen, tour
     tournamentId: tournament.id,
     time: '' // ako korisnik zeli nadodat detaljnije vrime utakmice
   });
-
-  console.log("Selected Date: ", selectedDate)
-
-  // dohvacanje timova po organizatoru na backendu nije moguce er Team nema vezu na User-a(organizatora)
-
-  // backend API zahtjeva String 'ime turnira' zbog toga moram prvo dohvatit turnir po organizatoru 
-
-  // sad mogu dohvatit timove po turniru
-
-/*   useEffect(() => {
-    if (!tournament) {
-      console.log("tournament not defined yes wait and then fetch teams")
-      return
-    }
-    const fetchTeams = async () => {
-      const fetchTeamsObj = {
-        tournamentName: tournament.tournamentName
-      }
-      try {
-        const response = await fetchTeamsByTournament(fetchTeamsObj)
-        setTeams(response)
-      } catch (error) {
-        console.log("error fetchTeams: ", error)
-        throw error
-      }
-    }
-
-    fetchTeams();
-  }, [tournament]); */
-
 
   useEffect(() => {
     const getStadiums = async () => {

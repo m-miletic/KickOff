@@ -29,7 +29,6 @@ public class TournamentDto {
     @Min(value = 3, message = "Must be at lest 3 teams to create a tournament")
     private int maxTeams;
 
-    // ovo bi tribalo bit ok
     private List<TeamDto> teams;
     private List<MatchDto> matchesList;
 

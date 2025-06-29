@@ -15,8 +15,6 @@ const EditMatchModal = ({ match, onClose, setSelectedMatches, setEvents }) => {
   const [errorMessage, setErrorMessage] = useState('');
 
 
-
-
   const handleChange = (e) => {
     setEditMatchForm((prevValues) => ({
       ...prevValues,

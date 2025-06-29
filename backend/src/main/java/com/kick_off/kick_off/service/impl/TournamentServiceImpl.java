@@ -153,19 +153,30 @@ public class TournamentServiceImpl implements TournamentService {
                 .map(tournament -> {
                     TournamentDto tournamentDto = modelMapper.map(tournament, TournamentDto.class);
 
-                    // Ensure nested User is mapped manually if ModelMapper doesn't handle it by default
                     if (tournament.getOrganizer() != null) {
                         UserDto userDto = modelMapper.map(tournament.getOrganizer(), UserDto.class);
                         tournamentDto.setOrganizer(userDto);
                     }
 
+                    if (tournamentDto.getTeams() != null) {
+                        tournamentDto.getTeams().sort((a, b) -> {
+                            int pointComparison = Integer.compare(b.getPoints(), a.getPoints());
+
+                            if (pointComparison != 0) {
+                                return pointComparison;
+                            }
+
+                            int goalDiffA = a.getGoalsScored() - a.getGoalsAgainst();
+                            int goalDiffB = b.getGoalsScored() - b.getGoalsAgainst();
+
+                            return Integer.compare(goalDiffB, goalDiffA);
+                        });
+                    }
+
+
                     return tournamentDto;
                 }).toList();
 
-
-        for (TournamentDto dto : tournamentDtos) {
-            System.out.println(dto);
-        }
 
 
         TournamentListDto tournamentListDto = TournamentListDto.builder()
@@ -214,6 +225,25 @@ public class TournamentServiceImpl implements TournamentService {
             }
         }
 
+        LocalDate now = LocalDate.now();
+        LocalDate editStartDate = tournamentDto.getStartDate();
+        LocalDate editEndDate = tournamentDto.getEndDate();
+
+        if(editEndDate.isBefore(editStartDate)) {
+            throw new FieldValidationException("endDate", "End date can't be before start date");
+        }
+
+        if(editStartDate.isBefore(now) || editEndDate.isBefore(now)) {
+            throw new FieldValidationException("endDate", "Can't set dates in past");
+        }
+
+        if(editStartDate.equals(LocalDate.now())) {
+            throw new FieldValidationException("startDate", "Too early! The tournament can't start on the current day.");
+        }
+
+        if(editEndDate.isAfter(editStartDate.plusMonths(1))) {
+            throw new FieldValidationException("endDate", "Tournament can't last longer than a month");
+        }
 
 
         updateRequest.setRequestFulfilled(true);
@@ -327,6 +357,7 @@ public class TournamentServiceImpl implements TournamentService {
         tournament.setDetails(updatedTournament.getDetails());
         tournament.setStartDate(updatedTournament.getStartDate());
         tournament.setEndDate(updatedTournament.getEndDate());
+        tournament.setMaxTeams(updatedTournament.getMaxTeams());
 
         Tournament saveUpdatedTournament = tournamentRepository.save(tournament);
 

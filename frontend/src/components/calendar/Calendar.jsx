@@ -40,9 +40,6 @@ export const Calendar = () => {
 
   const [currentView, setCurrentView] = useState("dayGridMonth");
 
-  console.log("Match To Edit: ", matchToEdit);
-  console.log("selectedMatches: ", selectedMatches);
-
 
   const handleDatesSet = (arg) => {
     setCurrentView(arg.view.type);
@@ -84,7 +81,6 @@ export const Calendar = () => {
       alert("Tournament data is loading, please wait");
       return;
     }
-
     const now = new Date()
     const clickedDate = new Date(arg.date)
 
@@ -118,14 +114,13 @@ export const Calendar = () => {
 
   // Fetch tournament by organizer
   useEffect(() => {
-    console.log("I'm here #1")
     if (!decodedJwt) return;
 
     const fetchTournament = async () => {
       try {
         setLoadingTournament(true);
         const response = await fetchOrganizersTournament(decodedJwt.userId);
-        console.log("What's the response?: ", response)
+        console.log("fetchTournament Response: ", response)
         setTournament(response.data);
         setTeams(response.data.teams)
       } catch (error) {
@@ -151,8 +146,6 @@ export const Calendar = () => {
         if (response.success && response.data) {
           const grouped = {}; // za grupirat Match objekte po date-u
 
-          console.log("reponse for matches: ", response)
-
           response.data.map((match) => {
             const dateKey = match.matchDate.slice(0, 10); // "YYYY-MM-DD" // micem ure jer cu grupirat po cilom danu a ne po satima, minutama...
             if (!grouped[dateKey]) {  // provjerava postoji li grouped array s ovim key-om, dakle array di cu pohranit sve meceve od tog datuma
@@ -162,7 +155,7 @@ export const Calendar = () => {
           });
 
 
-          const mappedGroupedEvents = Object.entries(grouped).map(([date, matches]) => ({ // Object.entried pretvara grouped objekt u key(date):value(matches) parove
+          const mappedGroupedEvents = Object.entries(grouped).map(([date, matches]) => ({ // Object.entries pretvara grouped objekt u key(date):value(matches) parove
             title: "See Matches",
             start: date,
             allDay: true,
@@ -171,7 +164,7 @@ export const Calendar = () => {
 
           const mappedIndividualEvents = response.data.map((match) => ({
             id: match.id,
-            title: match.name, // or format how you want to show the match name
+            title: match.name, 
             start: match.matchDate, // ode ne slice-am ko gore jer ocu grzpirat bas po uri
             allDay: false,
             extendedProps: { match },
@@ -203,13 +196,11 @@ export const Calendar = () => {
     }
   };
 
-  console.log("events: ", events)
-  console.log("individualMatchEvents: ", individualMatchEvents)
 
   return (
     
     <div className="relative flex mx-2 my-6 sm:mx-10 sm:my-10 lg:mx-16 xl:mx-20 2xl:mx-50 transition-all text-[9px] sm:text-xs 2xl:text-sm min-h-[85vh]">
-      {/* Sidebar legend only if wide screen */}
+      
       {isWideScreen ? (
         <div>
           <aside className="w-80 mr-6 p-4 bg-gray-100 rounded shadow-sm text-gray-700 text-xs sm:text-sm top-6 self-start">
@@ -239,7 +230,7 @@ export const Calendar = () => {
 
         </div>
       ) : (
-        // Button that opens the legend modal on small screens
+        // botun za legendu u malom ekranu
         <div className="mr-4">
           <button
             onClick={() => setIsLegendModalOpen(true)}
@@ -319,14 +310,10 @@ export const Calendar = () => {
           }}
         />
 
-        {/* Weather widget goes below calendar */}
         <div className="flex justify-center" id="weather-widget">
           <WeatherWidget city="Split" style="p-4 mt-8 bg-sky-100 rounded-lg shadow w-full text-center" />
         </div>
       </div>
-
-
-      {/* Modals */}
 
       {isCreateMatchModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
@@ -364,12 +351,14 @@ export const Calendar = () => {
                   >
                     Edit
                   </button>
-                  <button
-                    className="px-2 py-1 mt-2 ml-2 bg-red-600 text-white rounded"
-                    onClick={() => handleDeleteClick(match)}
-                  >
-                    Delete
-                  </button>
+                  {new Date(match.matchDate) > new Date() && (
+                    <button
+                      className="px-2 py-1 mt-2 ml-2 bg-red-600 text-white rounded"
+                      onClick={() => handleDeleteClick(match)}
+                    >
+                      Delete
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>

@@ -16,15 +16,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "username")}) // db level validation
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "username")})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "username", nullable = false, unique = true) // field level validation for JPA entity
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
     private String password;
-    // prije je bia string sada je role kada san radia dohvacanje usera po filterima vidit kasnije jesan li sjeba ista za auth
     @Enumerated(EnumType.STRING)
     private Role role;
 

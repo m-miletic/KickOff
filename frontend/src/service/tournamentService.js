@@ -77,8 +77,6 @@ export const fetchActiveAndUpcomingTournaments = async () => {
   }
 }
 
-
-
 export const createTournament = async ( tournamentObject ) => {
   const jwt = localStorage.getItem('token');
   try {
@@ -172,16 +170,6 @@ export const updateTournament = async (id, updateTournamentObj) => {
     console.log("Update Tournament Error: ", error)
     throw error.response.data
 
-/*     // Optional enhancement: attach backend message to the error
-    if (error.response) {
-      throw {
-        message: error.response.data?.message || "Unexpected error",
-        status: error.response.status,
-        data: error.response.data
-      };
-    }
-
-    throw error; // Re-throw for unknown/unstructured errors */
   }
 };
 

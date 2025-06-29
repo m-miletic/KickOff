@@ -8,10 +8,7 @@ import com.kick_off.kick_off.dto.stadium.StadiumDto;
 import com.kick_off.kick_off.dto.team.MyTeamDto;
 import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.exception.ForbiddenActionException;
-import com.kick_off.kick_off.model.Match;
-import com.kick_off.kick_off.model.Stadium;
-import com.kick_off.kick_off.model.Team;
-import com.kick_off.kick_off.model.Tournament;
+import com.kick_off.kick_off.model.*;
 import com.kick_off.kick_off.repository.MatchRepository;
 import com.kick_off.kick_off.repository.StadiumRepository;
 import com.kick_off.kick_off.repository.TeamRepository;
@@ -183,8 +180,6 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public MatchDto updateMatch(Long matchId, EditMatchDto editMatchDto) {
 
-        System.out.println("editMatchDto Object: " + editMatchDto.toString());
-
         TeamDto homeTeam = editMatchDto.getHomeTeam();
         TeamDto awayTeam = editMatchDto.getAwayTeam();
 
@@ -195,22 +190,282 @@ public class MatchServiceImpl implements MatchService {
                 .orElseThrow(() -> new EntityNotFoundException("Team with id: " + awayTeam.getId() + " not found."));
 
 
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> new EntityNotFoundException("Match with id: " + matchId + " doesn't exist."));
+
+        System.out.println("Match: " + match.getName());
+
+
         int homeTeamGoals = editMatchDto.getHomeTeamGoals();
         int awayTeamGoals = editMatchDto.getAwayTeamGoals();
 
         if (homeTeamGoals > awayTeamGoals) {
-            updateHomeTeam.setWins(homeTeam.getWins() + 1);
-            updateAwayTeam.setLosses(awayTeam.getLosses() + 1);
-            updateHomeTeam.setPoints(homeTeam.getPoints() + 3);
+            /*provjerit null jer san u dummy data inserta null-ove*/
+            if (match.getMatchOutcome() != null) {
+                if (match.getMatchOutcome().equals(MatchOutcome.DRAW)) {
+                    updateHomeTeam.setDraws(updateHomeTeam.getDraws() - 1);
+                    updateAwayTeam.setDraws(updateAwayTeam.getDraws() - 1);
+
+                    updateHomeTeam.setWins(updateHomeTeam.getWins() + 1);
+                    updateAwayTeam.setLosses(updateAwayTeam.getLosses() + 1);
+
+                    updateHomeTeam.setPoints(updateHomeTeam.getPoints() - 1);
+                    updateAwayTeam.setPoints(updateAwayTeam.getPoints() - 1);
+
+                    updateHomeTeam.setPoints(updateHomeTeam.getPoints() + 3);
+
+
+                    int oldHomeGoals = match.getHomeTeamGoals();
+                    int oldAwayGoals = match.getAwayTeamGoals();
+
+                    updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
+                    updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
+
+                    updateHomeTeam.setGoalsAgainst(updateHomeTeam.getGoalsAgainst() - oldAwayGoals + awayTeamGoals);
+                    updateAwayTeam.setGoalsAgainst(updateAwayTeam.getGoalsAgainst() - oldHomeGoals + homeTeamGoals);
+
+                    match.setMatchOutcome(MatchOutcome.WIN);
+                    match.setHomeTeamGoals(homeTeamGoals);
+                    match.setAwayTeamGoals(awayTeamGoals);
+
+                } else if (match.getMatchOutcome().equals(MatchOutcome.WIN)) {
+
+                    int oldHomeGoals = match.getHomeTeamGoals();
+                    int oldAwayGoals = match.getAwayTeamGoals();
+
+                    updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
+                    updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
+
+                    updateHomeTeam.setGoalsAgainst(updateHomeTeam.getGoalsAgainst() - oldAwayGoals + awayTeamGoals);
+                    updateAwayTeam.setGoalsAgainst(updateAwayTeam.getGoalsAgainst() - oldHomeGoals + homeTeamGoals);
+
+                    match.setHomeTeamGoals(homeTeamGoals);
+                    match.setAwayTeamGoals(awayTeamGoals);
+
+
+                } else if (match.getMatchOutcome().equals(MatchOutcome.LOSE)) {
+                    updateHomeTeam.setLosses(updateHomeTeam.getLosses() - 1);
+                    updateAwayTeam.setWins(updateAwayTeam.getWins() - 1);
+
+                    updateHomeTeam.setWins(updateHomeTeam.getWins() + 1);
+                    updateAwayTeam.setLosses(updateAwayTeam.getLosses() + 1);
+
+                    updateAwayTeam.setPoints(updateAwayTeam.getPoints() - 3);
+                    updateHomeTeam.setPoints(updateHomeTeam.getPoints() + 3);
+
+                    int oldHomeGoals = match.getHomeTeamGoals();
+                    int oldAwayGoals = match.getAwayTeamGoals();
+
+                    updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
+                    updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
+
+                    updateHomeTeam.setGoalsAgainst(updateHomeTeam.getGoalsAgainst() - oldAwayGoals + awayTeamGoals);
+                    updateAwayTeam.setGoalsAgainst(updateAwayTeam.getGoalsAgainst() - oldHomeGoals + homeTeamGoals);
+
+                    match.setMatchOutcome(MatchOutcome.WIN);
+                    match.setHomeTeamGoals(homeTeamGoals);
+                    match.setAwayTeamGoals(awayTeamGoals);
+
+                }
+            } else {
+
+                updateHomeTeam.setWins(updateHomeTeam.getWins() + 1);
+                updateAwayTeam.setLosses(updateAwayTeam.getLosses() + 1);
+
+                updateHomeTeam.setPoints(updateHomeTeam.getPoints() + 3);
+
+                int oldHomeGoals = match.getHomeTeamGoals();
+                int oldAwayGoals = match.getAwayTeamGoals();
+
+                updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
+                updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
+
+                updateHomeTeam.setGoalsAgainst(updateHomeTeam.getGoalsAgainst() - oldAwayGoals + awayTeamGoals);
+                updateAwayTeam.setGoalsAgainst(updateAwayTeam.getGoalsAgainst() - oldHomeGoals + homeTeamGoals);
+
+                match.setMatchOutcome(MatchOutcome.WIN);
+                match.setHomeTeamGoals(homeTeamGoals);
+                match.setAwayTeamGoals(awayTeamGoals);
+            }
+
+
         } else if (homeTeamGoals == awayTeamGoals)  {
-            updateHomeTeam.setDraws(homeTeam.getDraws() + 1);
-            updateAwayTeam.setDraws(awayTeam.getDraws() + 1);
-            updateHomeTeam.setPoints(homeTeam.getPoints() + 1);
-            updateAwayTeam.setPoints(awayTeam.getPoints() + 1);
+            if (match.getMatchOutcome() != null) {
+                if (match.getMatchOutcome().equals(MatchOutcome.DRAW)) {
+
+                    int oldHomeGoals = match.getHomeTeamGoals();
+                    int oldAwayGoals = match.getAwayTeamGoals();
+
+                    updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
+                    updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
+
+                    updateHomeTeam.setGoalsAgainst(updateHomeTeam.getGoalsAgainst() - oldAwayGoals + awayTeamGoals);
+                    updateAwayTeam.setGoalsAgainst(updateAwayTeam.getGoalsAgainst() - oldHomeGoals + homeTeamGoals);
+
+                    match.setHomeTeamGoals(homeTeamGoals);
+                    match.setAwayTeamGoals(awayTeamGoals);
+
+                } else if (match.getMatchOutcome().equals(MatchOutcome.WIN)) {
+
+                    updateHomeTeam.setWins(updateHomeTeam.getWins() - 1);
+                    updateAwayTeam.setLosses(updateAwayTeam.getLosses() - 1);
+
+                    updateHomeTeam.setDraws(updateHomeTeam.getDraws() + 1);
+                    updateAwayTeam.setDraws(updateAwayTeam.getDraws() + 1);
+
+                    updateHomeTeam.setPoints(updateHomeTeam.getPoints() - 3);
+                    updateAwayTeam.setPoints(updateAwayTeam.getPoints() + 1);
+                    updateHomeTeam.setPoints(updateHomeTeam.getPoints() + 1);
+
+                    int oldHomeGoals = match.getHomeTeamGoals();
+                    int oldAwayGoals = match.getAwayTeamGoals();
+
+                    updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
+                    updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
+
+                    updateHomeTeam.setGoalsAgainst(updateHomeTeam.getGoalsAgainst() - oldAwayGoals + awayTeamGoals);
+                    updateAwayTeam.setGoalsAgainst(updateAwayTeam.getGoalsAgainst() - oldHomeGoals + homeTeamGoals);
+
+                    match.setMatchOutcome(MatchOutcome.DRAW);
+                    match.setHomeTeamGoals(homeTeamGoals);
+                    match.setAwayTeamGoals(awayTeamGoals);
+
+
+                } else if (match.getMatchOutcome().equals(MatchOutcome.LOSE)) {
+
+                    updateHomeTeam.setLosses(updateHomeTeam.getLosses() - 1);
+                    updateAwayTeam.setWins(updateAwayTeam.getWins() - 1);
+
+                    updateHomeTeam.setDraws(updateHomeTeam.getDraws() + 1);
+                    updateAwayTeam.setDraws(updateAwayTeam.getDraws() + 1);
+
+                    updateAwayTeam.setPoints(updateAwayTeam.getPoints() - 3);
+                    updateAwayTeam.setPoints(updateAwayTeam.getPoints() + 1);
+                    updateHomeTeam.setPoints(updateHomeTeam.getPoints() + 1);
+
+                    int oldHomeGoals = match.getHomeTeamGoals();
+                    int oldAwayGoals = match.getAwayTeamGoals();
+
+                    updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
+                    updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
+
+                    updateHomeTeam.setGoalsAgainst(updateHomeTeam.getGoalsAgainst() - oldAwayGoals + awayTeamGoals);
+                    updateAwayTeam.setGoalsAgainst(updateAwayTeam.getGoalsAgainst() - oldHomeGoals + homeTeamGoals);
+
+                    match.setMatchOutcome(MatchOutcome.DRAW);
+                    match.setHomeTeamGoals(homeTeamGoals);
+                    match.setAwayTeamGoals(awayTeamGoals);
+
+                }
+            } else {
+
+                updateHomeTeam.setDraws(updateHomeTeam.getDraws() + 1);
+                updateAwayTeam.setDraws(updateAwayTeam.getDraws() + 1);
+
+                updateHomeTeam.setPoints(updateHomeTeam.getPoints() + 1);
+                updateAwayTeam.setPoints(updateAwayTeam.getPoints() + 1);
+
+                int oldHomeGoals = match.getHomeTeamGoals();
+                int oldAwayGoals = match.getAwayTeamGoals();
+
+                updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
+                updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
+
+                updateHomeTeam.setGoalsAgainst(updateHomeTeam.getGoalsAgainst() - oldAwayGoals + awayTeamGoals);
+                updateAwayTeam.setGoalsAgainst(updateAwayTeam.getGoalsAgainst() - oldHomeGoals + homeTeamGoals);
+
+                match.setMatchOutcome(MatchOutcome.DRAW);
+                match.setHomeTeamGoals(homeTeamGoals);
+                match.setAwayTeamGoals(awayTeamGoals);
+            }
+
         } else if (homeTeamGoals < awayTeamGoals) {
-            updateHomeTeam.setLosses(homeTeam.getLosses() + 1);
-            updateAwayTeam.setWins(awayTeam.getWins() + 1);
-            updateAwayTeam.setPoints(awayTeam.getPoints() + 3);
+            if (match.getMatchOutcome() != null) {
+                if (match.getMatchOutcome().equals(MatchOutcome.DRAW)) {
+
+                    updateHomeTeam.setDraws(updateHomeTeam.getDraws() - 1);
+                    updateAwayTeam.setDraws(updateAwayTeam.getDraws() - 1);
+
+                    updateHomeTeam.setLosses(updateHomeTeam.getLosses() + 1);
+                    updateAwayTeam.setWins(updateAwayTeam.getWins() + 1);
+
+                    updateHomeTeam.setPoints(updateHomeTeam.getPoints() - 1);
+                    updateAwayTeam.setPoints(updateAwayTeam.getPoints() - 1);
+
+                    updateAwayTeam.setPoints(updateAwayTeam.getPoints() + 3);
+
+                    int oldHomeGoals = match.getHomeTeamGoals();
+                    int oldAwayGoals = match.getAwayTeamGoals();
+
+                    updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
+                    updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
+
+                    updateHomeTeam.setGoalsAgainst(updateHomeTeam.getGoalsAgainst() - oldAwayGoals + awayTeamGoals);
+                    updateAwayTeam.setGoalsAgainst(updateAwayTeam.getGoalsAgainst() - oldHomeGoals + homeTeamGoals);
+
+                    match.setMatchOutcome(MatchOutcome.LOSE);
+                    match.setHomeTeamGoals(homeTeamGoals);
+                    match.setAwayTeamGoals(awayTeamGoals);
+
+
+                } else if (match.getMatchOutcome().equals(MatchOutcome.WIN)) {
+
+                    updateHomeTeam.setWins(updateHomeTeam.getWins() - 1);
+                    updateAwayTeam.setLosses(updateAwayTeam.getLosses() - 1);
+
+                    updateHomeTeam.setLosses(updateHomeTeam.getLosses() + 1);
+                    updateAwayTeam.setWins(updateAwayTeam.getWins() + 1);
+
+                    updateHomeTeam.setPoints(updateHomeTeam.getPoints() - 3);
+                    updateAwayTeam.setPoints(updateAwayTeam.getPoints() + 3);
+
+                    int oldHomeGoals = match.getHomeTeamGoals();
+                    int oldAwayGoals = match.getAwayTeamGoals();
+
+                    updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
+                    updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
+
+                    updateHomeTeam.setGoalsAgainst(updateHomeTeam.getGoalsAgainst() - oldAwayGoals + awayTeamGoals);
+                    updateAwayTeam.setGoalsAgainst(updateAwayTeam.getGoalsAgainst() - oldHomeGoals + homeTeamGoals);
+
+                    match.setMatchOutcome(MatchOutcome.LOSE);
+                    match.setHomeTeamGoals(homeTeamGoals);
+                    match.setAwayTeamGoals(awayTeamGoals);
+
+
+                } else if (match.getMatchOutcome().equals(MatchOutcome.LOSE)) {
+
+                    int oldHomeGoals = match.getHomeTeamGoals();
+                    int oldAwayGoals = match.getAwayTeamGoals();
+
+                    updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
+                    updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
+
+                    updateHomeTeam.setGoalsAgainst(updateHomeTeam.getGoalsAgainst() - oldAwayGoals + awayTeamGoals);
+                    updateAwayTeam.setGoalsAgainst(updateAwayTeam.getGoalsAgainst() - oldHomeGoals + homeTeamGoals);
+
+                    match.setHomeTeamGoals(homeTeamGoals);
+                    match.setAwayTeamGoals(awayTeamGoals);
+
+                }
+            } else {
+
+                int oldHomeGoals = match.getHomeTeamGoals();
+                int oldAwayGoals = match.getAwayTeamGoals();
+
+                updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
+                updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
+
+                updateHomeTeam.setLosses(updateHomeTeam.getLosses() + 1);
+                updateAwayTeam.setWins(updateAwayTeam.getWins() + 1);
+
+                updateAwayTeam.setPoints(updateAwayTeam.getPoints() + 3);
+
+                match.setMatchOutcome(MatchOutcome.LOSE);
+                match.setHomeTeamGoals(homeTeamGoals);
+                match.setAwayTeamGoals(awayTeamGoals);
+            }
+
         }
 
         updateHomeTeam.setGoalsScored(homeTeam.getGoalsScored() + homeTeamGoals);
@@ -225,9 +480,6 @@ public class MatchServiceImpl implements MatchService {
 
 
 
-        Match match = matchRepository.findById(matchId)
-                .orElseThrow(() -> new EntityNotFoundException("Match with id: " + matchId + " doesn't exist."));
-
         LocalDateTime newDate = editMatchDto.getMatchDate();
         LocalDateTime now = LocalDateTime.now();
         if (newDate != null && !newDate.equals(match.getMatchDate())) {
@@ -237,13 +489,6 @@ public class MatchServiceImpl implements MatchService {
             match.setMatchDate(newDate);
         }
 
-        if (editMatchDto.getHomeTeamGoals() != null) {
-            match.setHomeTeamGoals(editMatchDto.getHomeTeamGoals());
-        }
-
-        if (editMatchDto.getAwayTeamGoals() != null) {
-            match.setAwayTeamGoals(editMatchDto.getAwayTeamGoals());
-        }
 
         Match updatedMatch = matchRepository.save(match);
 

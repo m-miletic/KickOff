@@ -48,7 +48,7 @@ const OrganizersTournament = () => {
 
 
 
-  // iako nemoze se ovo ba sni dogodit al ok
+
   useEffect(() => {
     if (enrollError) {
       const timer = setTimeout(() => {
