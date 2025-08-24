@@ -1,8 +1,7 @@
 package com.kick_off.kick_off.dto.request;
 
-import com.kick_off.kick_off.dto.novo.UserDto;
+import com.kick_off.kick_off.dto.UserDto;
 import com.kick_off.kick_off.model.RequestType;
-import com.kick_off.kick_off.model.Role;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

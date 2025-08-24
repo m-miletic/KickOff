@@ -1,7 +1,7 @@
 package com.kick_off.kick_off.controller;
 
-import com.kick_off.kick_off.dto.novo.UserDto;
-import com.kick_off.kick_off.dto.novo.UserListDto;
+import com.kick_off.kick_off.dto.UserDto;
+import com.kick_off.kick_off.dto.auth.UserListDto;
 import com.kick_off.kick_off.dto.paginationFilters.UserPaginationFilter;
 import com.kick_off.kick_off.dto.request.RequestDto;
 import com.kick_off.kick_off.dto.request.RoleChangeRequestDto;

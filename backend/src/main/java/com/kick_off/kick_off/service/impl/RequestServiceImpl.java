@@ -1,7 +1,6 @@
 package com.kick_off.kick_off.service.impl;
 
-import com.kick_off.kick_off.dto.novo.CreateEnrollTeamRequestDto;
-import com.kick_off.kick_off.dto.novo.CreateRoleChangeRequestDto;
+import com.kick_off.kick_off.dto.request.CreateEnrollTeamRequestDto;
 import com.kick_off.kick_off.dto.paginationFilters.PaginationFilters;
 import com.kick_off.kick_off.dto.request.*;
 import com.kick_off.kick_off.exception.ForbiddenActionException;
@@ -13,7 +12,6 @@ import com.kick_off.kick_off.repository.TeamRepository;
 import com.kick_off.kick_off.repository.TournamentRepository;
 import com.kick_off.kick_off.repository.authentication.UserRepository;
 import com.kick_off.kick_off.service.RequestService;
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;

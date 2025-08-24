@@ -25,24 +25,15 @@ public class Request {
     private Status status;
     @Enumerated(EnumType.STRING)
     private RequestType requestType;
-    @Column(name = "desired_role")
-    @Enumerated(EnumType.STRING)
-    private Role desiredRole;
-
     @Column(name = "request_fulfilled")
     private Boolean requestFulfilled = false;
-
     @ManyToOne
     @JoinColumn(name = "requester_id")
     private User requester;
-
     @ManyToOne
     @JoinColumn(name = "approver_id")
     private User approver;
-
-    // ubacit vezu na turnir
     @ManyToOne
     @JoinColumn(name = "tournament_id")
     private Tournament tournament;
-
 }

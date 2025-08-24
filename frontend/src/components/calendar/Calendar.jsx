@@ -197,6 +197,10 @@ export const Calendar = () => {
   };
 
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); 
+
+
   return (
     
     <div className="relative flex mx-2 my-6 sm:mx-10 sm:my-10 lg:mx-16 xl:mx-20 2xl:mx-50 transition-all text-[9px] sm:text-xs 2xl:text-sm min-h-[85vh]">
@@ -345,12 +349,16 @@ export const Calendar = () => {
                     <div className="ml-2">{match.stadium.stadiumName}</div>
                   </div>
                   
-                  <button
-                    className="px-2 py-1 mt-2 bg-blue-500 text-white rounded"
-                    onClick={() => handleEditClick(match)}
-                  >
-                    Edit
-                  </button>
+                  {/* mogu minjat samo one koji su prosli */}
+                  {new Date(match.matchDate) < today && (
+                    <button
+                      className="px-2 py-1 mt-2 bg-blue-500 text-white rounded"
+                      onClick={() => handleEditClick(match)}
+                    >
+                      Edit
+                    </button>
+                  )}
+
                   {new Date(match.matchDate) > new Date() && (
                     <button
                       className="px-2 py-1 mt-2 ml-2 bg-red-600 text-white rounded"
@@ -385,10 +393,8 @@ export const Calendar = () => {
           try {
             await deleteMatch(id);
 
-            // Remove the deleted match from the day list
             setSelectedMatches((prev) => prev.filter((m) => m.id !== id));
 
-            // Optionally update events to refresh calendar view
             setEvents((prev) =>
               prev.map((event) => {
                 if (!event.extendedProps.matches) return event;

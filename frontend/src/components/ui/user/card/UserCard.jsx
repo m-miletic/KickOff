@@ -89,7 +89,7 @@ const UserCard = ({ user, setUsers }) => {
                     <div>{team.teamName}</div>
                   </div>
                 ) : (
-                  <div>{errorMessage}</div>
+                  <div>Not representing team</div>
                 )}
               </div>
             )}

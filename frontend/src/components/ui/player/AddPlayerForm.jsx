@@ -168,7 +168,7 @@ const AddPlayerForm = ({ team, setTeam }) => {
         </div>
 
 
-        {/* Right column for photo upload */}
+        {/*  photo upload */}
         <div className="space-y-4 mt-10 pl-44">
           <div className='pl-3'>
           <FileUpload

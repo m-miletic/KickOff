@@ -8,7 +8,7 @@ const AdminsPendingRequests = () => {
 
   const [pendingRequests, setPendingRequests] = useState([])
   const { decodedJwt } = useContext(LoggedUserContext)
-  const [paginationFilters, setPaginationFilters] = useState({
+  const [filters, setFilters] = useState({
     status: "PENDING",
     pageNumber: 1
   });
@@ -19,7 +19,7 @@ const AdminsPendingRequests = () => {
 
     const fetchRequests = async () => {
       try {
-        const response = await fetchRequestsByApprover(decodedJwt?.userId, paginationFilters)
+        const response = await fetchRequestsByApprover(decodedJwt?.userId, filters)
         setTotalPages(response.data.totalPages)
         setPendingRequests(response.data.requests)
       } catch (error) {
@@ -28,8 +28,7 @@ const AdminsPendingRequests = () => {
     }
 
     fetchRequests()
-  }, [decodedJwt, paginationFilters])
-  
+  }, [decodedJwt, filters])
 
   const handleRegisterTeam = async (statusValue, reqId) => {
     const updateReqObj = {
@@ -55,13 +54,11 @@ const AdminsPendingRequests = () => {
   };
 
   const handleSetSelectedFilter = (filterType, value) => {
-    setPaginationFilters((prevValues) => ({
+    setFilters((prevValues) => ({
       ...prevValues,
       [filterType]: value,
     }));
   };
-
-
 
   return(
     <div className="fixed top-2 bottom-2 right-2 w-96 rounded-xl bg-[#1F2937] px-4 text-white">
@@ -84,7 +81,7 @@ const AdminsPendingRequests = () => {
         )}
 
         <div className='text-center bottom-1'>
-          <Pagination totalPages={totalPages} selectedFilters={paginationFilters} handleSelectFilter={handleSetSelectedFilter} navButtonStyle={'text-white w-5 h-5 px-4 '} />
+          <Pagination totalPages={totalPages} selectedFilters={filters} handleSelectFilter={handleSetSelectedFilter} navButtonStyle={'text-white w-5 h-5 px-4 '} />
        </div>
       </div>
     </div>

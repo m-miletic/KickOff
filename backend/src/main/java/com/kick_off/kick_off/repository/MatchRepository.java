@@ -37,6 +37,7 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
 
     Page<Match> findByTournamentId(Long tournamentId, Pageable pageable);
+    List<Match> findByTournamentId(Long tournamentId);
 
     Page<Match> findByTournamentIdAndMatchDateBeforeOrderByMatchDateDesc(Long tournamentId, LocalDateTime dateTime, Pageable pageable);
 

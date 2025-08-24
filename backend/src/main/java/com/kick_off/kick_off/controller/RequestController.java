@@ -1,12 +1,8 @@
 package com.kick_off.kick_off.controller;
 
-import com.kick_off.kick_off.dto.novo.CreateEnrollTeamRequestDto;
-import com.kick_off.kick_off.dto.novo.CreateRoleChangeRequestDto;
+import com.kick_off.kick_off.dto.request.CreateEnrollTeamRequestDto;
 import com.kick_off.kick_off.dto.paginationFilters.PaginationFilters;
 import com.kick_off.kick_off.dto.request.*;
-import com.kick_off.kick_off.dto.tournament.TournamentDto;
-import com.kick_off.kick_off.model.RequestType;
-import com.kick_off.kick_off.model.Role;
 import com.kick_off.kick_off.response.ApiResponse;
 import com.kick_off.kick_off.service.RequestService;
 import org.springframework.http.HttpStatus;

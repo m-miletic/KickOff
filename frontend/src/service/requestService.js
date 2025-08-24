@@ -1,7 +1,6 @@
 import apiClient from "./apis/apiClient";
 
 export const fetchRequestsByApprover = async ( userId, selectedFilters ) => {
-  console.log("Uđe li u servis")
   const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.get(`/requests/approver/${userId}`, {
@@ -12,10 +11,8 @@ export const fetchRequestsByApprover = async ( userId, selectedFilters ) => {
         Authorization: `Bearer ${jwt}`
       }
     });
-    console.log("Request Service Response: ", response)
     return response.data;
   } catch (error) {
-    console.log("Service Error while trying to fetch requests by approver - ", error)
     throw error.response.data;
   }
 }

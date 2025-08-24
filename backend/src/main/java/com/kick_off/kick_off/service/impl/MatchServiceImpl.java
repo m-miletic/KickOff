@@ -170,7 +170,7 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public List<MatchDto> findMatchesByTournament(Long tournamentId) {
 
-        List<Match> allMatches = matchRepository.findAll();
+        List<Match> allMatches = matchRepository.findByTournamentId(tournamentId);
 
         List<MatchDto> matchDtos = allMatches.stream().map(match -> modelMapper.map(match, MatchDto.class)).toList();
         return matchDtos;

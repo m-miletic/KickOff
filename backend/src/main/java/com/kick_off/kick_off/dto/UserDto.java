@@ -1,4 +1,4 @@
-package com.kick_off.kick_off.dto.novo;
+package com.kick_off.kick_off.dto;
 
 import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.dto.tournament.TournamentDto;
@@ -9,8 +9,6 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 public class UserDto {
-
-    // Bitno za Login ************************
 
     private Long id;
     private String username;

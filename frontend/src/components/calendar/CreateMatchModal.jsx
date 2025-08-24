@@ -104,9 +104,7 @@ export const CreateMatchModal = ({ selectedDate, setIsCreateMatchModalOpen, tour
         toast.success("Match Created!", {
           autoClose: 2500
         })
-      } /* else if (!response.success) {
-        
-      } */  /* vakjda ne triba nista */
+      } 
     } catch (error) {
       setErrors({ general: error.data.message })
     }

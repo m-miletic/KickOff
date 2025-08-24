@@ -243,7 +243,7 @@ const EditTournamentForm = ({ tournament, setTournament }) => {
               Save
             </button>  
           </form>
-          <div>
+{/*           <div>
           {showEndTournamentDialog ? (
             <div className="flex justify-between bg-[#00303f] py-4 rounded-md px-10 mt-10">
               <div>Confirm Deactivating Tournament</div>
@@ -261,7 +261,7 @@ const EditTournamentForm = ({ tournament, setTournament }) => {
             End Tournament
           </button>
           )}
-          </div>
+          </div> */}
         </>
       )}
   </div>

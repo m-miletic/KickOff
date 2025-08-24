@@ -2,16 +2,18 @@ import React, { useState } from "react";
 import { deleteTeamById } from "../../../../service/teamService";
 import { toast } from "react-toastify";
 
-const TeamCard = ({ team, setTeams }) => {
+const TeamCard = ({ team, teams, setTeams }) => {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [deleteErrorMessage, setDeleteErrorMessage] = useState("");
+
 
   const handleDeleteTeam = async () => {
     try {
       const response = await deleteTeamById(team.id)
       if (response.success) {
         setTeams((prevTeams) =>({
-          prevTeams: prevTeams.filter(t => t.id !== team.id)
+          ...prevTeams,
+          teamsList: prevTeams.teamsList.filter(t => t.id !== team.id)
         }))
         toast.success("Team Deleted!", {
           autoClose: 2000

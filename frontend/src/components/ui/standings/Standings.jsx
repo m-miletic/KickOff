@@ -89,7 +89,7 @@ const Standings = ({selectedTournament, setSelectedTournament}) => {
 
           {selectedTournament?.teams && selectedTournament?.teams.map((team, index) => {
             return (
-              <div key={team.id} className="flex items-center w-[655px] text-[11px] sm:text-[13px] xl:text-[15px] border-b border-white/15">
+              <div key={team.id} className="flex items-center w-[655px] text-[11px] sm:text-[13px] xl:text-[17px] border-b border-white/15">
                 <div className="w-[30px] sticky left-0 z-20 bg-[#04111a] h-full flex items-center px-2">
                   {index + 1}
                 </div>

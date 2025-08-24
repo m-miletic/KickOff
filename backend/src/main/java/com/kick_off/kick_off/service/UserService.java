@@ -1,13 +1,11 @@
 package com.kick_off.kick_off.service;
 
-import com.kick_off.kick_off.dto.novo.UserDto;
-import com.kick_off.kick_off.dto.novo.UserListDto;
+import com.kick_off.kick_off.dto.UserDto;
+import com.kick_off.kick_off.dto.auth.UserListDto;
 import com.kick_off.kick_off.dto.paginationFilters.UserPaginationFilter;
 import com.kick_off.kick_off.dto.request.RoleChangeRequestDto;
 import com.kick_off.kick_off.model.Role;
 import com.kick_off.kick_off.model.authentication.User;
-
-import java.util.Optional;
 
 public interface UserService {
 

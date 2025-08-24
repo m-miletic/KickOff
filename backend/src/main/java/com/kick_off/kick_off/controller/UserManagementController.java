@@ -3,7 +3,7 @@ package com.kick_off.kick_off.controller;
 import com.kick_off.kick_off.configuration.JwtUtil;
 import com.kick_off.kick_off.dto.RequestResponse;
 import com.kick_off.kick_off.dto.auth.*;
-import com.kick_off.kick_off.dto.novo.UserDto;
+import com.kick_off.kick_off.dto.UserDto;
 import com.kick_off.kick_off.model.authentication.RefreshToken;
 import com.kick_off.kick_off.model.authentication.User;
 import com.kick_off.kick_off.repository.authentication.UserRepository;
@@ -44,7 +44,6 @@ public class UserManagementController {
 
     @PostMapping("/auth/login")
     public ResponseEntity<ApiResponse<LoginResponseDto>> login(@RequestBody LoginRequestDto loginData) {
-        System.out.println("Login Data: " + loginData.toString());
         LoginResponseDto loginResponseData = userManagementService.login(loginData);
         ApiResponse<LoginResponseDto> response = ApiResponse.<LoginResponseDto>builder()
                 .message("Successfully logged in.")
@@ -57,7 +56,6 @@ public class UserManagementController {
 
     @DeleteMapping("/auth/logout")
     public ResponseEntity<ApiResponse<?>> logout(@RequestBody LogoutRequestDto logoutRequest) {
-        System.out.println("refresh token: " + logoutRequest.toString());
         refreshTokenService.deleteByToken(logoutRequest.getRefreshToken());
         ApiResponse<?> response = ApiResponse.builder()
                 .message("Successfully logged out.")

@@ -67,7 +67,7 @@ const MatchHub = ({ selectedTournament }) => {
 
                 <div className="flex justify-center items-center w-[40%]">
                   <div>{match.homeTeam.teamName}</div>
-                  <div><img src={match.homeTeam.photoUrl} className="w-5 h-5 rounded-full mt-1 ml-3"/></div>
+                  <div><img src={match.homeTeam.photoUrl} className="w-6 h-6 rounded-full mt-1 ml-3"/></div>
                 </div>
 
                 <div>
@@ -77,7 +77,7 @@ const MatchHub = ({ selectedTournament }) => {
                   </div>
 
                 <div className="flex justify-center items-center w-[40%]">
-                  <div><img src={match.awayTeam.photoUrl} className="w-5 h-5 rounded-xl mt-1 mr-3"/></div>
+                  <div><img src={match.awayTeam.photoUrl} className="w-6 h-6 rounded-xl mt-1 mr-3"/></div>
                   <div>{match.awayTeam.teamName}</div>
                 </div>
 

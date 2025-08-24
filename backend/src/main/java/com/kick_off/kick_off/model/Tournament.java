@@ -29,7 +29,7 @@ public class Tournament {
     @Column(name = "max_teams")
     private int maxTeams;
 
-    @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "tournament"/*, cascade = CascadeType.ALL, orphanRemoval = true*/)
     private List<Team> teams;
 
 

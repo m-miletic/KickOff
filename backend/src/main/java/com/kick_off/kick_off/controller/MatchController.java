@@ -37,7 +37,6 @@ public class MatchController {
 
     @GetMapping("/pagination/tournament/{tournamentId}")
     public ResponseEntity<ApiResponse<MatchListDto>> getMatchesByTournamentIdPagination(@PathVariable Long tournamentId, @RequestParam(defaultValue = "1") int pageNumber) {
-        System.out.println("TESTESTTES");
         MatchListDto matches = matchService.findMatchesByTournamentPagination(tournamentId, pageNumber);
         ApiResponse<MatchListDto> response = ApiResponse.<MatchListDto>builder()
                 .message("Matches fetched successfully.")

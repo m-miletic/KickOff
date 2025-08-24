@@ -1,5 +1,6 @@
-package com.kick_off.kick_off.dto.novo;
+package com.kick_off.kick_off.dto.auth;
 
+import com.kick_off.kick_off.dto.UserDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

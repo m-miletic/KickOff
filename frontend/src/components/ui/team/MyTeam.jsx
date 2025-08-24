@@ -25,24 +25,6 @@ const MyTeam = () => {
   const [selectedTeamImage, setSelectedTeamImage] = useState("")
   const [previewTeamImage, setPreviewTeamImage] = useState(false) 
 
-
-/*   // custom hook ! ********************+
-  useEffect(() => {
-    const fetchTeam = async () => {
-      try {
-        const response = await getTeamByTeamRepresentative(decodedJwt.userId)
-        setTeam(response.data)
-      } catch (error) {
-        setError(error.response.data.data.message)
-        console.log("this error: ", error.response.data.data.message)
-      }
-    };
-    fetchTeam()
-    fetchTeam()
-  }, [decodedJwt, jwt]); */
-
-
-  // na page render jwt jos nije loadan
   useEffect(() => {
     if (!decodedJwt) return;
     const getMyTeamData = async () => {
@@ -58,34 +40,9 @@ const MyTeam = () => {
   }, [decodedJwt])
 
 
-  // ✅ team na prvi render je undefined 
-/*   useEffect(() => {
-    if (team?.id) {
-      setAddPlayerForm((prev) => ({
-        ...prev,
-        teamId: team.id,
-      }));
-    }
-  }, [team]);
- */
-
-
-
-/*     const [editPlayerForm, setEditPlayerForm] = useState({
-      goals: '',
-      assists: '',
-      firstName: '',
-      lastName: '',
-      age: '',
-      height: '',
-    });
-
- */
-
   const handleEditPlayerClick = (playerId) => {
     const playerToEdit = team.players.find(p => p.id === playerId);
   
-    // If the same player is clicked again, close the form
     if (selectedPlayer?.id === playerId && showEditPlayerForm) {
       setSelectedPlayer(null);
       setShowEditPlayerForm(false);
@@ -182,8 +139,6 @@ const MyTeam = () => {
   };
 
 
-
-
   if (error) {
     return(
       <div className='text-xl flex justify-center items-center mt-20'>
@@ -193,8 +148,6 @@ const MyTeam = () => {
   }
 
   if (!team) return "Doesnt represent a team yet";
-
-  
 
   return (
     <div className="w-full">
@@ -264,31 +217,6 @@ const MyTeam = () => {
         </div>
       </div>
 
-
-      <div className='flex items-start justify-center mt-8'>
-        <div className='bg-[#001E30] text-white p-6 rounded-md w-[60%] space-y-4 shadow-md'>
-          <span className='text-xl font-semibold'>Team Matches:</span>
-          {team.allMatches && team.allMatches.length > 0 ? (
-            <div className="grid grid-cols-3 gap-4">
-            {team.allMatches.map((match) => (
-              <div key={match.id}>
-                <div>{new Date(match.matchDate).toLocaleString()}</div>
-                <div className='bg-gray-800 p-4 rounded-lg text-center'>
-                  {match.name}
-                </div>
-              </div>
-            ))}
-            
-          </div>
-          ) : (
-            <span className='text-lg ml-4'>Doesn't have scheduled matches yet</span>
-          )}
-        </div>
-      </div>
-
-      
-
-
       <div className="flex items-start justify-center mt-8">
         <div className="bg-[#001E30] text-white p-6 rounded-md w-[60%] space-y-4 shadow-md">
           <div className="flex justify-between items-center">
@@ -336,7 +264,7 @@ const MyTeam = () => {
                   <div className="flex flex-col items-center w-full">
                     <div>
                       {player.photoUrl ? (
-                        <img className='w-24 h-24 rounded-full mb-3 flex items-center justify-center text-sm' src={player.photoUrl} />
+                        <img className='w-[110px] h-[98px] rounded-full mb-3 flex items-center justify-center text-sm' src={player.photoUrl} />
                       ) : (
                         <img className='w-24 h-24 rounded-full mb-3 flex items-center justify-center text-sm' src={defaultPlayerImg} />
                       )}
@@ -395,8 +323,29 @@ const MyTeam = () => {
             ))}
           </div>
         </div>
-      </div>       
+      </div> 
       )}
+      {/* utakmice */}
+      <div className='flex items-start justify-center mt-8'>
+      <div className='bg-[#001E30] text-white p-6 rounded-md w-[60%] space-y-4 shadow-md'>
+        <span className='text-xl font-semibold'>Team Matches:</span>
+        {team.allMatches && team.allMatches.length > 0 ? (
+          <div className="grid grid-cols-3 gap-4">
+          {team.allMatches.map((match) => (
+            <div key={match.id}>
+              <div>{new Date(match.matchDate).toLocaleString()}</div>
+              <div className='bg-gray-800 p-4 rounded-lg text-center'>
+                {match.name}
+              </div>
+            </div>
+          ))}
+          
+        </div>
+        ) : (
+          <span className='text-lg ml-4'>Doesn't have scheduled matches yet</span>
+        )}
+      </div>
+    </div>
     </div>
   );
 };

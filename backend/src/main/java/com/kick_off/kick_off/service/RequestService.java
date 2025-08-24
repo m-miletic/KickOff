@@ -1,10 +1,8 @@
 package com.kick_off.kick_off.service;
 
-import com.kick_off.kick_off.dto.novo.CreateEnrollTeamRequestDto;
-import com.kick_off.kick_off.dto.novo.CreateRoleChangeRequestDto;
+import com.kick_off.kick_off.dto.request.CreateEnrollTeamRequestDto;
 import com.kick_off.kick_off.dto.paginationFilters.PaginationFilters;
 import com.kick_off.kick_off.dto.request.*;
-import com.kick_off.kick_off.model.RequestType;
 
 import java.util.List;
 

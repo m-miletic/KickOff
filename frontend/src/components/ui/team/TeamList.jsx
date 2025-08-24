@@ -26,7 +26,7 @@ const TeamList = () => {
         <div className="grid grid-cols-2 gap-6">
           {teams?.teamsList.length > 0 &&
             teams?.teamsList.map((team) => (
-              <TeamCard key={team.id} team={team} setTeams={setTeams}/>
+              <TeamCard key={team.id} team={team} teams={teams} setTeams={setTeams}/>
             ))}
         </div>
   

@@ -29,9 +29,13 @@ Guest
 
 
 ## Technologies
-* Spring Boot 3.4.0
-* Spring Security 6
-* React.js 
+* Java
+* Spring Boot
+* Spring Security
+* React.js
+* HTML
+* CSS
+* TailwindCSS
 * MySQL
 
 # Author
