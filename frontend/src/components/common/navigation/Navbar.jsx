@@ -9,7 +9,6 @@ import { ActiveComponentContext } from "../../../context/ActiveComponentContext"
 import { LoggedUserContext } from "../../../context/LoggedUserContext"
 import { GUEST_NAVBAR_ITEMS, TEAM_REPRESENTATIVE_NAVBAR_ITEMS, TOURNAMENT_ORGANIZER_NAVBAR_ITEMS } from '../../../data/navbarItems.js'
 import logoWhite from '../../../assets/logoWhite.png';
-import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isSideBarActive, setIsSideBarActive] = useState(false);
@@ -17,10 +16,7 @@ const Navbar = () => {
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 640);
 
   const { activeComponent, setActiveComponent } = useContext(ActiveComponentContext);
-  const { decodedJwt, jwt, loading } = useContext(LoggedUserContext);
-
-  const navigate = useNavigate()
-  const location = useLocation()
+  const { decodedJwt } = useContext(LoggedUserContext);
 
   useCollapseSidebarOnResize(setIsSideBarActive);
 

@@ -4,7 +4,6 @@ import Standings from "../components/ui/standings/Standings";
 import { useState } from "react";
 import MatchHub from "../components/ui/match/MatchHub";
 
-
 const HomePage = () => {
   const [selectedTournament, setSelectedTournament] = useState()
 

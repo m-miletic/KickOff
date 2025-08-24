@@ -7,7 +7,7 @@ import { ActiveComponentContext } from "../../../context/ActiveComponentContext"
 import { RxHamburgerMenu } from "react-icons/rx";
 import { IoMdClose } from "react-icons/io";
 
-const Sidebar = () => {
+const Sidebar = ({ setSelectedSidebarItem }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [error, setError] = useState('');
 
@@ -20,13 +20,11 @@ const Sidebar = () => {
   };
 
   const selectSideBarItem = (item) => {
-    setActiveComponent(item);
+    setSelectedSidebarItem(item)
     if (window.innerWidth < BREAKPOINTS.SM) {
       toggleSidebar();
     };
   };
-
-  console.log("active Component: ", activeComponent);
 
   return (
     <div>
