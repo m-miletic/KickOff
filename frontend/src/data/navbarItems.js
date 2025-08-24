@@ -1,8 +1,8 @@
 export const GUEST_NAVBAR_ITEMS = [
   { key: "homepage", label: "Homepage", id: "homepage" },
-  { key: "leaderboard", label: "Leaderboard", id: "standings-section" },
+  { key: "leaderboard", label: "Leaderboard", id: "leaderboard" },
   { key: "matchHub", label: "Match Hub", id: "match-hub" },
-  { key: "about", label: "About Us", id: "footer-section" }
+  { key: "about", label: "About Us", id: "about-us" }
 ]
 
 export const TEAM_REPRESENTATIVE_NAVBAR_ITEMS = [

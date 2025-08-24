@@ -24,17 +24,6 @@ const Navbar = () => {
 
   useCollapseSidebarOnResize(setIsSideBarActive);
 
-  const handleScrollToSection = (id) => {
-    if (location.pathname !== '/home') {
-      navigate('/home', { state: {scrollTo: id} })
-    } else {
-      const section = document.getElementById(id)
-      if (section) {
-        section.scrollIntoView({ behavior: "smooth" })
-      }
-    }
-  };
-
   const toggleSidebar = () => {
     setIsSideBarActive(!isSideBarActive);
   };
@@ -51,6 +40,12 @@ const Navbar = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const handleScrollToSection = (elementId) => {
+    const element = document.getElementById(elementId)
+    element?.scrollIntoView({
+      behavior: 'smooth'
+    })
+  };
 
   return(
     <div>
@@ -71,7 +66,7 @@ const Navbar = () => {
               {decodedJwt === null ? (
                 <>
                   {GUEST_NAVBAR_ITEMS.map((item) => (
-                    <div onClick={() => handleScrollToSection(item.id)} className={`flex-col space-y-3 mx-2`}>
+                    <div className={`flex-col space-y-3 mx-2`}>
                       <div key={item.key} className="cursor-pointer hover:bg-[#005571] px-2 py-1 rounded-lg">
                         <button>{item.label}</button>
                       </div>
@@ -142,7 +137,7 @@ const Navbar = () => {
               <div className={`flex justify-center items-center space-x-2`}>
                 {GUEST_NAVBAR_ITEMS.map((item) => (
                   <div key={item.key} className="cursor-pointer">
-                    <button className="text-base hover:text-xl hover:px-6 font-bold transition-all duration-300 ease-in-out" onClick={() => handleScrollToSection(item.id)}>{item.label}</button>
+                    <button onClick={() => handleScrollToSection(item.id)}  className="text-base hover:text-xl hover:px-6 font-bold transition-all duration-300 ease-in-out">{item.label}</button>
                   </div>
                 ))}
               </div>
