@@ -75,8 +75,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    // dole san maka error vidit ocu li tako svugdi maknit ocu samo svoje poruke
-
+    
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleBadCredentials(BadCredentialsException ex) {
 

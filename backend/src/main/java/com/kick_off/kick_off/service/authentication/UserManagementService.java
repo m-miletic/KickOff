@@ -81,8 +81,6 @@ public class UserManagementService {
         response.setAccessToken(jwt);
         response.setRefreshToken(refreshTokenDto);
 
-        System.out.println("Response from Login backend: " + response.toString());
-
         return response;
     }
 

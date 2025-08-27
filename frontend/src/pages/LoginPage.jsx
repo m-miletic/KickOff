@@ -2,42 +2,35 @@ import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import image from '../assets/register-background.jpg'
 import { jwtDecode } from "jwt-decode";
-import { LoggedUserContext } from "../context/LoggedUserContext.jsx";
 import { login } from "../service/authenticationService.js";
 
 const LoginPage = () => {
+  let navigate = useNavigate();
+
   const [loginCredentials, setLoginCredentials] = useState({
     username: "",
     password: ""
   });
-  const [error, setError] = useState("");
-  let navigate = useNavigate();
 
-  const { setTokenFromLogin } = useContext(LoggedUserContext);
+  const [error, setError] = useState("");
+
+  const pages = {
+    "ADMIN": "/admin",
+    "TEAM_REPRESENTATIVE": "/representative",
+    "TOURNAMENT_ORGANIZER": "/organizer",
+    "USER": "/user",
+  };
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
       const userData = await login(loginCredentials)
-      console.log("Login response: ", userData)
       if (userData.data.accessToken) {
         localStorage.setItem('token', userData.data.accessToken);
         localStorage.setItem('refreshToken', userData.data.refreshToken.token);
-
-        setTokenFromLogin(userData.data.accessToken);
-
         const decodedToken = jwtDecode(userData.data.accessToken);
         const loggedUserRole = decodedToken.role;
-
-        if(loggedUserRole === 'ADMIN') {
-          navigate('/admin');  
-        } else if (loggedUserRole === 'TEAM_REPRESENTATIVE') {
-          navigate('/representative');
-        } else if (loggedUserRole === 'TOURNAMENT_ORGANIZER') {
-          navigate('/organizer');
-        } else if (loggedUserRole === 'USER') {
-          navigate('/user')
-        }
+        navigate(pages[loggedUserRole]);
       } else {
         setError(userData.message);
       }

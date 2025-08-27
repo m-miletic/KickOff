@@ -62,7 +62,8 @@ const App = () => {
                   </ActiveComponentProvider>
                 </ActiveModalProvider> }>
               </Route>
-              <Route path="/admin" element={ <ActiveModalProvider> <ActiveComponentProvider> <AdminPage /> </ActiveComponentProvider > </ActiveModalProvider>} />
+
+              <Route path="/admin" element={ <ActiveModalProvider> <ActiveComponentProvider> <AdminPage /> </ActiveComponentProvider > </ActiveModalProvider>}> </Route>
             </Routes>
           </LoggedUserProvider>
         </AuthProvider>

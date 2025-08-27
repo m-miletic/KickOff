@@ -4,9 +4,10 @@ import { useFetchActiveTournaments } from "../../../hooks/tournaments/useFetchTo
 import DropdownContent from "../../common/dropdown/DropdownContent";
 import { useNavigate } from "react-router-dom";
 
-const Standings = ({selectedTournament, setSelectedTournament}) => {
+const Standings = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const [selectedTournament, setSelectedTournament] = useState();
 
   const { tournaments } = useFetchActiveTournaments(); 
 

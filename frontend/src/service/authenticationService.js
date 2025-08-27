@@ -3,10 +3,8 @@ import { apiAuthClient } from "./apis/apiClient";
 export const login = async (loginCredentials) => {
   try {
     const response = await apiAuthClient.post(`/auth/login`, loginCredentials);
-    console.log("Login Service Response: ", response)
     return response.data
   } catch (error) {
-    console.log("Error while trying to log in: ", error)
     throw error.response.data
   }
 }
