@@ -7,40 +7,48 @@ import OrganizerPage from "./pages/OrganizerPage";
 import TeamRepresentativePage from "./pages/TeamRepresentativePage";
 import AdminPage from "./pages/AdminPage";
 import HomePage from "./pages/HomePage";
-import { AuthProvider } from "./context/AuthContext";
 import { ActiveComponentProvider } from "./context/ActiveComponentContext";
-import { ActiveModalProvider } from "./context/ActiveModalContext";
 import { LoggedUserProvider } from "./context/LoggedUserContext";
-import UserPage from "./pages/UserPage";
-import Standings from "./components/ui/standings/Standings";
 import { Calendar } from "./components/calendar/Calendar";
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import OrganizersTournament from "./components/ui/tournaments/OrganizersTournament";
+import UpcomingTournaments from "./components/ui/tournaments/UpcomingTournaments";
+import MyTeam from "./components/ui/team/MyTeam";
+import UserList from "./components/ui/user/UserList";
+import TeamList from "./components/ui/team/TeamList";
 
 const App = () => {
   return (
     <>
       <ToastContainer />
       <BrowserRouter>
-        <AuthProvider>
+{/*         <AuthProvider> */}
           <LoggedUserProvider>
 
             <Routes>
-              <Route path="/home" element={ <ActiveComponentProvider> <HomePage /> </ActiveComponentProvider> } />
+              <Route path="/" element={ <HomePage />}></Route>
 
+              <Route path="/login" element={<LoginPage />}></Route>
+
+              <Route path="/signup" element={<SignupPage />}></Route>
+
+              <Route path="/admin" element={<AdminPage />}>
+                <Route path="users" element={<UserList />}></Route>
+                <Route path="teams" element={<TeamList />}></Route>
+              </Route>
+
+              <Route path="/tournament-organizer" element={<OrganizerPage />}>
+                <Route path="match-scheduler" element={<Calendar />}></Route>
+                <Route path="tournament-overview" element={<OrganizersTournament />}></Route>
+              </Route>
+
+              <Route path="/team-representative" element={<TeamRepresentativePage />}>
+                <Route path="upcoming-tournaments" element={<UpcomingTournaments />}></Route>
+                <Route path="team-overview" element={<MyTeam />}></Route>
+              </Route>
               
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/leaderboard" element={<Standings />} />
-              <Route path="/calendar" element={<Calendar />} />
-              <Route path="/user" element={
-                  <ActiveModalProvider>
-                    <ActiveComponentProvider>
-                      <UserPage />
-                    </ActiveComponentProvider>
-                  </ActiveModalProvider>
-                } />
-              <Route path="/signup" element={<SignupPage />} />
               <Route path="/teams/:id" element=
               {
                 <ActiveComponentProvider>
@@ -48,25 +56,10 @@ const App = () => {
                 </ActiveComponentProvider>
 
               } />
-              <Route path="/organizer" element={
-                  <ActiveModalProvider>
-                    <ActiveComponentProvider>
-                      <OrganizerPage />
-                    </ActiveComponentProvider>
-                  </ActiveModalProvider>
-                } />
-              <Route path="/representative" element={ 
-                <ActiveModalProvider>
-                  <ActiveComponentProvider>
-                    <TeamRepresentativePage />
-                  </ActiveComponentProvider>
-                </ActiveModalProvider> }>
-              </Route>
 
-              <Route path="/admin" element={ <ActiveModalProvider> <ActiveComponentProvider> <AdminPage /> </ActiveComponentProvider > </ActiveModalProvider>}> </Route>
             </Routes>
           </LoggedUserProvider>
-        </AuthProvider>
+{/*         </AuthProvider> */}
       </BrowserRouter>
     </>
   );

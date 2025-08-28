@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import image from '../assets/register-background.jpg'
 import { jwtDecode } from "jwt-decode";
 import { login } from "../service/authenticationService.js";
+import { LoggedUserContext } from "../context/LoggedUserContext.jsx";
 
 const LoginPage = () => {
   let navigate = useNavigate();
+  const { setTokenFromLogin } = useContext(LoggedUserContext);
 
   const [loginCredentials, setLoginCredentials] = useState({
     username: "",
@@ -16,18 +18,19 @@ const LoginPage = () => {
 
   const pages = {
     "ADMIN": "/admin",
-    "TEAM_REPRESENTATIVE": "/representative",
-    "TOURNAMENT_ORGANIZER": "/organizer",
-    "USER": "/user",
+    "TEAM_REPRESENTATIVE": "/team-representative",
+    "TOURNAMENT_ORGANIZER": "/tournament-organizer",
   };
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const userData = await login(loginCredentials)
+      const userData = await login(loginCredentials);
+      console.log("userData - ", userData);
       if (userData.data.accessToken) {
         localStorage.setItem('token', userData.data.accessToken);
         localStorage.setItem('refreshToken', userData.data.refreshToken.token);
+        setTokenFromLogin(userData.data.accessToken);
         const decodedToken = jwtDecode(userData.data.accessToken);
         const loggedUserRole = decodedToken.role;
         navigate(pages[loggedUserRole]);

@@ -2,16 +2,14 @@ import React, { useContext, useState } from 'react'
 import { RxCaretDown } from "react-icons/rx";
 import { RxCaretUp } from "react-icons/rx";
 import { CiLogout } from "react-icons/ci";
-import { ActiveComponentContext } from '../../../context/ActiveComponentContext';
 import { useNavigate } from 'react-router-dom';
 import { LoggedUserContext } from '../../../context/LoggedUserContext';
 import { logout } from '../../../service/authenticationService';
 
 const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
   const [isUserProfileDropdownOpen, setIsUserProfileDropdownOpen] = useState(false);
-  const { setActiveComponent } = useContext(ActiveComponentContext);
   const { setJwt, setDecodedJwt, decodedJwt } = useContext(LoggedUserContext)
-  const nav = useNavigate();
+  const navigate = useNavigate();
   const firstLetter = name.charAt(0).toUpperCase();
 
   const handleSendRequestClick = () => {
@@ -24,7 +22,6 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
   };
 
   const handleSelectItem = (item) => {
-    setActiveComponent(item);
     handleIsUserProfileDropdownOpen();
   }
 
@@ -34,9 +31,9 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
       await logout(refreshToken)
       localStorage.removeItem('token')
       localStorage.removeItem('refreshToken')
-      setJwt(null)            // hvata iz localstrorage-a stare podatke pa setirma na null da immam navbar UI za gosta
-      setDecodedJwt(null)   // hvata iz localstrorage-a stare podatke pa setirma na null da immam navbar UI za gosta
-      nav("/home")
+      setJwt(null)
+      setDecodedJwt(null)
+      navigate("/")
     } catch (error) {
       console.error("Error while trying to log out: ", error.message)
     }

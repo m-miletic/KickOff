@@ -6,11 +6,11 @@ export const GUEST_NAVBAR_ITEMS = [
 ]
 
 export const TEAM_REPRESENTATIVE_NAVBAR_ITEMS = [
-  { key: "upcomingTournaments", label: "Upcoming Tournaments" },
-  { key: "teamOverview", label: "Team Overview"}
+  { key: "upcomingTournaments", path: "/team-representative/upcoming-tournaments",  label: "Upcoming Tournaments" },
+  { key: "teamOverview", path: "/team-representative/team-overview", label: "Team Overview"}
 ]
 
 export const TOURNAMENT_ORGANIZER_NAVBAR_ITEMS = [
-  { key: "matchScheduler", label: "Match Scheduler" },
-  { key: "tournamentOverview", label: "Tournament Overview"},
+  { key: "matchScheduler", path: "/tournament-organizer/match-scheduler", label: "Match Scheduler" },
+  { key: "tournamentOverview", path: "/tournament-organizer/tournament-overview", label: "Tournament Overview"},
 ]

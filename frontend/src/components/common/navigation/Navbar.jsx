@@ -1,13 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useCollapseSidebarOnResize } from "../../../hooks/useCollapseSidebarOnResize";
 import { SendRequestModal } from "../../ui/request/modal/SendRequestModal";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoClose } from "react-icons/io5";
 import UserProfileDropdown from "./UserProfileDropdown.jsx";
-import { ActiveComponentContext } from "../../../context/ActiveComponentContext";
 import { LoggedUserContext } from "../../../context/LoggedUserContext"
-import { GUEST_NAVBAR_ITEMS, TEAM_REPRESENTATIVE_NAVBAR_ITEMS, TOURNAMENT_ORGANIZER_NAVBAR_ITEMS } from '../../../data/navbarItems.js'
+import { 
+  GUEST_NAVBAR_ITEMS as guestNavItems,
+  TEAM_REPRESENTATIVE_NAVBAR_ITEMS as representativeNavItems,
+  TOURNAMENT_ORGANIZER_NAVBAR_ITEMS as organizerNavItems
+} from '../../../data/navbarItems.js'
 import logoWhite from '../../../assets/logoWhite.png';
 
 const Navbar = () => {
@@ -15,8 +18,9 @@ const Navbar = () => {
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 640);
 
-  const { activeComponent, setActiveComponent } = useContext(ActiveComponentContext);
   const { decodedJwt } = useContext(LoggedUserContext);
+
+  console.log("navbar - decodedJwt: ", decodedJwt);
 
   useCollapseSidebarOnResize(setIsSideBarActive);
 
@@ -43,8 +47,10 @@ const Navbar = () => {
     })
   };
 
+
   return(
     <div>
+      {/* ***** MOBILE VIEW ***** */}
       {isMobileView ? (
         <div>
           {isSideBarActive ? (
@@ -61,7 +67,7 @@ const Navbar = () => {
 
               {decodedJwt === null ? (
                 <>
-                  {GUEST_NAVBAR_ITEMS.map((item) => (
+                  {guestNavItems.map((item) => (
                     <div className={`flex-col space-y-3 mx-2`}>
                       <div key={item.key} className="cursor-pointer hover:bg-[#005571] px-2 py-1 rounded-lg">
                         <button>{item.label}</button>
@@ -77,10 +83,10 @@ const Navbar = () => {
                   {decodedJwt.role === "TEAM_REPRESENTATIVE" && (
                     <>
                       <div className={`flex flex-col items-start space-y-2 ml-3`}>
-                        {TEAM_REPRESENTATIVE_NAVBAR_ITEMS.map((item) => {
+                        {representativeNavItems.map((item) => {
                           return (
                             <div key={item.key} className="cursor-pointer hover:border-b border-white/25">
-                              <Link><button onClick={() => setActiveComponent(item.key)}>{item.label}</button></Link>
+                              <Link><button /* onClick={() => setActiveComponent(item.key)} */>{item.label}</button></Link>
                             </div>
                           );
                         })}
@@ -91,10 +97,10 @@ const Navbar = () => {
                   {decodedJwt.role === "TOURNAMENT_ORGANIZER" && (
                     <>
                       <div className={`flex flex-col items-start space-y-2 ml-3`}>
-                        {TOURNAMENT_ORGANIZER_NAVBAR_ITEMS.map((item) => {
+                        {organizerNavItems.map((item) => {
                           return (
                             <div key={item.key} className="cursor-pointer hover:border-b border-white/25">
-                              <Link><button onClick={() => setActiveComponent(item.key)}>{item.label}</button></Link>
+                              <Link to={item.key}>Test</Link>
                             </div>
                           );
                         })}
@@ -125,13 +131,13 @@ const Navbar = () => {
 
         </div>
       ) : (
-
+        /* ***** DESKTOP VIEW ***** */
         <div className={`flex justify-between items-center bg-[#001E28] text-white h-20 lg:h-[78px] xl:h-[88px] 2xl:h-[94px] px-4`}>
           <div><img src={logoWhite} alt="Logo" className="w-[85px] h-12 mt-2 " /></div>
           {decodedJwt === null ? (
             <>
               <div className={`flex justify-center items-center space-x-2`}>
-                {GUEST_NAVBAR_ITEMS.map((item) => (
+                {guestNavItems.map((item) => (
                   <div key={item.key} className="cursor-pointer">
                     <button onClick={() => handleScrollToSection(item.id)}  className="text-base hover:text-xl hover:px-6 font-bold transition-all duration-300 ease-in-out">{item.label}</button>
                   </div>
@@ -146,10 +152,15 @@ const Navbar = () => {
               {decodedJwt.role === "TEAM_REPRESENTATIVE" && (
                 <>
                   <div className={`flex justify-center items-center space-x-2`}>
-                    {TEAM_REPRESENTATIVE_NAVBAR_ITEMS.map((item) => {
+                    {representativeNavItems.map((item) => {
                       return (
                         <div key={item.key} className="cursor-pointer hover:border-b border-white/25">
-                          <Link><button onClick={() => setActiveComponent(item.key)}>{item.label}</button></Link>
+                          <NavLink
+                            to={item.path}
+                            className={({ isActive }) => (isActive ? 'font-bold' : '')}
+                          >
+                            {item.label}
+                          </NavLink>
                         </div>
                       );
                     })}
@@ -160,10 +171,15 @@ const Navbar = () => {
               {decodedJwt.role === "TOURNAMENT_ORGANIZER" && (
                 <>
                   <div className={`flex justify-center items-center space-x-2`}>
-                    {TOURNAMENT_ORGANIZER_NAVBAR_ITEMS.map((item) => {
+                    {organizerNavItems.map((item) => {
                       return (
                         <div key={item.key} className="cursor-pointer hover:border-b border-white/25 2xl:text-lg">
-                          <Link><button onClick={() => setActiveComponent(item.key)}>{item.label}</button></Link>
+                          <NavLink 
+                            to={item.path} 
+                            className={({ isActive }) => (isActive ? 'font-bold' : '')}
+                            >
+                              {item.label}
+                          </NavLink>
                         </div>
                       );
                     })}

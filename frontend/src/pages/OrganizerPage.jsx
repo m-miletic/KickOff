@@ -1,44 +1,15 @@
-import React, { useContext } from "react";
+import React from "react";
 import Navbar from "../components/common/navigation/Navbar";
-import RequestList from "../components/ui/request/RequestList";
-import { RequestProvider } from "../context/RequestContext";
-import { ActiveComponentContext } from "../context/ActiveComponentContext";
-import OrganizersTournament from "../components/ui/tournaments/OrganizersTournament";
-import { Calendar } from "../components/calendar/Calendar";
 import Footer from "../components/common/footer/Footer";
+import { Outlet } from "react-router-dom";
 
 const OrganizerPage = () => {
-  const { activeComponent } = useContext(ActiveComponentContext);
-
   return(
-    <div className="min-h-screen flex flex-col">
-
+    <>
       <Navbar />
-
-      <main className="flex-grow">
-
-        {(activeComponent === "myRequests") && 
-          <div className="flex justify-center text-white mt-20">
-            <RequestProvider>
-              <RequestList />
-            </RequestProvider>
-          </div>
-        }
-
-
-        { (activeComponent === "matchScheduler" || activeComponent === "") && (
-          <Calendar />
-        )}
-
-        { (activeComponent === "tournamentOverview") && (
-          <OrganizersTournament />
-        )}
-
-      </main>
-
+      <Outlet />
       <Footer />
-
-    </div>
+    </>
   );
 }
 export default OrganizerPage;

@@ -6,6 +6,7 @@ export const adminSidebarItems = [
   {
     label: "Users",
     value: "users",
+    path: "/admin/users",
     icon: (
       <ImUsers className="text-gray-400 w-5 h-5" />
     ),  
@@ -13,6 +14,7 @@ export const adminSidebarItems = [
   {
     label: "Teams",
     value: "teams",
+    path: "/admin/teams",
     icon: (
       <PiMicrosoftTeamsLogo className="text-gray-400 w-5 h-5" />
     ),  

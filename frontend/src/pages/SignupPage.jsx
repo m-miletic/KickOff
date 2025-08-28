@@ -3,9 +3,11 @@ import image from '../assets/register-background.jpg'
 import { register } from "../service/authenticationService";
 import { roles } from "../data/rolesForSignup";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 const MAX_MOBILE_SCREEN_WIDTH = 1028;
 
 const SignupPage = () => {
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     username: "",
@@ -16,12 +18,11 @@ const SignupPage = () => {
 
   const [error, setError] = useState("")
   const [isMobile, setIsMobile] = useState(window.innerWidth <= MAX_MOBILE_SCREEN_WIDTH);
-  const prevWidth = useRef(window.innerWidth);// useRef za razliku ode useState-a ne triggera re-render
+  const prevWidth = useRef(window.innerWidth);
 
   useEffect(() => {
     const handleResize = () => {
       const currWidth = window.innerWidth; 
-      // zasto je prevWidth objekt koji ima property "current" - zbog useRef-a, vidit kako tocno funkcionira useRef
       if (currWidth <= MAX_MOBILE_SCREEN_WIDTH && prevWidth.current > MAX_MOBILE_SCREEN_WIDTH) {
         setIsMobile(true);
       } else if (currWidth > MAX_MOBILE_SCREEN_WIDTH && prevWidth.current <= MAX_MOBILE_SCREEN_WIDTH) {
@@ -38,12 +39,13 @@ const SignupPage = () => {
       ...formData,
       [event.target.name]: event.target.value
     });
-  }
+  };
 
   const handleRegistration = async (e) => {
     e.preventDefault()
     try {
-      const response = await register(formData)
+      const response = await register(formData);
+      console.log("response --- ", response)
       toast.success(response.message, {
         autoClose: 2500
       })
@@ -52,15 +54,15 @@ const SignupPage = () => {
         password: "",
         repeatPassword: "",
         role: "",
-      })
-      setError("")
+      });
+      setError("");
+      if (response.success) {
+        navigate('/login');
+      };
     } catch (error) {
       setError(error.data)
     }
-  }
-
-
-  console.log("error role: ", error.role)
+  };
 
   return (
     <section className="overflow-hidden flex items-center justify-center bg-gradient-to-r from-[#262626] from-60% via-gray-400 py-6">
@@ -83,7 +85,6 @@ const SignupPage = () => {
                   <span className="text-red-600 mb-2">{error.username}</span>
                 )}
             </div>
-
 
             <div className="flex flex-col text-base text-left gap-1">
               <span>Password</span>
@@ -190,7 +191,7 @@ const SignupPage = () => {
               <h2 className="text-3xl font-bold text-black mt-32">Why register ?</h2>
               <p className="mt-44 absolute px-10 py-2 text-lg">
                 Are you part of a competitive team that loves playing soccer and aims to win tournaments?<br></br> Sign up now to manage your team, apply for tournaments, and stay organized.<br></br> Tournament organizers can also register to host events.<br></br>
-              <span className="absolute mt-5">Looking for match dates, team info, or results? No signup is needed-everything is available on our <a className="hover:underline" href="/home">homepage</a> !</span></p>
+              <span className="absolute mt-5">Looking for match dates, team info, or results? No signup is needed-everything is available on our <a className="hover:underline" href="/">homepage</a> !</span></p>
             </div>
           </div>
         )}       
