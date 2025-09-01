@@ -18,29 +18,13 @@ export const createMatch = async (matchObject) => {
   }
 }
 
-export const fetchMatchesByTournamentPagination = async (tournamentId, pageNumber) => {
-  const jwt = localStorage.getItem('token');
-  try {
-    const response = await apiClient.get(`/matches/pagination/tournament/${tournamentId}`, {
-      params: {
-        pageNumber,
-      },
-      headers: {
-        Authorization: `Bearer ${jwt}`
-      }
-    });
-    console.log("Service fetch matches by tournament and paginated response: ", response)
-    return response.data;
-  } catch (error) {
-    console.log("Error while trying to fetch matches based on tournament id: ", error)
-    throw error.response.data
-  }
-}
-
-export const fetchMatchesByTournament = async (tournamentId) => {
+export const fetchMatchesByTournament = async (tournamentId, page) => {
   const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.get(`/matches/tournament/${tournamentId}`, {
+      params: {
+        page,
+      },
       headers: {
         Authorization: `Bearer ${jwt}`
       }

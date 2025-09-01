@@ -1,36 +1,61 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DropdownButton } from "../../common/dropdown/DropdownButton";
-import { useFetchActiveTournaments } from "../../../hooks/tournaments/useFetchTournaments";
 import DropdownContent from "../../common/dropdown/DropdownContent";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { fetchAllActiveTournaments } from "../../../service/tournamentService";
 
-const Standings = () => {
+const Standings = ({ selectedTournament, setSelectedTournament }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
-  const [selectedTournament, setSelectedTournament] = useState();
 
-  const { tournaments } = useFetchActiveTournaments(); 
+  const [tournaments, setTournaments] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetchAllActiveTournaments();
+        if (!response.success) {
+          throw new Error('Failed to fetch data.');
+        }
+        setTournaments(response.data);
+      } catch (error) {
+        setError("Unable to fetch torunament data!");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  console.log("Tournaments: ", tournaments);
+
+  if (loading) return <p className="text-black flex justify-center">Loading...</p>
+  if (error) return <p className="text-black flex justify-center">{error}</p>
+  if (!tournaments) return null;
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const dropdownItems = tournaments.tournamentsList.map(tournament => ({
+  const dropdownContentItems = tournaments.tournamentsList.map(tournament => ({
     label: tournament.tournamentName,
     value: tournament.id
   }));
 
-  const handleSelectFilter = (type, value) => {
+  const handleSelectFilter = (value) => {
     const selected = tournaments.tournamentsList.find(t => t.id === value);
     if(selected) {
       setSelectedTournament(selected);
     }
-  
     setIsDropdownOpen(false);
   };
   
   const handleShowTeamPage = (id) => {
-    navigate(`/teams/${id}`)
+    navigate(`/teams/${id}`);
   };
 
   return (
@@ -41,7 +66,6 @@ const Standings = () => {
           <div className="font-semibold text-base border-b border-white/10 pb-2">
             Team Stats
           </div>
-{/*           <div className="flex"><span className="w-12 inline-block">MP</span>Matches Played</div> */}
           <div className="flex"><span className="w-12 inline-block">W</span>Games Won</div>
           <div className="flex"><span className="w-12 inline-block">D</span>Draws</div>
           <div className="flex"><span className="w-12 inline-block">L</span>Losses</div>
@@ -51,8 +75,6 @@ const Standings = () => {
           <div className="flex"><span className="w-12 inline-block">PTS</span>Points Earned</div>
         </div>
       </aside>
-
-
 
       <div className="text-white overflow-x-scroll sm:overflow-hidden bg-[#04111a] rounded-lg px-4 py-6"> {/* bg-opacity-70  */}
         
@@ -65,8 +87,7 @@ const Standings = () => {
 
           {isDropdownOpen  && (
             <DropdownContent 
-              values={dropdownItems}
-              filterType={'tournamentName'}
+              values={dropdownContentItems}
               onSelect={handleSelectFilter}
             />
           )}
@@ -75,7 +96,6 @@ const Standings = () => {
         <div className="flex items-center bg-[#001E30] w-[625px] p-1 rounded-lg text-[11px] xl:text-[13px]">
           <div className="w-[40px] sticky left-0 bg-[#001E30] z-10 px-1">#</div>
           <div className="w-[258px] sticky left-[30px] bg-[#001E30] z-10 text-start">Team</div>
-{/*           <div className="w-[35px] px-1">MP</div> */}
           <div className="w-[35px] px-2">W</div>
           <div className="w-[35px] px-2">D</div>
           <div className="w-[35px] px-2">L</div>
@@ -87,7 +107,6 @@ const Standings = () => {
         </div>
 
         <div className="space-y-2">
-
           {selectedTournament?.teams && selectedTournament?.teams.map((team, index) => {
             return (
               <div key={team.id} className="flex items-center w-[655px] text-[11px] sm:text-[13px] xl:text-[17px] border-b border-white/15">
@@ -100,17 +119,14 @@ const Standings = () => {
                       <img src={team.photoUrl} className="w-4 h-4 rounded-full mr-2 mt-[2px]" />
                     ) : (
                       <span className="w-4"></span>
-                    )}
+                    )}  
 
-                    <button
-                      onClick={() => handleShowTeamPage(team.id)}
-                      className="hover:underline"
-                      >
-                      {team.teamName} 
-                    </button>
+                    <Link to={`/team/${team.id}`}>
+                      <span className="hover:underline">{team.teamName}</span>
+                    </Link>
+
                   </span>
                 </div>
-{/*                 <div className="w-[35px] px-3">{team.matchesPlayed}</div> */}
                 <div className="w-[35px] px-3">{team.wins}</div>
                 <div className="w-[35px] px-3">{team.draws}</div>
                 <div className="w-[35px] px-3">{team.losses}</div>

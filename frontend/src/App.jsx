@@ -49,7 +49,7 @@ const App = () => {
                 <Route path="team-overview" element={<MyTeam />}></Route>
               </Route>
               
-              <Route path="/teams/:id" element=
+              <Route path="/team/:id" element=
               {
                 <ActiveComponentProvider>
                   <TeamPage />

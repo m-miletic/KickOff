@@ -3,9 +3,11 @@ package com.kick_off.kick_off.controller;
 import com.kick_off.kick_off.dto.match.CreateMatchDto;
 import com.kick_off.kick_off.dto.match.EditMatchDto;
 import com.kick_off.kick_off.dto.match.MatchDto;
-import com.kick_off.kick_off.dto.match.MatchListDto;
+import com.kick_off.kick_off.request.PaginationRequest;
 import com.kick_off.kick_off.response.ApiResponse;
+import com.kick_off.kick_off.response.PaginatedResponse;
 import com.kick_off.kick_off.service.MatchService;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,9 +37,9 @@ public class MatchController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/pagination/tournament/{tournamentId}")
+/*    @GetMapping("/pagination/tournament/{tournamentId}")
     public ResponseEntity<ApiResponse<MatchListDto>> getMatchesByTournamentIdPagination(@PathVariable Long tournamentId, @RequestParam(defaultValue = "1") int pageNumber) {
-        MatchListDto matches = matchService.findMatchesByTournamentPagination(tournamentId, pageNumber);
+        MatchListDto matches = matchService.findPaginatedMatchesByTournament(tournamentId, pageNumber);
         ApiResponse<MatchListDto> response = ApiResponse.<MatchListDto>builder()
                 .message("Matches fetched successfully.")
                 .data(matches)
@@ -45,18 +47,25 @@ public class MatchController {
                 .build();
 
         return ResponseEntity.ok(response);
-    }
+    }*/
 
     @GetMapping("/tournament/{tournamentId}")
-    public ResponseEntity<ApiResponse<List<MatchDto>>> getMatchesByTournamentId(@PathVariable Long tournamentId) {
-        List<MatchDto> matches = matchService.findMatchesByTournament(tournamentId);
-        ApiResponse<List<MatchDto>> response = ApiResponse.<List<MatchDto>>builder()
-                .message("Matches fetched successfully.")
+    public ResponseEntity<ApiResponse<PaginatedResponse<MatchDto>>> getMatchesByTournamentId(
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "5") Integer size,
+            @RequestParam(defaultValue = "id") String sortField,
+            @RequestParam(defaultValue = "DESC") Sort.Direction direction
+            ) {
+        PaginationRequest request = new PaginationRequest(page, size, sortField, direction);
+        final PaginatedResponse<MatchDto> matches = matchService.findMatchesByTournament(request);
+
+        ApiResponse<PaginatedResponse<MatchDto>> response = ApiResponse.<PaginatedResponse<MatchDto>>builder()
+                .message("Matches fetched successfully")
                 .data(matches)
                 .success(true)
                 .build();
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PatchMapping("/{id}")

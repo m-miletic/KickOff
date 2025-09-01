@@ -1,27 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { fetchMatchesByTournament, fetchMatchesByTournamentPagination } from "../../../service/matchService";
+import { fetchMatchesByTournament } from "../../../service/matchService";
 import Pagination from "../../common/navigation/Pagination";
 
 const MatchHub = ({ selectedTournament }) => {
   const [matches, setMatches] = useState([]);
-
   const [filters, setFilters] = useState({
-    pageNumber: 1,
+    page: 1,
   });
-
   const [pagesBeforeToday, setPagesBeforeToday] = useState(null);
 
-/*   useEffect(() => {
-    if (pagesBeforeToday && filters.pageNumber !== pagesBeforeToday) {
+  useEffect(() => {
+    if (pagesBeforeToday && filters.page !== pagesBeforeToday) {
       setFilters((prevValues) => ({
         ...prevValues,
-        pageNumber: pagesBeforeToday,
+        page: pagesBeforeToday,
       }));
     }
-  }, [pagesBeforeToday]); */
+  }, [pagesBeforeToday]);
   
-
-
   const handleSelectFilter = (type, value) => {
     setFilters((prevValues) => ({
       ...prevValues,
@@ -34,9 +30,8 @@ const MatchHub = ({ selectedTournament }) => {
 
     const fetchTournamentMatches = async () => {
       try {
-        const response = await fetchMatchesByTournamentPagination(selectedTournament.id, filters.pageNumber);
-        console.log("Response: ", response)
-        setMatches(response.data);
+        const response = await fetchMatchesByTournament(selectedTournament.id, filters.page);
+        setMatches(response.data.content);
         setPagesBeforeToday(response.data.pagesBeforeToday + 1)
       } catch (error) {
         console.log("Komponenta: ", error?.response?.data?.message || error.message);
@@ -44,21 +39,20 @@ const MatchHub = ({ selectedTournament }) => {
     };
 
     fetchTournamentMatches();
-  }, [selectedTournament, filters.pageNumber]);
-
-
+  }, [selectedTournament, filters.page]);
 
   return (
     <>
       <div className="flex justify-center items-center">
         <div className="bg-[#001E30] w-[45%] ml-64 rounded-lg py-4 pb-12 px-8 space-y-4">
-          <div className="text-center text-2xl mr-6">Match Hub</div>
+          <div className="text-center text-2xl">Match Hub</div>
+          <div className="text-center py-2">{selectedTournament?.tournamentName}</div>
 
           {matches?.matchesList?.length === 0 && (
             <div className="text-center text-gray-400">No matches available.</div>
           )}
 
-          {matches?.matchesList?.map(match => (
+          {matches?.map(match => (
             <div key={match.id}>
               <div className="text-start px-2">
                 <span>{match.matchDate.substring(0, 10)} {match.matchDate.substring(11, 16)}</span>

@@ -20,8 +20,6 @@ const Navbar = () => {
 
   const { decodedJwt } = useContext(LoggedUserContext);
 
-  console.log("navbar - decodedJwt: ", decodedJwt);
-
   useCollapseSidebarOnResize(setIsSideBarActive);
 
   const toggleSidebar = () => {

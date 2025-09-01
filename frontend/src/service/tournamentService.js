@@ -20,13 +20,12 @@ export const fetchAllTournaments = async (pageNumber) => {
   }
 };
 
-export const fetchAllUpcomingTournaments = async (representativeId, pageNumber) => {
+export const fetchAllUpcomingTournaments = async (pageNumber) => {
   const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.get("/tournaments/upcoming", {
       params: {
         pageNumber,
-        representativeId,
       }
     },
       {

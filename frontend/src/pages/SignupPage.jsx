@@ -32,7 +32,7 @@ const SignupPage = () => {
     }
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [])
+  }, []);
 
   const handleInputChange = (event) => {
     setFormData({
@@ -45,7 +45,6 @@ const SignupPage = () => {
     e.preventDefault()
     try {
       const response = await register(formData);
-      console.log("response --- ", response)
       toast.success(response.message, {
         autoClose: 2500
       })

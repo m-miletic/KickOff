@@ -1,8 +1,6 @@
 import React from "react";
 
-const DropdownContent = ({ values, filterType, onSelect }) => {
-
-  // ne smi bit role moze bit item jer se oco vise komponenti koristit
+const DropdownContent = ({ values, onSelect }) => {
   return(
     <div className="text-white text-xs bg-[#001E28] rounded-lg py-2 mt-2 w-52 absolute z-30">
       <ul>
@@ -11,8 +9,8 @@ const DropdownContent = ({ values, filterType, onSelect }) => {
             <li
               key={value.value}
               className="py-1 hover:bg-[#005571] cursor-pointer rounded-lg px-2 ml-1"
-              onClick={() => onSelect(filterType, value.value)}
-              >
+              onClick={() => onSelect(value.value)}
+            >
               {value.label}
             </li>
           );

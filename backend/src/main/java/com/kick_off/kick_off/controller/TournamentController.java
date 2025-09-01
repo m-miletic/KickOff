@@ -41,8 +41,7 @@ public class TournamentController {
 
     @GetMapping("/upcoming")
     public ResponseEntity<ApiResponse<TournamentListDto>> fetchAllUpcomingTournaments(
-            @RequestParam(defaultValue = "1") int pageNumber,
-            @RequestParam Long representativeId
+            @RequestParam(defaultValue = "1") int pageNumber
     ) {
 
         TournamentListDto tournaments = tournamentService.getUpcomingTournaments(pageNumber);

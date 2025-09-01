@@ -2,8 +2,6 @@ package com.kick_off.kick_off.dto.match;
 
 
 import com.kick_off.kick_off.dto.stadium.StadiumDto;
-import com.kick_off.kick_off.dto.team.LightTeamDto;
-import com.kick_off.kick_off.dto.team.TeamDto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

@@ -1,10 +1,8 @@
 package com.kick_off.kick_off.service.impl;
 
-import com.kick_off.kick_off.dto.match.CreateMatchDto;
-import com.kick_off.kick_off.dto.match.EditMatchDto;
-import com.kick_off.kick_off.dto.match.MatchDto;
-import com.kick_off.kick_off.dto.match.MatchListDto;
+import com.kick_off.kick_off.dto.match.*;
 import com.kick_off.kick_off.dto.stadium.StadiumDto;
+import com.kick_off.kick_off.dto.team.LightTeamDto;
 import com.kick_off.kick_off.dto.team.MyTeamDto;
 import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.exception.ForbiddenActionException;
@@ -13,13 +11,17 @@ import com.kick_off.kick_off.repository.MatchRepository;
 import com.kick_off.kick_off.repository.StadiumRepository;
 import com.kick_off.kick_off.repository.TeamRepository;
 import com.kick_off.kick_off.repository.TournamentRepository;
+import com.kick_off.kick_off.request.PaginationRequest;
+import com.kick_off.kick_off.response.PaginatedResponse;
 import com.kick_off.kick_off.service.MatchService;
+import com.kick_off.kick_off.util.PaginationUtils;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.apache.coyote.BadRequestException;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -139,7 +141,7 @@ public class MatchServiceImpl implements MatchService {
     }
 
     @Override
-    public MatchListDto findMatchesByTournamentPagination(Long tournamentId, int pageNumber) {
+    public MatchListDto findPaginatedMatchesByTournament(Long tournamentId, int pageNumber) {
 
         int pageSize = 3;
 
@@ -168,12 +170,18 @@ public class MatchServiceImpl implements MatchService {
     }
 
     @Override
-    public List<MatchDto> findMatchesByTournament(Long tournamentId) {
-
-        List<Match> allMatches = matchRepository.findByTournamentId(tournamentId);
-
-        List<MatchDto> matchDtos = allMatches.stream().map(match -> modelMapper.map(match, MatchDto.class)).toList();
-        return matchDtos;
+    public PaginatedResponse<MatchDto> findMatchesByTournament(PaginationRequest request) {
+        final Pageable pageable = PaginationUtils.getPageable(request);
+        final Page<Match> entities = matchRepository.findAll(pageable);
+        final List<MatchDto> entitiesDto = entities.stream().map(match -> modelMapper.map(match, MatchDto.class)).toList();
+        return new PaginatedResponse<>(
+                entities.getTotalPages(),
+                entities.getTotalElements(),
+                entities.getSize(),
+                entities.getNumber(),
+                entities.isEmpty(),
+                entitiesDto
+        );
     }
 
 
