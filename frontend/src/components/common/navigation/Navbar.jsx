@@ -130,8 +130,8 @@ const Navbar = () => {
         </div>
       ) : (
         /* ***** DESKTOP VIEW ***** */
-        <div className={`flex justify-between items-center bg-[#001E28] text-white h-32 px-4 text-xl`}>
-          <div><img src={logoWhite} alt="Logo" className="w-[85px] h-12 mt-2 " /></div>
+        <div className={`flex justify-between items-center bg-[#001E28] text-white h-32 ps-14 pe-8 text-xl`}>
+          <div><img src={logoWhite} alt="Logo" className="w-28 h-16 mt-2" /></div>
           {decodedJwt === null ? (
             <>
               <div className={`flex justify-center items-center space-x-2`}>
@@ -142,7 +142,7 @@ const Navbar = () => {
                 ))}
               </div>
               <div>
-                <Link to={"/login"} className="px-2.5 py-1.5 lg:px-3 lg:py-2 rounded-xl bg-blue-500"><span>Login</span></Link>
+                <Link to={"/login"} className="px-6 p-3 rounded-xl bg-blue-600 hover:bg-blue-700"><span className="font-bold">Login</span></Link>
               </div>
             </>
           ) : (

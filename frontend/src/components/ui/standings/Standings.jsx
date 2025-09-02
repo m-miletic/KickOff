@@ -61,7 +61,7 @@ const Standings = ({ selectedTournament, setSelectedTournament }) => {
     <div className="flex justify-center">
 
       <aside>
-        <div className="bg-[#001E30] rounded-lg mr-2 ps-6 pe-24 py-6 text-white space-y-2 shadow-md text-lg">
+        <div className="bg-[#001E30] rounded-lg mr-2 ps-6 pe-24 py-6 text-white space-y-2 shadow-md text-lg ">
           <div className="font-semibold text-2xl border-b border-white/10 pb-2">
             Team Stats
           </div>
@@ -92,27 +92,26 @@ const Standings = ({ selectedTournament, setSelectedTournament }) => {
           )}
         </div>
 
-        <div className="flex items-center bg-[#001E30] p-1 rounded-lg text-lg">
-          <div className="w-[40px] sticky left-0 bg-[#001E30] z-10 px-1">#</div>
-          <div className="w-[258px] sticky left-[30px] bg-[#001E30] z-10 text-start">Team</div>
-          <div className="w-[35px] px-2">W</div>
-          <div className="w-[35px] px-2">D</div>
-          <div className="w-[35px] px-2">L</div>
-          <div className="w-[35px] px-1">GF</div>
-          <div className="w-[35px] px-1">GA</div>
-          <div className="w-[35px] px-1">GD</div>
-          <div className="w-[35px] px-1">PTS</div>
-
+        <div className="flex justify-start items-center bg-[#001E30] px-1 py-3 rounded-lg text-lg w-[100%]">
+          <div className="w-[5%] sticky left-0 bg-[#001E30] z-10 px-1">#</div>
+          <div className="w-[35%] sticky left-[30px] bg-[#001E30] z-10 text-start">Team</div>
+          <div className="w-[10%] px-2 ml-4">W</div>
+          <div className="w-[10%] px-2">D</div>
+          <div className="w-[10%] px-2">L</div>
+          <div className="w-[10%] px-1">GF</div>
+          <div className="w-[10%] px-1">GA</div>
+          <div className="w-[10%] px-1">GD</div>
+          <div className="w-[10%] px-1">PTS</div>
         </div>
 
         <div className="space-y-2">
           {selectedTournament?.teams && selectedTournament?.teams.map((team, index) => {
             return (
-              <div key={team.id} className="flex items-center w-[655px] text-lg border-b border-white/15">
-                <div className="w-[30px] sticky left-0 z-20 bg-[#04111a] h-full flex items-center px-2">
+              <div key={team.id} className="flex items-center w-[100%] text-lg border-b border-white/15">
+                <div className="z-20 bg-[#04111a] h-full flex items-center px-2">
                   {index + 1}
                 </div>
-                <div className="w-[270px] sticky left-[30px] z-20 bg-[#04111a] h-full flex items-center py-[3px] border-r border-white/10">
+                <div className="w-[328px] z-20 bg-[#04111a] h-full flex items-center py-2 border-r border-white/10">
                   <span className="w-[125px] sm:w-[150px] xl:w-auto overflow-hidden text-ellipsis whitespace-nowrap flex items-center justify-center">
                     {team.photoUrl ? (
                       <img src={team.photoUrl} className="w-4 h-4 rounded-full mr-2 mt-[2px]" />
@@ -126,13 +125,13 @@ const Standings = ({ selectedTournament, setSelectedTournament }) => {
 
                   </span>
                 </div>
-                <div className="w-[35px] px-3">{team.wins}</div>
-                <div className="w-[35px] px-3">{team.draws}</div>
-                <div className="w-[35px] px-3">{team.losses}</div>
-                <div className="w-[35px] px-3">{team.goalsScored}</div>
-                <div className="w-[35px] px-3">{team.goalsAgainst}</div>
-                <div className="w-[35px] px-3">{team.goalsScored - team.goalsAgainst}</div>
-                <div className="w-[35px] px-3">{team.points}</div>
+                <div className="w-[10%] px-3 ml-4">{team.wins}</div>
+                <div className="w-[10%] px-3">{team.draws}</div>
+                <div className="w-[10%] px-3">{team.losses}</div>
+                <div className="w-[10%] px-3">{team.goalsScored}</div>
+                <div className="w-[10%] px-3">{team.goalsAgainst}</div>
+                <div className="w-[10%] px-3">{team.goalsScored - team.goalsAgainst}</div>
+                <div className="w-[10%] px-3">{team.points}</div>
               </div>
             );
           })}

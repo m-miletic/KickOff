@@ -13,11 +13,11 @@ const HomePage = () => {
         <Navbar />
 
         <div>
-          <div className="pt-14 w-screen">
+          <div id="leaderboard" className="pt-14 w-screen">
             <Standings selectedTournament={selectedTournament} setSelectedTournament={setSelectedTournament} />
           </div>
 
-          <div className="pt-6 pb-20 w-screen">
+          <div id="match-hub" className="pt-6 pb-20 w-screen">
             <MatchHub selectedTournament={selectedTournament} />
           </div>
 
@@ -25,22 +25,6 @@ const HomePage = () => {
             <Footer />
           </div>
         </div>
-
-
-
-
-{/*         <div id="leaderboard" className="mt-14">
-          <Standings selectedTournament={selectedTournament} setSelectedTournament={setSelectedTournament} />
-        </div>
-
-        <div id="match-hub" className="mt-14"> 
-          <MatchHub selectedTournament={selectedTournament} />
-        </div>
-
-        <div id="about-us">
-          <Footer />
-        </div> */}
-
       </div>
     </div>
   );
