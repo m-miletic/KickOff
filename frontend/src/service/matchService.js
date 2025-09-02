@@ -18,12 +18,12 @@ export const createMatch = async (matchObject) => {
   }
 }
 
-export const fetchMatchesByTournament = async (tournamentId, page) => {
+export const fetchMatchesByTournament = async (tournamentId, filters) => {
   const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.get(`/matches/tournament/${tournamentId}`, {
       params: {
-        page,
+        ...filters,
       },
       headers: {
         Authorization: `Bearer ${jwt}`

@@ -17,10 +17,8 @@ import com.kick_off.kick_off.service.MatchService;
 import com.kick_off.kick_off.util.PaginationUtils;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
-import org.apache.coyote.BadRequestException;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -140,7 +138,7 @@ public class MatchServiceImpl implements MatchService {
         return matchDto1;
     }
 
-    @Override
+/*    @Override
     public MatchListDto findPaginatedMatchesByTournament(Long tournamentId, int pageNumber) {
 
         int pageSize = 3;
@@ -167,18 +165,20 @@ public class MatchServiceImpl implements MatchService {
                 .build();
 
         return matchListDto;
-    }
+    }*/
 
     @Override
-    public PaginatedResponse<MatchDto> findMatchesByTournament(PaginationRequest request) {
+    public PaginatedResponse<MatchDto> findMatchesByTournament(PaginationRequest request, Long tournamentId) {
         final Pageable pageable = PaginationUtils.getPageable(request);
         final Page<Match> entities = matchRepository.findAll(pageable);
         final List<MatchDto> entitiesDto = entities.stream().map(match -> modelMapper.map(match, MatchDto.class)).toList();
+        LocalDateTime today = LocalDate.now().atStartOfDay();
+        final Page<Match> matchesBeforeCurrentDate = matchRepository.findByTournamentIdAndMatchDateBeforeOrderByMatchDateDesc(tournamentId, today, pageable);
         return new PaginatedResponse<>(
                 entities.getTotalPages(),
                 entities.getTotalElements(),
                 entities.getSize(),
-                entities.getNumber(),
+                matchesBeforeCurrentDate.getTotalPages() + 1,
                 entities.isEmpty(),
                 entitiesDto
         );
@@ -508,6 +508,8 @@ public class MatchServiceImpl implements MatchService {
     public void deleteMatch(Long id) {
         matchRepository.deleteById(id);
     }
+
+
 }
 
 

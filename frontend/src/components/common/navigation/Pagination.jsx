@@ -1,105 +1,105 @@
 import React, { useEffect, useState } from "react";
 
 const Pagination = ({ 
-  pagesBeforeToday,
   totalPages,
-  selectedFilters,
+  initialPage,
   handleSelectFilter,
   navButtonStyle = 'text-white',
   totalPagesStyle = 'text-white',
   }) => {
 
-    console.log("Pagination pages before today: ", pagesBeforeToday)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [paginationNumbers, setPaginationNumbers] = useState([]);
 
-  const [currentPage, setCurrentPage] = useState(null);
-  const [previousPage, setPreviousPage] = useState();
-  const [nextPage, setNextPage] = useState();
-  const [navigationNumbers, setNavigationNumbers] = useState([]);
+  // Kada se Pagination komponenta prvi put učita, prop initialPage još može biti undefined 
+  // jer ga roditeljska komponenta postavlja tek nakon što dođe odgovor s backenda (asinkrono).
+  // Zbog toga u dependency array dodajem initialPage – tako da se ovaj useEffect ponovo pokrene 
+  // čim se initialPage promijeni i onda postavi currentPage i paginationNumbers na pravu vrijednost.
+  useEffect(() => {
+    handleSetInitialPagionationNumbers();
+    setCurrentPage(initialPage);
+    handleSelectFilter('page', initialPage);
+  }, [initialPage]);
 
-  console.log("currentPage -> ", currentPage)
+  const handleSetInitialPagionationNumbers = () => {
+    const arrayRange = (start, stop, step) =>
+      Array.from(
+        { length: (stop - start) / step + 1 },
+        (value, index) => start +index * step
+      );
 
-  console.log("Pagination total pages: ", totalPages);
-
-  const pagesArray = (start, stop, step) => {
-    return Array.from(
-      { length: (stop - start) / step + 1 },
-      (value, index) => start + index * step
-    );
-  }
-
-  const handleNextPrev = (direction) => {
-    if (direction === 'next') {
-      setPreviousPage(currentPage);
-      if (nextPage === totalPages) {
-        setNextPage(totalPages);
-      } else {
-        setNextPage(currentPage + 2);
+    let temp = [];
+    if (initialPage <= 3 && totalPages <=3) {
+      temp = arrayRange(1, totalPages, 1);
+    } else if (initialPage < 3 && totalPages > 3) {
+      temp = [1,2,3,totalPages];
+    } else if (initialPage >= 3) {
+      if (initialPage+2 === totalPages) {
+        temp = [1, initialPage-1, initialPage, initialPage+1, totalPages];
+      } else if (initialPage+3 === totalPages) {
+        temp = [1, initialPage, initialPage+1, initialPage+2, totalPages];
       }
-      setCurrentPage(currentPage + 1);
-    } else if (direction === 'prev') {
-      setNextPage(currentPage);
-      if (previousPage === 1) {
-        setCurrentPage(1);
-      } else {
-        setCurrentPage(previousPage);
-      }
-      setPreviousPage(previousPage - 1);
-    } 
+      temp = [1, initialPage-1, initialPage, initialPage+1, totalPages];
+    }
+
+    setPaginationNumbers(temp);
   };
 
-  const handleSetNavigatioNumbers = () => {
-    if (totalPages < 3) {
-      setNavigationNumbers(pagesArray(1, totalPages, 1));
-    } else if (previousPage === 1 || previousPage === undefined || previousPage === 0) {
-        setNavigationNumbers(pagesArray(1, 3, 1));
-    } else if (nextPage >= totalPages) {
-        setNavigationNumbers(pagesArray(totalPages - 2, totalPages, 1));
-    } else {
-        setNavigationNumbers(pagesArray(previousPage, nextPage, 1));
+  useEffect(() => {
+    handleSetInitialPagionationNumbers();
+  }, []);
+
+  useEffect(() => {
+    handleChangePaginationNumbers();
+  }, [currentPage])
+
+  const handleChangePaginationNumbers = () => {
+    if (currentPage === totalPages) {
+      let temp = [1, currentPage-3, currentPage-2, currentPage-1, currentPage];
+      setPaginationNumbers(temp);
+    } else if (currentPage === 1) {
+      let temp = [currentPage, currentPage+1, currentPage+2, currentPage+3, totalPages];
+      setPaginationNumbers(temp);
+    } else if (currentPage === 2 && totalPages >= 3) {
+      let temp = [1,2,3,4,totalPages];
+      setPaginationNumbers(temp); 
+    }
+    else if (currentPage >= 3 && currentPage+2 <= totalPages) {
+      let temp = [1, currentPage-1, currentPage, currentPage+1, totalPages];
+      setPaginationNumbers(temp);
     }
   };
 
-  const handleClickPageNumber = (page) => {
-    setCurrentPage(page); // setiranje triggera donji useEffect jer imam currentPage u dependency-u
-    setPreviousPage(page - 1);
-    setNextPage(page + 1);
+  const handleClickPaginationNumber = (clickedNumber) => {
+    setCurrentPage(clickedNumber);
+    handleChangePaginationNumbers();
   };
 
-  useEffect(() => {
-    handleSetNavigatioNumbers();
-    handleSelectFilter('pageNumber', currentPage);
-  }, [currentPage, selectedFilters.pageNumber, totalPages]);
-
-  useEffect(() => {
-    setPreviousPage(0);
-    setCurrentPage(1);
-    setNextPage(2);
-  }, [selectedFilters.status, selectedFilters.timeCreated, selectedFilters.role])
-
-
-  useEffect(() => {
-    if (pagesBeforeToday != null) {
-      setCurrentPage(pagesBeforeToday)
-      setPreviousPage(pagesBeforeToday-1)
-      setNextPage(pagesBeforeToday+1)
+  const handleClickNextprevButtons = (direction) => {
+    if (direction === 'next' && currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+      handleSelectFilter('page', currentPage + 1);
+    } else if (direction === 'prev' && currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+      handleSelectFilter('page', currentPage - 1);
     }
-  }, [pagesBeforeToday])
+  };
 
   return(
     <nav>
-      <ul className="inline-flex text-2xs sm:text-xs xl:text-lg mt-2">
+      <ul className="inline-flex text-2xs sm:text-xs xl:text-lg mt-2 bg-[#2b536c2c] w-96 py-5 px-12 rounded-3xl justify-between">
         <li>
-          <button disabled={currentPage === 1} onClick={() => handleNextPrev('prev')} className={`${navButtonStyle} flex items-center justify-center hover:text-xl 
+          <button disabled={currentPage === 1} onClick={() => handleClickNextprevButtons('prev') } className={`${navButtonStyle} cursor-pointer flex items-center justify-center hover:text-xl 
           ${totalPages === 0 && 'hidden'}`}>
             Prev
           </button>
         </li>
 
-        {navigationNumbers.map((num, index) => {
+        {paginationNumbers.map((num, index) => {
           return(
             <li key={index}>
-              <button onClick={() => { handleSelectFilter('pageNumber', num); handleClickPageNumber(num); }} className={`${navButtonStyle} flex items-center justify-center bg-transparent
-                hover:text-2xl  ${currentPage === num && ''}`}>
+              <button onClick={() => { handleSelectFilter('page', num); handleClickPaginationNumber(num); }} className={`${navButtonStyle} flex items-center justify-center bg-transparent
+                hover:text-2xl  ${currentPage === num ? 'text-2xl' : ''}`}>
                 {num}
               </button>
             </li>
@@ -107,13 +107,13 @@ const Pagination = ({
         })}
 
         <li>
-          <button disabled={currentPage === totalPages} onClick={() => handleNextPrev('next')} className={`${navButtonStyle} flex items-center justify-center hover:text-xl 
+          <button disabled={currentPage === totalPages} onClick={() => handleClickNextprevButtons('next')} className={`${navButtonStyle} cursor-pointer flex items-center justify-center hover:text-xl 
            ${totalPages === 0 && 'hidden'}`}>
             Next
           </button>
         </li>
       </ul>
-      <div className={`text-xs ml-1 mt-2`}>
+      <div className={`text-base ml-1 mt-2`}>
         {totalPages > 0 && <span className={`${totalPagesStyle}`}>{currentPage}/{totalPages}</span>}
       </div>
     </nav>

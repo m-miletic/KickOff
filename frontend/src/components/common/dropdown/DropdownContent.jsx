@@ -2,7 +2,7 @@ import React from "react";
 
 const DropdownContent = ({ values, onSelect }) => {
   return(
-    <div className="text-white text-xs bg-[#001E28] rounded-lg py-2 mt-2 w-52 absolute z-30">
+    <div className="text-white text-sm bg-[#001E28] rounded-lg py-2 mt-2 w-52 absolute z-30">
       <ul>
         {values.map((value) => {
           return(

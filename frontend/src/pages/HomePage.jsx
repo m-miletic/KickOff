@@ -8,11 +8,28 @@ const HomePage = () => {
   const [selectedTournament, setSelectedTournament] = useState(null);
 
   return (
-    <div id="homepage" className="relative min-h-screen flex flex-col bg-cover bg-center bg-no-repeat bg-scroll text-white">
+    <div id="homepage">
       <div className="relative z-10">
         <Navbar />
 
-        <div id="leaderboard" className="mt-14">
+        <div>
+          <div className="pt-14 w-screen">
+            <Standings selectedTournament={selectedTournament} setSelectedTournament={setSelectedTournament} />
+          </div>
+
+          <div className="pt-6 pb-20 w-screen">
+            <MatchHub selectedTournament={selectedTournament} />
+          </div>
+
+          <div id="about-us">
+            <Footer />
+          </div>
+        </div>
+
+
+
+
+{/*         <div id="leaderboard" className="mt-14">
           <Standings selectedTournament={selectedTournament} setSelectedTournament={setSelectedTournament} />
         </div>
 
@@ -22,7 +39,7 @@ const HomePage = () => {
 
         <div id="about-us">
           <Footer />
-        </div>
+        </div> */}
 
       </div>
     </div>

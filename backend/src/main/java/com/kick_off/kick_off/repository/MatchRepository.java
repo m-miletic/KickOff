@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +40,7 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     Page<Match> findByTournamentId(Long tournamentId, Pageable pageable);
     List<Match> findByTournamentId(Long tournamentId);
 
-    Page<Match> findByTournamentIdAndMatchDateBeforeOrderByMatchDateDesc(Long tournamentId, LocalDateTime dateTime, Pageable pageable);
+    Page<Match> findByTournamentIdAndMatchDateBeforeOrderByMatchDateDesc(Long tournamentId, LocalDateTime today, Pageable pageable);
 
 
     @Query("""

@@ -4,14 +4,12 @@ import logoWhite from '../../../assets/logoWhite.png';
 const Footer = () => {
   return (
     <footer className="bg-[#001E28] text-white px-6 py-8 mt-12"> {/* bg-transparent za sliku ako je bg */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-lg">
         
-        {/* Logo Column */}
         <div className="flex items-start">
           <img src={logoWhite} alt="Logo" className="w-20 h-auto" />
         </div>
 
-        {/* Explore Column */}
         <div>
           <h3 className="font-semibold mb-2">Explore</h3>
           <ul className="space-y-1">
@@ -21,7 +19,6 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Account Column */}
         <div>
           <h3 className="font-semibold mb-2">Account</h3>
           <ul className="space-y-1">
@@ -31,7 +28,6 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Bottom Text */}
       <div className="text-center mt-8 text-xs text-white/50">
         &copy; {new Date().getFullYear()} KickOff. All rights reserved.
       </div>

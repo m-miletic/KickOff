@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 public final class PaginationUtils {
 
     public static Pageable getPageable(PaginationRequest request) {
-        return PageRequest.of(request.getPage(), request.getSize(), request.getDirection(), request.getSortField());
+        System.out.println("request from utils: " + request.toString());
+        return PageRequest.of(request.getPage()-1, request.getSize(), request.getDirection(), request.getSortField());
     }
 }
