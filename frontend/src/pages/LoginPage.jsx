@@ -26,7 +26,6 @@ const LoginPage = () => {
     event.preventDefault();
     try {
       const userData = await login(loginCredentials);
-      console.log("userData - ", userData);
       if (userData.data.accessToken) {
         localStorage.setItem('token', userData.data.accessToken);
         localStorage.setItem('refreshToken', userData.data.refreshToken.token);
@@ -62,7 +61,7 @@ const LoginPage = () => {
 
           <form onSubmit={handleLogin}>
           
-            <div className="flex flex-col text-xl text-left gap-1">
+            <div className="flex flex-col text-2xl text-left gap-1">
               <span>Username</span>
               <input 
                 type="text" 
@@ -74,7 +73,7 @@ const LoginPage = () => {
                 />
             </div>
 
-            <div className="flex flex-col text-xl text-left gap-1">
+            <div className="flex flex-col text-2xl text-left gap-1">
               <span>Password</span>
               <input 
                 type="password" 
@@ -93,12 +92,12 @@ const LoginPage = () => {
             text-white hover:px-11 hover:py-2.5">Login</button>
 
             <div className="py-2">
-              <span><a href="/signup" className="cursor-pointer hover:underline hover:text-blue-500">Don't have an account? Sign up</a></span>
+              <span><a href="/signup" className="cursor-pointer hover:underline hover:text-blue-500 text-lg">Don't have an account? Sign up</a></span>
             </div>
           </form>
 
           <div className="py-2">
-            <span><a href="/home" className="cursor-pointer hover:underline hover:text-blue-500">Back to homepage</a></span>
+            <span><a href="/" className="cursor-pointer hover:underline hover:text-blue-500 text-lg">Back to homepage</a></span>
           </div>
 
         </div>

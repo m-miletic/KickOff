@@ -64,13 +64,13 @@ const SignupPage = () => {
   };
 
   return (
-    <section className="overflow-hidden flex items-center justify-center bg-gradient-to-r from-[#262626] from-60% via-gray-400 py-6">
+    <section className="overflow-hidden flex items-center justify-center bg-gradient-to-r from-[#262626] from-60% via-gray-400 py-6 h-screen">
       <div className="flex shadow-2xl rounded-2xl">
         <div className="flex flex-col bg-[#F7F7F7] b items-center jusitfy-center text-center p-20 gap-8 rounded-2xl lg:rounded-tr-none lg:rounded-br-none">
           <h1 className="text-5xl font-bold">Register</h1>
           <form onSubmit={handleRegistration}>
 
-            <div className="flex flex-col text-base text-left gap-1">
+            <div className="flex flex-col text-xl text-left gap-1">
               <span>Username</span>
               <input 
                 type="text" 
@@ -85,7 +85,7 @@ const SignupPage = () => {
                 )}
             </div>
 
-            <div className="flex flex-col text-base text-left gap-1">
+            <div className="flex flex-col text-xl text-left gap-1">
               <span>Password</span>
               <input 
                 type="password" 
@@ -101,7 +101,7 @@ const SignupPage = () => {
                 )}
             </div>
 
-            <div className="flex flex-col text-base text-left gap-1">
+            <div className="flex flex-col text-xl text-left gap-1">
               <span>Repeat Password</span>
               <input 
                 type="password" 
@@ -117,7 +117,7 @@ const SignupPage = () => {
                 )}
             </div>
 
-            <div className="flex flex-col text-base text-left gap-1">
+            <div className="flex flex-col text-xl text-left gap-1">
               <label>Signup purpose</label>
               <select
                 name="role"
@@ -128,7 +128,7 @@ const SignupPage = () => {
               >
                 <option value="" disabled hidden>Select</option>
                 {roles.map((role) => (
-                  <option key={role.value} value={role.value}>{role.label}</option>
+                  <option key={role.value} value={role.value} className="text-lg">{role.label}</option>
                 ))}
               </select>
 
@@ -145,7 +145,7 @@ const SignupPage = () => {
           </form>
 
           <div>
-            <span><a className="hover:underline" href="/home">Back to homepage</a></span>
+            <span className="text-lg"><a className="hover:underline" href="/">Back to homepage</a></span>
           </div>
 
           <div>
@@ -170,7 +170,7 @@ const SignupPage = () => {
                   <div className="p-4 md:p-5 space-y-4">
                     <p className="text-base leading-relaxed text-gray-500">
                       Are you part of a competitive team that loves playing soccer and aims to win tournaments?<br></br> Sign up now to manage your team, apply for tournaments, and stay organized.<br></br> Tournament organizers can also register to host events.<br></br><br></br>
-                      Looking for match dates, team info, or results? No signup is needed-everything is available on our <a className="underline" href="/home">homepage</a> !
+                      Looking for match dates, team info, or results? No signup is needed-everything is available on our <a className="underline" href="/">homepage</a> !
                     </p>
                   </div>
                   <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b">
