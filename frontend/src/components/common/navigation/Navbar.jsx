@@ -116,7 +116,7 @@ const Navbar = () => {
               <div>
                 {decodedJwt === null ? (
                   <div>
-                    <Link to={"/login"} className="px-2.5 py-1.5 text-xs sm:text-sm lg:px-3 lg:py-2 rounded-xl bg-blue-500"><span>Login</span></Link>
+                    <Link to={"/login"} className="px-2.5 py-1.5 lg:px-3 lg:py-2 rounded-xl bg-blue-500"><span>Login</span></Link>
                   </div>
                 ) : (
                   <div>
@@ -130,19 +130,19 @@ const Navbar = () => {
         </div>
       ) : (
         /* ***** DESKTOP VIEW ***** */
-        <div className={`flex justify-between items-center bg-[#001E28] text-white h-20 lg:h-[78px] xl:h-[88px] 2xl:h-[94px] px-4`}>
+        <div className={`flex justify-between items-center bg-[#001E28] text-white h-32 px-4 text-xl`}>
           <div><img src={logoWhite} alt="Logo" className="w-[85px] h-12 mt-2 " /></div>
           {decodedJwt === null ? (
             <>
               <div className={`flex justify-center items-center space-x-2`}>
                 {guestNavItems.map((item) => (
                   <div key={item.key} className="cursor-pointer">
-                    <button onClick={() => handleScrollToSection(item.id)}  className="text-base hover:text-xl hover:px-6 font-bold transition-all duration-300 ease-in-out">{item.label}</button>
+                    <button onClick={() => handleScrollToSection(item.id)}  className="hover:px-4 hover:text-2xl font-bold transition-all duration-300 ease-in-out">{item.label}</button>
                   </div>
                 ))}
               </div>
               <div>
-                <Link to={"/login"} className="px-2.5 py-1.5 text-xs sm:text-sm lg:px-3 lg:py-2 rounded-xl bg-blue-500"><span>Login</span></Link>
+                <Link to={"/login"} className="px-2.5 py-1.5 lg:px-3 lg:py-2 rounded-xl bg-blue-500"><span>Login</span></Link>
               </div>
             </>
           ) : (
@@ -171,7 +171,7 @@ const Navbar = () => {
                   <div className={`flex justify-center items-center space-x-2`}>
                     {organizerNavItems.map((item) => {
                       return (
-                        <div key={item.key} className="cursor-pointer hover:border-b border-white/25 2xl:text-lg">
+                        <div key={item.key} className="cursor-pointer hover:border-b border-white/25">
                           <NavLink 
                             to={item.path} 
                             className={({ isActive }) => (isActive ? 'font-bold' : '')}

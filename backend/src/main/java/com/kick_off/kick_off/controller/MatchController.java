@@ -37,18 +37,6 @@ public class MatchController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-/*    @GetMapping("/pagination/tournament/{tournamentId}")
-    public ResponseEntity<ApiResponse<MatchListDto>> getMatchesByTournamentIdPagination(@PathVariable Long tournamentId, @RequestParam(defaultValue = "1") int pageNumber) {
-        MatchListDto matches = matchService.findPaginatedMatchesByTournament(tournamentId, pageNumber);
-        ApiResponse<MatchListDto> response = ApiResponse.<MatchListDto>builder()
-                .message("Matches fetched successfully.")
-                .data(matches)
-                .success(true)
-                .build();
-
-        return ResponseEntity.ok(response);
-    }*/
-
     @GetMapping("/tournament/{tournamentId}")
     public ResponseEntity<ApiResponse<PaginatedResponse<MatchDto>>> getMatchesByTournamentId(
             @PathVariable Long tournamentId,
@@ -114,7 +102,5 @@ public class MatchController {
 
         }
     }
-
-
 
 }

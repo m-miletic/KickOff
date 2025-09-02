@@ -2,8 +2,6 @@ package com.kick_off.kick_off.service.impl;
 
 import com.kick_off.kick_off.dto.match.*;
 import com.kick_off.kick_off.dto.stadium.StadiumDto;
-import com.kick_off.kick_off.dto.team.LightTeamDto;
-import com.kick_off.kick_off.dto.team.MyTeamDto;
 import com.kick_off.kick_off.dto.team.TeamDto;
 import com.kick_off.kick_off.exception.ForbiddenActionException;
 import com.kick_off.kick_off.model.*;
@@ -137,35 +135,6 @@ public class MatchServiceImpl implements MatchService {
 
         return matchDto1;
     }
-
-/*    @Override
-    public MatchListDto findPaginatedMatchesByTournament(Long tournamentId, int pageNumber) {
-
-        int pageSize = 3;
-
-        Page<Match> pageMatches;
-        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
-        pageMatches = matchRepository.findByTournamentId(tournamentId, pageRequest);
-
-        long totalMatches = pageMatches.getTotalElements();
-        long totalPages = calculateTotalPages(totalMatches, pageSize);
-
-        List<MatchDto> matchDtos = pageMatches
-                .stream()
-                .map(match -> modelMapper.map(match, MatchDto.class)).toList();
-
-
-        Page<Match> beforeToday = matchRepository.findByTournamentIdAndMatchDateBeforeOrderByMatchDateDesc(tournamentId, LocalDate.now().atStartOfDay(), pageRequest);
-
-
-        MatchListDto matchListDto = MatchListDto.builder()
-                .matchesList(matchDtos)
-                .totalPages(totalPages)
-                .pagesBeforeToday(beforeToday.getTotalPages())
-                .build();
-
-        return matchListDto;
-    }*/
 
     @Override
     public PaginatedResponse<MatchDto> findMatchesByTournament(PaginationRequest request, Long tournamentId) {

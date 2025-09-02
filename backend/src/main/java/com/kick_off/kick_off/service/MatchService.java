@@ -8,8 +8,6 @@ public interface MatchService {
 
     MatchDto createMatch(CreateMatchDto matchDto);
 
-/*    MatchListDto findPaginatedMatchesByTournament(Long tournamentId, int pageNumber);*/
-
     PaginatedResponse<MatchDto> findMatchesByTournament(PaginationRequest request, Long tournamentId);
 
     MatchDto updateMatch(Long matchId, EditMatchDto editMatchDto);
