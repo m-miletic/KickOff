@@ -3,7 +3,7 @@ import logoWhite from '../../../assets/logoWhite.png';
 
 const Footer = () => {
   return (
-    <footer className="bg-[#001E28] text-white px-6 py-8 mt-12"> {/* bg-transparent za sliku ako je bg */}
+    <div className="w-screen bg-[#001E28] text-white px-6 py-8 mt-12">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-lg">
         
         <div className="flex items-start">
@@ -31,7 +31,7 @@ const Footer = () => {
       <div className="text-center mt-8 text-xs text-white/50">
         &copy; {new Date().getFullYear()} KickOff. All rights reserved.
       </div>
-    </footer>
+    </div>
   );
 };
 

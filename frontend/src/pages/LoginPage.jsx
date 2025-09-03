@@ -19,7 +19,7 @@ const LoginPage = () => {
   const pages = {
     "ADMIN": "/admin",
     "TEAM_REPRESENTATIVE": "/team-representative",
-    "TOURNAMENT_ORGANIZER": "/tournament-organizer",
+    "TOURNAMENT_ORGANIZER": "/tournament-organizer/tournament-overview",
   };
 
   const handleLogin = async (event) => {
@@ -65,7 +65,7 @@ const LoginPage = () => {
               <span>Username</span>
               <input 
                 type="text" 
-                className="rounded-md p-1 border-2 outline-none focus:border-black focus:bg-slate-50 text-md"
+                className="rounded-md p-1 border-2 outline-none focus:border-black focus:bg-slate-50 text-xl font-sans"
                 name="username"
                 value={loginCredentials.username}
                 onChange={handleChange}
@@ -77,7 +77,7 @@ const LoginPage = () => {
               <span>Password</span>
               <input 
                 type="password" 
-                className="rounded-md p-1 border-2 outline-none focus:border-black focus:bg-slate-50"
+                className="rounded-md p-1 border-2 outline-none focus:border-black focus:bg-slate-50 text-xl"
                 name="password"
                 value={loginCredentials.password}
                 onChange={handleChange}

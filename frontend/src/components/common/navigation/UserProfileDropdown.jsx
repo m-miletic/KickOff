@@ -55,7 +55,7 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
       </div>
 
       {isUserProfileDropdownOpen && (
-        <div className="absolute z-[100] top-[76px] xl:top-[84px] 2xl:top-[98px] right-2 text-xs xl:text-sm bg-[#001E28] rounded-lg p-2 space-y-1 px-2 2xl:px-4 2xl:py-4">
+        <div className="absolute z-[100] w-56 top-[130px] right-2 text-lg bg-[#001E28] rounded-lg p-2 space-y-1 px-2 2xl:px-4 2xl:py-4">
 
           <div className='text-gray-300 cursor-pointer pb-2'>
             Hello {name}

@@ -9,22 +9,21 @@ const HomePage = () => {
 
   return (
     <div id="homepage">
-      <div className="relative z-10">
-        <Navbar />
+      <Navbar />
 
-        <div>
-          <div id="leaderboard" className="pt-14 w-screen">
-            <Standings selectedTournament={selectedTournament} setSelectedTournament={setSelectedTournament} />
-          </div>
-
-          <div id="match-hub" className="pt-6 pb-20 w-screen">
-            <MatchHub selectedTournament={selectedTournament} />
-          </div>
-
-          <div id="about-us">
-            <Footer />
-          </div>
+      <div>
+        <div id="leaderboard" className="pt-14">
+          <Standings selectedTournament={selectedTournament} setSelectedTournament={setSelectedTournament} />
         </div>
+
+        <div id="match-hub" className="pt-6">
+          <MatchHub selectedTournament={selectedTournament} />
+        </div>
+
+        <div id="about-us">
+          <Footer />
+        </div>
+
       </div>
     </div>
   );
