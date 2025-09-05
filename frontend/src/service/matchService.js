@@ -29,10 +29,9 @@ export const fetchMatchesByTournament = async (tournamentId, filters) => {
         Authorization: `Bearer ${jwt}`
       }
     });
-    console.log("Service fetch matches by tournament response: ", response)
     return response.data;
   } catch (error) {
-    console.log("Error while trying to fetch matches based on tournament id: ", error)
+    console.error("Error: ", error)
     throw error.response.data
   }
 }

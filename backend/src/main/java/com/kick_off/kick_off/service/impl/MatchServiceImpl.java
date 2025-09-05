@@ -138,19 +138,37 @@ public class MatchServiceImpl implements MatchService {
 
     @Override
     public PaginatedResponse<MatchDto> findMatchesByTournament(PaginationRequest request, Long tournamentId) {
+        System.out.println("Request in serviceImpl: " + request.toString());
         final Pageable pageable = PaginationUtils.getPageable(request);
-        final Page<Match> entities = matchRepository.findAll(pageable);
-        final List<MatchDto> entitiesDto = entities.stream().map(match -> modelMapper.map(match, MatchDto.class)).toList();
-        LocalDateTime today = LocalDate.now().atStartOfDay();
-        final Page<Match> matchesBeforeCurrentDate = matchRepository.findByTournamentIdAndMatchDateBeforeOrderByMatchDateDesc(tournamentId, today, pageable);
-        return new PaginatedResponse<>(
-                entities.getTotalPages(),
-                entities.getTotalElements(),
-                entities.getSize(),
-                matchesBeforeCurrentDate.getTotalPages() + 1,
-                entities.isEmpty(),
-                entitiesDto
-        );
+        final Page<Match> entities;
+
+        if (!request.isFetchAll()) {
+            entities = matchRepository.findAll(pageable);
+            final List<MatchDto> entitiesDto = entities.stream().map(match -> modelMapper.map(match, MatchDto.class)).toList();
+            LocalDateTime today = LocalDate.now().atStartOfDay();
+            final Page<Match> matchesBeforeCurrentDate = matchRepository.findByTournamentIdAndMatchDateBeforeOrderByMatchDateDesc(tournamentId, today, pageable);
+            return new PaginatedResponse<>(
+                    entities.getTotalPages(),
+                    entities.getTotalElements(),
+                    entities.getSize(),
+                    matchesBeforeCurrentDate.getTotalPages() + 1,
+                    entities.isEmpty(),
+                    entitiesDto
+            );
+        } else {
+            entities = matchRepository.findAll(Pageable.unpaged());
+            final List<MatchDto> entitiesDto = entities.stream().map(match -> modelMapper.map(match, MatchDto.class)).toList();
+            return new PaginatedResponse<>(
+                    entities.getTotalPages(),
+                    entities.getTotalElements(),
+                    entities.getSize(),
+                    1,
+                    entities.isEmpty(),
+                    entitiesDto
+            );
+        }
+
+
     }
 
 

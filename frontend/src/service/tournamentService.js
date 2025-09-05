@@ -144,7 +144,6 @@ export const fetchOrganizersTournament = async ( userId ) => {
         }
       }
     );
-    console.log("Fetch Organizers Tournament Service Response: ", response)
     return response.data;
   } catch (error) { 
     console.log("Fetch Organizers Tournament Error: ", error)

@@ -40,12 +40,15 @@ public class MatchController {
     @GetMapping("/tournament/{tournamentId}")
     public ResponseEntity<ApiResponse<PaginatedResponse<MatchDto>>> getMatchesByTournamentId(
             @PathVariable Long tournamentId,
-            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "3") Integer size,
+            @RequestParam(defaultValue = "false") boolean fetchAll,
             @RequestParam(defaultValue = "id") String sortField,
             @RequestParam(defaultValue = "DESC") Sort.Direction direction
             ) {
-        PaginationRequest request = new PaginationRequest(page, size, sortField, direction);
+        System.out.println("Landed here - ");
+        PaginationRequest request = new PaginationRequest(page, fetchAll, size, sortField, direction);
+        System.out.println("Request: " + request);
         final PaginatedResponse<MatchDto> matches = matchService.findMatchesByTournament(request, tournamentId);
 
         ApiResponse<PaginatedResponse<MatchDto>> response = ApiResponse.<PaginatedResponse<MatchDto>>builder()
