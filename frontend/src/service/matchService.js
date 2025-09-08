@@ -1,3 +1,4 @@
+import { formatDate } from "@fullcalendar/core/index.js";
 import apiClient from "./apis/apiClient";
 
 export const createMatch = async (matchObject) => {
@@ -34,8 +35,7 @@ export const fetchMatchesByTournament = async (tournamentId, filters) => {
     console.error("Error: ", error)
     throw error.response.data
   }
-}
-
+;}
 
 export const editMatch = async (id, updatedData) => {
   const jwt = localStorage.getItem('token');
@@ -45,10 +45,10 @@ export const editMatch = async (id, updatedData) => {
         Authorization: `Bearer ${jwt}`
       }
     });
-    return response.data; // return API response data so caller can use it
+    return response.data; 
   } catch (error) {
     console.error("Edit match error:", error);
-    throw error; // rethrow so caller can handle it
+    throw error; 
   }
 };
 

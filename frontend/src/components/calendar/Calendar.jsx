@@ -7,7 +7,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import { fetchMatchesByTournament } from "../../service/matchService";
 import { LoggedUserContext } from "../../context/LoggedUserContext";
 import { fetchOrganizersTournament } from "../../service/tournamentService";
-import ShowMatchesByDateModal from "./ShowMatchesByDateModal";
+import ShowMatchesByDateModal from "../ui/match/modal/ShowMatchesByDateModal";
 
 export const Calendar = () => {
   const [matches, setMatches] = useState([]);
@@ -19,8 +19,7 @@ export const Calendar = () => {
   const [calendarEvents, setCalendarEvents] = useState([]);
   const [showMatchesModal, setShowMatchesModal] = useState(false);
   const [clickedDateMatches, setClickedDateMatches] = useState([]);
-  const [matchesByDayWithTime, setMatchesByDayWithTime] = useState({});
-
+  
   // grupiranje utakmica koje imaju isti datum
   const handleGroupMatchesByDay = () => {
     let groupedMatchesObj = {};
@@ -49,11 +48,10 @@ export const Calendar = () => {
           title: 'See Matches',
           date: date, 
           extendedProps: { 'matches': matchesArray },
-          className: "cursor-pointer py-2 text-center"
+          className: "cursor-pointer py-2 text-center hover:bg-blue-700"
         }   
         objectEventsArray.push(eventObj);
     }
-    console.log("objectEventsArray: ", objectEventsArray)
     return objectEventsArray;
   };
 
@@ -61,8 +59,6 @@ export const Calendar = () => {
     setClickedDateMatches(info.event.extendedProps.matches);
     setShowMatchesModal(!showMatchesModal);
   };
-
-  
 
   useEffect(() => {
 
@@ -124,7 +120,7 @@ export const Calendar = () => {
         </div>
       </div>
 
-      {showMatchesModal && <ShowMatchesByDateModal matches={clickedDateMatches} onClose={() => setShowMatchesModal(false)} /> }
+      {showMatchesModal && <ShowMatchesByDateModal matches={clickedDateMatches} closeModal={() => setShowMatchesModal(false)} /> }
 
     </div>
   );

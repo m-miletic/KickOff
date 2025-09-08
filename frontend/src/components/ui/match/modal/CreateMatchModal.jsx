@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
-import { createMatch } from "../../service/matchService";
-import { fetchStadiums } from "../../service/stadiumService";
+import { createMatch } from "../../../../service/matchService";
+import { fetchStadiums } from "../../../../service/stadiumService";
 import { toast } from "react-toastify";
 
 export const CreateMatchModal = ({ selectedDate, setIsCreateMatchModalOpen, tournament }) => {
