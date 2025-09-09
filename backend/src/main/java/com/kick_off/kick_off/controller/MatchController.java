@@ -12,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/matches")
 public class MatchController {
@@ -26,7 +24,6 @@ public class MatchController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<MatchDto>> createMatch(@RequestBody CreateMatchDto match) {
-        System.out.println("In create match controller");
         MatchDto matchDto = matchService.createMatch(match);
         ApiResponse<MatchDto> response = ApiResponse.<MatchDto>builder()
                 .message("Successfully created a match.")
@@ -46,9 +43,7 @@ public class MatchController {
             @RequestParam(defaultValue = "id") String sortField,
             @RequestParam(defaultValue = "DESC") Sort.Direction direction
             ) {
-        System.out.println("Landed here - ");
         PaginationRequest request = new PaginationRequest(page, fetchAll, size, sortField, direction);
-        System.out.println("Request: " + request);
         final PaginatedResponse<MatchDto> matches = matchService.findMatchesByTournament(request, tournamentId);
 
         ApiResponse<PaginatedResponse<MatchDto>> response = ApiResponse.<PaginatedResponse<MatchDto>>builder()
@@ -86,7 +81,6 @@ public class MatchController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteMatch(@PathVariable Long id) {
-        System.out.println("Delete match controller");
         try {
             matchService.deleteMatch(id);
             ApiResponse<Void> response = ApiResponse.<Void>builder()

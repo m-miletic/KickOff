@@ -1,20 +1,18 @@
-import { formatDate } from "@fullcalendar/core/index.js";
 import apiClient from "./apis/apiClient";
 
-export const createMatch = async (matchObject) => {
+export const createMatch = async (formData) => {
+  console.log("formData service -> ", formData);
   const jwt = localStorage.getItem('token');
   try {
-    const response = await apiClient.post(`/matches`, matchObject,
+    const response = await apiClient.post(`/matches`, formData,
       {
         headers: {
           Authorization: `Bearer ${jwt}`
         }
       }
     );
-    console.log("response match: ", response)
     return response.data
   } catch (error) {
-    console.log("a sta sad match error ", error)
     throw error.response.data;
   }
 }

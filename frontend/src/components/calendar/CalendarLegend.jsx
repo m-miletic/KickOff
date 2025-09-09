@@ -24,17 +24,17 @@ const CalendarLegend = () => {
     <>
       {isDesktopView ? (
         <div>
-          <aside className="w-80 mr-6 p-4 bg-gray-100 rounded shadow-sm text-gray-700 text-xs sm:text-sm top-6 self-start">
+          <aside className="w-80 mr-6 p-4 bg-gray-100 rounded shadow-sm text-gray-700 text-base top-6 self-start">
             <h3 className="font-semibold mb-3 text-gray-900">Calendar Actions</h3>
             <ul className="list-disc list-inside space-y-2">
-              <li>Click anywhere on the date to create a new match</li>
+              <li>Click on the calendars date field to create a new match.</li>
               <li className="font-medium text-gray-800">
                   Two teams can play a max of 2 matches against each other, with each team hosting one match
               </li>
-              <li>Click on the <span className="font-bold">"See Matches"</span> to preview, edit and delete matches on that day</li>
-              <li>Altering match results is available only after the scheduled match time</li>
+              <li>Click on the <span className="font-bold">"See Matches"</span> to preview, edit and delete matches on that day. Past matchs can't be deleted.</li>
+              <li>Altering match results is available only after the scheduled match time.</li>
               <li className="italic text-red-600">
-                Note: Matches can't be created in the past or on the day of playing the match
+                Note: Matches can't be created in the past or on the day of playing the match.
               </li>
               <li className="italic text-red-600">
                 Note: Be advised that match dates may only be modified at least 24 hours before the scheduled start time.

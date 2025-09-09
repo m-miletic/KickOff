@@ -120,6 +120,7 @@ public class MatchServiceImpl implements MatchService {
         match.setName(homeTeam.getTeamName() + " VS " + awayTeam.getTeamName());
         match.setTournament(tournament);
         match.setStadium(stadium);
+        System.out.println("Kakav je sad: " + match.toString());
         Match savedMatch = matchRepository.save(match);
 
         TeamDto hometeamDto = modelMapper.map(homeTeam, TeamDto.class);

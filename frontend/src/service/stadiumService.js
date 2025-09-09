@@ -1,6 +1,6 @@
 import apiClient from "./apis/apiClient";
 
-export const fetchStadiums = async () => {
+export const getStadiums = async () => {
   const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.get('/stadiums', {
@@ -8,7 +8,6 @@ export const fetchStadiums = async () => {
         Authorization: `Bearer ${jwt}`
       }
     });
-    console.log("Fetch Stadiums Service Response: ", response)
     return response.data;
   } catch (error) {
     console.log("Error while trying to fetch stadiums: ", error)
@@ -26,7 +25,6 @@ export const addStadium = async () => {
         }
       }
     )
-    console.log("Add Stadium Response: ", response)
     return response.data
   } catch (error) {
     console.log("Error While trying to create stadium: ", error)

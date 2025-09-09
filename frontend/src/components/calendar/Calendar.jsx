@@ -8,6 +8,7 @@ import { fetchMatchesByTournament } from "../../service/matchService";
 import { LoggedUserContext } from "../../context/LoggedUserContext";
 import { fetchOrganizersTournament } from "../../service/tournamentService";
 import ShowMatchesByDateModal from "../ui/match/modal/ShowMatchesByDateModal";
+import CreateMatchModal from "../ui/match/modal/CreateMatchModal";
 
 export const Calendar = () => {
   const [matches, setMatches] = useState([]);
@@ -19,12 +20,15 @@ export const Calendar = () => {
   const [calendarEvents, setCalendarEvents] = useState([]);
   const [showMatchesModal, setShowMatchesModal] = useState(false);
   const [clickedDateMatches, setClickedDateMatches] = useState([]);
+  const [showCreateMatchModal, setShowCreateMatchModal] = useState(false);
+  const [tournamentTeams, setTournamentTeams] = useState([]);
+  const [clickedDate, setClickedDate] = useState("");
   
   // grupiranje utakmica koje imaju isti datum
   const handleGroupMatchesByDay = () => {
     let groupedMatchesObj = {};
 
-    matches.forEach((match) => {
+    matches?.forEach((match) => {
       const date = match.matchDate.slice(0,10); // grupirat po danu, zanemarujući vrijeme utakmice
 
       if (!groupedMatchesObj[date]) {
@@ -36,7 +40,6 @@ export const Calendar = () => {
     let res = handleParseToEventObject(groupedMatchesObj);
     setCalendarEvents(res);
   }; 
-
 
   // Potrebno parsirat u format koji full calendar moze citat
   const handleParseToEventObject = (groupedMatchesObj) => {
@@ -71,6 +74,7 @@ export const Calendar = () => {
         if (decodedJwt) {
           const response = await fetchOrganizersTournament(decodedJwt.userId);
           setTournament(response.data);
+          setTournamentTeams(response.data.teams);
         }
       } catch (error) {
         console.error("Error: ", error);
@@ -95,6 +99,12 @@ export const Calendar = () => {
     fetchTournamentMatches();
   }, [tournament]);
 
+  const handleDateClick = (arg) => {
+    setShowCreateMatchModal(true);
+    let date = arg.dateStr+"T"+"12:00";
+    setClickedDate(date);
+  };
+
   return (
     <div className="relative">
       <div className={`flex my-12 mx-20 ${showMatchesModal && 'blur-sm'}`}>
@@ -116,11 +126,13 @@ export const Calendar = () => {
             eventClick={
               handleEventClick
             }
+            dateClick={handleDateClick}
           />
         </div>
       </div>
 
       {showMatchesModal && <ShowMatchesByDateModal matches={clickedDateMatches} setMatches={setMatches} setClickedDateMatches={setClickedDateMatches} closeModal={() => setShowMatchesModal(false)} /> }
+      {showCreateMatchModal && <CreateMatchModal closeModal={() => setShowCreateMatchModal(false)} teams={tournamentTeams} tournamentId={tournament.id} clickedDate={clickedDate} matches={matches} setMatches={setMatches} /> }
 
     </div>
   );
