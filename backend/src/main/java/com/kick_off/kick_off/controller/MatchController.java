@@ -86,6 +86,7 @@ public class MatchController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteMatch(@PathVariable Long id) {
+        System.out.println("Delete match controller");
         try {
             matchService.deleteMatch(id);
             ApiResponse<Void> response = ApiResponse.<Void>builder()

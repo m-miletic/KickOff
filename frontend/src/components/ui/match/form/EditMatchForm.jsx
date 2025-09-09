@@ -1,9 +1,7 @@
  import React, { useEffect, useState } from "react";
 import { editMatch } from "../../../../service/matchService";
 
- const EditMatchForm = ({ match, closeEditForm }) => {
-  console.log("EditMatchForm - match - ", match)
-  const [currentDateTime, setCurrentDateTime] = useState(null);
+ const EditMatchForm = ({ match, closeEditForm, currentDateTime={currentDateTime} }) => {
   const [formData, setFormData] = useState({
     matchDate: match.matchDate,
     stadium: match.stadium.stadiumName || "",
@@ -12,19 +10,6 @@ import { editMatch } from "../../../../service/matchService";
     homeTeam: match.homeTeam,
     awayTeam: match.awayTeam
   });
-
-  console.log("formData.matchDate: ", typeof(formData.matchDate));
-
-  useEffect(() => {
-    const updateTime = () => {
-      const newDate = new Date();
-      setCurrentDateTime(
-        `${String(newDate.getFullYear())}-${String(newDate.getMonth() + 1).padStart(2, '0')}-${String(newDate.getDate()).padStart(2, '0')}T${String(newDate.getHours()).padStart(2, '0')}:${String(newDate.getMinutes()).padStart(2, '0')}:${String(newDate.getSeconds()).padStart(2, '0')}`
-      );
-    }
-
-    updateTime();
-  }, []); 
 
   const handleSubmitForm = async (event) => {
     event.preventDefault();

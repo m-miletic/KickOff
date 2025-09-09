@@ -1,12 +1,16 @@
-import React from "react";
+/* import React from "react";
 import { deleteMatch } from "../../../../service/matchService";
 import { GoAlertFill } from "react-icons/go";
 
 const DeleteMatchModal = ({ match, onClose, onDelete }) => {
+  console.log("first")
   const handleDelete = async () => {
     try {
       const response = await deleteMatch(match.id);
-      // You can handle response if needed
+      console.log("response in cmponent: ", response);
+      if (response.success) {
+        console.log("Successfully deleted");
+      }
     } catch (error) {
       console.log("error - ", error);
     }
@@ -46,3 +50,4 @@ const DeleteMatchModal = ({ match, onClose, onDelete }) => {
 };
 
 export default DeleteMatchModal;
+ */

@@ -120,7 +120,7 @@ export const Calendar = () => {
         </div>
       </div>
 
-      {showMatchesModal && <ShowMatchesByDateModal matches={clickedDateMatches} closeModal={() => setShowMatchesModal(false)} /> }
+      {showMatchesModal && <ShowMatchesByDateModal matches={clickedDateMatches} setMatches={setMatches} setClickedDateMatches={setClickedDateMatches} closeModal={() => setShowMatchesModal(false)} /> }
 
     </div>
   );

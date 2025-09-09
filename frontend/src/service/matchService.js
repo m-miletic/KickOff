@@ -52,7 +52,6 @@ export const editMatch = async (id, updatedData) => {
   }
 };
 
-
 export const deleteMatch = async (id) => {
   const jwt = localStorage.getItem('token');
   try {
@@ -61,6 +60,7 @@ export const deleteMatch = async (id) => {
         Authorization: `Bearer ${jwt}`
       }
     });
+    return response.data;
   } catch (error) {
     console.error("Delete match error:", error);
     throw error; // rethrow so caller can handle it
