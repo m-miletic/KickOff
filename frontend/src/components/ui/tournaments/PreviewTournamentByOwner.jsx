@@ -10,9 +10,9 @@ const PreviewTournamentByOwner = ({ tournament }) => {
 
 
   return(
-    <div className="flex flex-col space-y-4 text-[10px] sm:text-[13px] lg:text-[15px]">
+    <div className="flex flex-col space-y-4 text-lg">
       <div className="bg-[#001E28] rounded-lg py-4">
-        <div className="px-10 text-[10px] sm:text-[13px] lg:text-[15px] font-semibold">Tournament Details</div>
+        <div className="px-10 font-semibold">Tournament Details</div>
         <div className="mt-4 px-10">
           <div>
             Maximum teams allowed to enrrol tournament: {tournament.maxTeams}
@@ -23,15 +23,15 @@ const PreviewTournamentByOwner = ({ tournament }) => {
         </div>
       </div>
 
-    <div className="bg-[#001E28] rounded-lg py-4">
-      <div className="px-10 text-[10px] sm:text-[13px] lg:text-[15px] font-semibold">Matches</div>
+    <div className="bg-[#001E28] rounded-lg py-4 text-lg">
+      <div className="px-10 text-xl font-semibold">Matches</div>
       <div className="mt-4 px-10">
       {displayMatches.length > 0 ? (
         displayMatches.map((match, index) => (
           <div key={index} className="py-[2px] flex justify-start items-center">
-            <span className="mr-2 text-[10px] sm:text-[13px] lg:text-[15px]">•</span>
-            <div className="text-[10px] sm:text-[13px] lg:text-[15px]">
-              {match.homeTeam.teamName} <span className="text-[10px] sm:text-[13px] lg:text-[15px]">VS</span> {match.awayTeam.teamName}
+            <span className="mr-2">•</span>
+            <div className="">
+              {match.homeTeam.teamName} <span className="">VS</span> {match.awayTeam.teamName}
             </div>
           </div>
         ))
@@ -49,8 +49,8 @@ const PreviewTournamentByOwner = ({ tournament }) => {
       </div>
     </div>
 
-    <div className="bg-[#001E28] rounded-lg py-4">
-      <div className="px-10 text-[10px] sm:text-[13px] lg:text-[15px] font-semibold">Teams</div>
+    <div className="bg-[#001E28] rounded-lg py-4 text-lg">
+      <div className="px-10 font-semibold">Teams</div>
       <div className="mt-4 px-10">
         {tournament?.teams?.length > 0 ? (
           tournament.teams.map((team, index) => (
@@ -66,8 +66,8 @@ const PreviewTournamentByOwner = ({ tournament }) => {
       </div>
     </div>
 
-    <div className="bg-[#001E28] rounded-lg py-4">
-      <div className="px-10 text-[10px] sm:text-[13px] lg:text-[15px] font-semibold">Date</div>
+    <div className="bg-[#001E28] rounded-lg py-4 text-lg">
+      <div className="px-10 font-semibold">Date</div>
       <div className="mt-4 px-10 space-y-2">
         <div className="flex">
           <div className="w-24 font-medium">Start Date:</div>

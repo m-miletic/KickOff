@@ -18,6 +18,7 @@ import UpcomingTournaments from "./components/ui/tournaments/UpcomingTournaments
 import MyTeam from "./components/ui/team/MyTeam";
 import UserList from "./components/ui/user/UserList";
 import TeamList from "./components/ui/team/TeamList";
+import RequestList from "./components/ui/request/RequestList";
 
 const App = () => {
   return (
@@ -42,6 +43,7 @@ const App = () => {
               <Route path="/tournament-organizer" element={<OrganizerPage />}>
                 <Route path="match-scheduler" element={<Calendar />}></Route>
                 <Route path="tournament-overview" element={<OrganizersTournament />}></Route>
+                <Route path="sent-requests" element={<RequestList />}></Route>
               </Route>
 
               <Route path="/team-representative" element={<TeamRepresentativePage />}>

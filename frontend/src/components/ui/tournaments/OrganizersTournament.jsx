@@ -21,8 +21,6 @@ const OrganizersTournament = () => {
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1000);
   const [showRequestsModal, setShowRequestsModal] = useState(false);
 
-
-
   useEffect(() => {
     const getTournament = async () => {
       try {
@@ -96,7 +94,7 @@ const OrganizersTournament = () => {
                 >
                   &times;
                 </button>
-                <div className="text-xs font-semibold mb-4">Pending Requests</div>
+                <div className="text-xl font-semibold mb-4">Pending Requests</div>
 
                 {pendingRequests.length > 0 ? (
                   <div className="space-y-2 max-h-[60vh] overflow-y-auto mt-2">
@@ -156,15 +154,15 @@ const OrganizersTournament = () => {
       ) : (
         <OrganizersPendingRequests setTournament={setTournament} />
       )}
-      <div className="flex flex-1 flex-col space-y-4 ml-6 pl-12 pr-16 text-[10px] sm:text-[13px] lg:text-[15px]">
-        <div className="bg-[#001E28] min-h-16 rounded-lg flex items-center justify-between px-10 py-4">
-          <div className="text-xs sm:text-[13px] lg:text-[15px] font-medium">{tournament ? tournament.tournamentName : "Doesn't host any tournaments yet"}</div>
+      <div className="flex flex-1 flex-col space-y-4 ml-6 pl-12 pr-16 text-lg">
+        <div className="bg-[#001E28] min-h-16 rounded-lg flex items-center justify-between px-10 py-5 w-full">
+          <div className="text-xl font-medium">{tournament ? tournament.tournamentName : "Doesn't host any tournaments yet"}</div>
           {tournament && (
             <div className="flex space-x-4">
-              <button onClick={handleClickPreview} className="bg-gray-600 hover:bg-gray-700 text-white transition-colors duration-200 px-3 py-1 rounded flex justify-center items-center">
+              <button onClick={handleClickPreview} className="bg-gray-600 hover:bg-gray-700 text-white transition-colors duration-200 px-5 py-2 rounded flex justify-center items-center">
                 <span className="mr-1"><IoEye /></span>Preview
               </button>
-              <button onClick={handleClickEdit}  className="bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-200 px-3 py-1 rounded flex justify-center items-center">
+              <button onClick={handleClickEdit}  className="bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-200 px-5 py-2 rounded flex justify-center items-center">
                 <span className="mr-1"><FaEdit /></span>Edit
               </button>
             </div>

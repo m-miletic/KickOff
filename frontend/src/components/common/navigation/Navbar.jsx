@@ -98,7 +98,7 @@ const Navbar = () => {
                         {organizerNavItems.map((item) => {
                           return (
                             <div key={item.key} className="cursor-pointer hover:border-b border-white/25">
-                              <Link to={item.key}>Test</Link>
+                              <Link to={item.key}>{item.label}</Link>
                             </div>
                           );
                         })}
@@ -109,7 +109,7 @@ const Navbar = () => {
               )}
             </div>
           ) : (
-            <div className={`bg-[#001E28] w-screen h-16 flex justify-between items-center text-white text-base px-3`}>
+            <div className={`bg-[#001E28] w-full h-16 flex justify-between items-center text-white text-base px-3`}>
               <div>
                 <button onClick={toggleSidebar} ><GiHamburgerMenu /></button>
               </div>
@@ -130,14 +130,14 @@ const Navbar = () => {
         </div>
       ) : (
         /* ***** DESKTOP VIEW ***** */
-        <div className={`flex justify-between items-center bg-[#001E28] text-white h-32 ps-14 pe-8 text-xl w-screen`}>
+        <div className={`flex justify-between items-center bg-[#001E28] text-white h-32 ps-14 pe-8 text-xl w-full`}>
           <div><img src={logoWhite} alt="Logo" className="w-28 h-16 mt-2" /></div>
           {decodedJwt === null ? (
             <>
               <div className={`flex justify-center items-center space-x-2`}>
                 {guestNavItems.map((item) => (
                   <div key={item.key} className="cursor-pointer">
-                    <button onClick={() => handleScrollToSection(item.id)}  className="hover:px-4 hover:text-2xl font-bold transition-all duration-300 ease-in-out">{item.label}</button>
+                    <button onClick={() => handleScrollToSection(item.id)}  className="hover:px-4 hover:text-2xl hover:font-bold transition-all duration-300 ease-in-out">{item.label}</button>
                   </div>
                 ))}
               </div>
@@ -152,7 +152,7 @@ const Navbar = () => {
                   <div className={`flex justify-center items-center space-x-2`}>
                     {representativeNavItems.map((item) => {
                       return (
-                        <div key={item.key} className="cursor-pointer hover:border-b border-white/25">
+                        <div key={item.key} className="hover:px-4 hover:text-2xl transition-all duration-300 ease-in-out">
                           <NavLink
                             to={item.path}
                             className={({ isActive }) => (isActive ? 'font-bold' : '')}
@@ -171,7 +171,7 @@ const Navbar = () => {
                   <div className={`flex justify-center items-center space-x-2`}>
                     {organizerNavItems.map((item) => {
                       return (
-                        <div key={item.key} className="cursor-pointer hover:border-b border-white/25">
+                        <div key={item.key} className="hover:px-4 hover:text-2xl transition-all duration-300 ease-in-out">
                           <NavLink 
                             to={item.path} 
                             className={({ isActive }) => (isActive ? 'font-bold' : '')}

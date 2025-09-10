@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react'
 import { RxCaretDown } from "react-icons/rx";
 import { RxCaretUp } from "react-icons/rx";
 import { CiLogout } from "react-icons/ci";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { LoggedUserContext } from '../../../context/LoggedUserContext';
 import { logout } from '../../../service/authenticationService';
 
@@ -20,10 +20,6 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
   const handleIsUserProfileDropdownOpen = () => {
     setIsUserProfileDropdownOpen(!isUserProfileDropdownOpen);
   };
-
-  const handleSelectItem = (item) => {
-    handleIsUserProfileDropdownOpen();
-  }
 
   const handleLogout = async () => {
     try {
@@ -60,7 +56,7 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
           <div className='text-gray-300 cursor-pointer pb-2'>
             Hello {name}
           </div>
-          
+
           <div 
             onClick={handleSendRequestClick}
             className='cursor-pointer hover:bg-[#005571] rounded-md px-2 py-1'
@@ -70,9 +66,13 @@ const UserProfileDropdown = ({ name, handleIsRequestModalOpen }) => {
 
           <div
             className='cursor-pointer hover:bg-[#005571] rounded-md px-2 py-1'
-            onClick={() => handleSelectItem("myRequests")}
             >
-            <button>My Requests</button>
+          <Link 
+            to="/tournament-organizer/sent-requests" 
+            className="cursor-pointer hover:bg-[#005571] rounded-md px-2 py-1 block text-left"
+          >
+            My Requests
+          </Link>
           </div>
 
           <div className='flex items-center cursor-pointer hover:bg-[#005571] rounded-md px-2 py-1'>

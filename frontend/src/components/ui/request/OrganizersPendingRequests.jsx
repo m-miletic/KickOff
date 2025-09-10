@@ -82,7 +82,7 @@ const OrganizersPendingRequests = ({ setTournament }) => {
 
   return(
     <aside className="bg-[#001E28] rounded-lg p-4 min-h-[400px] h-auto w-[30vw] ml-8">
-      <div className="text-lg font-semibold mb-4">Pending Requests</div>
+      <div className="text-xl font-semibold mb-4">Pending Requests</div>
 
       {pendingRequests.length > 0 ? (
         <div className="space-y-2">
@@ -143,7 +143,7 @@ const OrganizersPendingRequests = ({ setTournament }) => {
           )}
         </div>
       ) : (
-        <div className="text-sm text-gray-300">No pending requests yet.</div>
+        <div className="text-base text-gray-300">No pending requests yet.</div>
       )}
   </aside>
 );

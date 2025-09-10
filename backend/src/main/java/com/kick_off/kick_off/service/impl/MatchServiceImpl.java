@@ -62,6 +62,14 @@ public class MatchServiceImpl implements MatchService {
         Long tournamentId = matchDto.getTournamentId();
         Long stadiumId = matchDto.getStadium();
 
+        if (homeTeamId == null || awayTeamId == null) {
+            throw new ForbiddenActionException("Must select both teams.");
+        }
+
+        if (stadiumId == null) {
+            throw new ForbiddenActionException("Must select a stadium.");
+        }
+
         Team homeTeam = teamRepository.findById(homeTeamId)
                 .orElseThrow(() ->  new EntityNotFoundException("Team with id: " + homeTeamId + " not found."));
         Team awayTeam = teamRepository.findById(awayTeamId)
@@ -78,6 +86,11 @@ public class MatchServiceImpl implements MatchService {
         if (matchExists) {
             throw new EntityExistsException("Match already exists.");
         }
+
+        if (homeTeamId.equals(awayTeamId)) {
+            throw new ForbiddenActionException("Home team and away team must be different");
+        }
+
 
         // s obzirom da san na frontendu pretvoria u string i maka vremensku zonu ode ga moram vratit u Date objekt tj. LocalDateTime
         String matchDate = matchDto.getMatchDate();
@@ -98,11 +111,6 @@ public class MatchServiceImpl implements MatchService {
             throw new EntityExistsException("Away team already has a match that day");
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        if (parsedDate.isBefore(now.plusHours(24))) {
-            throw new ForbiddenActionException("Match date must at least 24 hrs before scheduled start.");
-        }
-
         LocalDateTime matchDateTime = LocalDateTime.parse(matchDto.getMatchDate(), formatter);
 
         LocalDateTime startWindow = matchDateTime.minusHours(2);
@@ -110,7 +118,7 @@ public class MatchServiceImpl implements MatchService {
 
         boolean stadiumBusy = matchRepository.existsByStadiumAndMatchDateInWindow(stadiumId, startWindow, endWindow);
         if(stadiumBusy) {
-            throw new EntityExistsException("Stadium busy at that time.Must be a 2 hour gap between matches.");
+            throw new EntityExistsException("Stadium busy at that time. Must be a 2 hour gap between matches.");
         }
 
 
@@ -120,7 +128,6 @@ public class MatchServiceImpl implements MatchService {
         match.setName(homeTeam.getTeamName() + " VS " + awayTeam.getTeamName());
         match.setTournament(tournament);
         match.setStadium(stadium);
-        System.out.println("Kakav je sad: " + match.toString());
         Match savedMatch = matchRepository.save(match);
 
         TeamDto hometeamDto = modelMapper.map(homeTeam, TeamDto.class);
@@ -139,7 +146,6 @@ public class MatchServiceImpl implements MatchService {
 
     @Override
     public PaginatedResponse<MatchDto> findMatchesByTournament(PaginationRequest request, Long tournamentId) {
-        System.out.println("Request in serviceImpl: " + request.toString());
         final Pageable pageable = PaginationUtils.getPageable(request);
         final Page<Match> entities;
 

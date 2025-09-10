@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const CalendarLegend = () => {
+const CalendarLegend = ({ tournament }) => {
   const [isDesktopView, setIsDesktopView] = useState(window.innerWidth >= 1100);
   const [showLegend, setShowLegend] = useState(false);
 
@@ -25,7 +25,19 @@ const CalendarLegend = () => {
       {isDesktopView ? (
         <div>
           <aside className="w-80 mr-6 p-4 bg-gray-100 rounded shadow-sm text-gray-700 text-base top-6 self-start">
-            <h3 className="font-semibold mb-3 text-gray-900">Calendar Actions</h3>
+            <div className="text-xl font-bold pb-6 text-center">
+              <div className="pb-3">{tournament?.tournamentName}</div>
+              <div className="text-base flex justify-between">
+                <div>Start Date: </div>
+                <div>{tournament?.startDate}</div>
+              </div>
+              <div className="text-base flex justify-between">
+                <div>End Date:</div>
+                <div>{tournament?.endDate}</div>
+              </div>
+            </div>
+
+            <h3 className="font-semibold mb-1 text-gray-900 text-lg">Calendar Actions</h3>
             <ul className="list-disc list-inside space-y-2">
               <li>Click on the calendars date field to create a new match.</li>
               <li className="font-medium text-gray-800">

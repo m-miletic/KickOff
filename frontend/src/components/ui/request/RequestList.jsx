@@ -4,7 +4,6 @@ import { DropdownButton } from '../../common/dropdown/DropdownButton';
 import { useFetchRequests } from '../../../hooks/requestHook';
 import { RequestDetailsModal } from './modal/RequestDetailsModal';
 import Pagination from '../../common/navigation/Pagination';
-import { ActiveComponentContext } from '../../../context/ActiveComponentContext';
 import DropdownContent from '../../common/dropdown/DropdownContent';
 import { LoggedUserContext } from '../../../context/LoggedUserContext';
 
@@ -12,7 +11,6 @@ const RequestList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState([]);
 
-  const { activeComponent } = useContext(ActiveComponentContext);
   const { decodedJwt } = useContext(LoggedUserContext)
 
   const [selectedFilters, setSelectedFilters] = useState({
@@ -47,11 +45,11 @@ const RequestList = () => {
     setIsModalOpen(true);
   };
 
-  const { requests, setRequests, totalPages, error } = useFetchRequests(decodedJwt?.userId, selectedFilters, activeComponent);
+  const { requests, setRequests, totalPages, error } = useFetchRequests(decodedJwt?.userId, selectedFilters);
 
 
   return (
-    <div className={`text-black text-[12px] sm:text-xs xl:text-base`}>
+    <div className={`text-black text-lg w-[500px] h-full mx-auto mt-20`}>
 
       <div className='flex justify-between pb-4 space-x-1'>
 
@@ -158,15 +156,16 @@ const RequestList = () => {
           </tbody>
         </table>
 
-      {isModalOpen && (
-        <RequestDetailsModal selectedRequest={selectedRequest} setIsModalOpen={setIsModalOpen} setRequests={setRequests} />
-      )}
+        {isModalOpen && (
+          <RequestDetailsModal selectedRequest={selectedRequest} setIsModalOpen={setIsModalOpen} setRequests={setRequests} />
+        )}
 
-    </div>
+      </div>
 
       <div className='text-center mt-4'>
         <Pagination totalPages={totalPages} selectedFilters={selectedFilters} handleSelectFilter={handleSetSelectedFilter} navButtonStyle="text-black w-5 h-5 px-4" totalPagesStyle="text-black" />
       </div>
+      
     </div>
   )
 }

@@ -9,6 +9,8 @@ import { LoggedUserContext } from "../../context/LoggedUserContext";
 import { fetchOrganizersTournament } from "../../service/tournamentService";
 import ShowMatchesByDateModal from "../ui/match/modal/ShowMatchesByDateModal";
 import CreateMatchModal from "../ui/match/modal/CreateMatchModal";
+import { toast } from "react-toastify";
+import WeatherWidget from "../weather/WeatherWidget";
 
 export const Calendar = () => {
   const [matches, setMatches] = useState([]);
@@ -100,16 +102,40 @@ export const Calendar = () => {
   }, [tournament]);
 
   const handleDateClick = (arg) => {
-    setShowCreateMatchModal(true);
-    let date = arg.dateStr+"T"+"12:00";
-    setClickedDate(date);
+    const date = new Date(arg.dateStr);
+    const today = new Date();
+    let dateString = arg.dateStr+"T"+"12:00";
+  
+    date.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    if (date < today) {
+      toast.error("Matches cannot be scheduled in the past!", {
+        autoClose: 2500
+      });
+    } else if (arg.dateStr < tournament.startDate) {
+      toast.error("Matches cannot be scheduled before tournaments start date!", {
+        autoClose: 2500,
+      });
+    } else if (arg.dateStr > tournament.endDate) {
+      toast.error("Matches cannot be scheduled after tournaments end date!", {
+        autoClose: 2500,
+      });
+    } else if (date.getTime() === today.getTime()) {
+      toast.error("Matches cannot be scheduled on the same day they are played!", {
+        autoClose: 2500,
+      });
+    } else {
+      setShowCreateMatchModal(true);
+      setClickedDate(dateString);
+    }
   };
 
   return (
     <div className="relative">
-      <div className={`flex my-12 mx-20 ${showMatchesModal && 'blur-sm'}`}>
-        <CalendarLegend />
-        <div className="w-full">
+      <div className={`flex my-12 mx-20 ${ (showMatchesModal || showCreateMatchModal) && 'blur-sm'}`}>
+        <CalendarLegend tournament={tournament} />
+        <div className="w-full overflow-x-auto">
           <FullCalendar 
             plugins={[ dayGridPlugin, timeGridPlugin, interactionPlugin ]}
             initialView="dayGridMonth"
@@ -120,19 +146,23 @@ export const Calendar = () => {
                 end: 'prev next'
               }
             }
-            events={
-              calendarEvents
-            }
-            eventClick={
-              handleEventClick
-            }
+            events={calendarEvents}
+            eventClick={handleEventClick}
             dateClick={handleDateClick}
           />
         </div>
       </div>
+      
+      <div id="weather-widget" className="flex justify-center w-full">
+        <WeatherWidget 
+            city={"Split"}
+            style="px-4 py-8 mt-8 bg-sky-100 rounded-lg shadow text-center w-[1300px] mx-80" 
+        />  
+      </div>
+
 
       {showMatchesModal && <ShowMatchesByDateModal matches={clickedDateMatches} setMatches={setMatches} setClickedDateMatches={setClickedDateMatches} closeModal={() => setShowMatchesModal(false)} /> }
-      {showCreateMatchModal && <CreateMatchModal closeModal={() => setShowCreateMatchModal(false)} teams={tournamentTeams} tournamentId={tournament.id} clickedDate={clickedDate} matches={matches} setMatches={setMatches} /> }
+      {showCreateMatchModal && <CreateMatchModal closeModal={() => setShowCreateMatchModal(false)} teams={tournamentTeams} tournamentId={tournament.id} clickedDate={clickedDate} setMatches={setMatches} /> }
 
     </div>
   );

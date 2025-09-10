@@ -79,7 +79,7 @@ const EditTournamentForm = ({ tournament, setTournament }) => {
   }
 
   return(
-    <div className="bg-[#001E28] rounded-lg p-4  mx-auto shadow-lg lg:w-[600px] xl:w-[750px] 2xl:w-[870px] sm:p-6">
+    <div className="bg-[#001E28] rounded-lg p-4 mx-auto shadow-lg w-full sm:p-6">
       {tournament && (
         <>
           <form onSubmit={handleUpdateTournament} className="space-y-4 sm:space-y-6">
@@ -92,7 +92,7 @@ const EditTournamentForm = ({ tournament, setTournament }) => {
                 name="tournamentName"
                 value={editTournamentFormData.tournamentName || ""}
                 onChange={handleInputChange}
-                className="w-full text-black p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:p-3 text-xs sm:text-base"
+                className="w-full text-black p-2 rounded-md border border-gray-300 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:p-3 text-lg"
               />
             </div>
             {validationErrors?.tournamentName && (
@@ -112,7 +112,7 @@ const EditTournamentForm = ({ tournament, setTournament }) => {
                 name="details"
                 value={editTournamentFormData.details || ""}
                 onChange={handleInputChange}
-                className="w-full text-black p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:p-3 text-xs sm:text-base"
+                className="w-full text-black p-2 rounded-md border border-gray-300 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:p-3 text-lg"
               />
             </div>
 
@@ -125,7 +125,7 @@ const EditTournamentForm = ({ tournament, setTournament }) => {
                 name="maxTeams"
                 value={editTournamentFormData.maxTeams || ""}
                 onChange={handleInputChange}
-                className="w-24 text-black p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:p-3 text-xs sm:text-base"
+                className="w-24 text-black p-2 rounded-md border border-gray-300 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:p-3 text-lg"
               />
             </div>
             {validationErrors?.maxTeams && (
@@ -144,15 +144,15 @@ const EditTournamentForm = ({ tournament, setTournament }) => {
                 tournament?.teams?.map((team) => (
                   <div
                     key={team.id}
-                    className="bg-[#00303f] rounded-lg flex flex-col justify-between items-center shadow-md h-[65px] w-[275px]" // fix height
+                    className="bg-[#00303f] rounded-lg flex flex-col justify-between items-center shadow-md h-[65px] w-auto" // fix height
                   >
                     {showDeleteConfirmation === team.id ? (
-                      <div className="flex justify-between items-center w-full h-full px-4">
-                        <div className="text-white text-sm">Are you sure?</div>
+                      <div className="flex justify-between items-center w-full h-full px-4 text-lg">
+                        <div className="text-white">Are you sure?</div>
                         <div className="flex justify-end space-x-2 ml-4">
                           <div>
                             <button
-                              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
+                              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
                               onClick={() => handleKickTeam(team.id)}
                             >
                               Yes
@@ -161,7 +161,7 @@ const EditTournamentForm = ({ tournament, setTournament }) => {
 
                           <div>
                             <button
-                              className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm"
+                              className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded"
                               onClick={() => setShowDeleteConfirmation(null)}
                             >
                               Cancel
@@ -176,12 +176,11 @@ const EditTournamentForm = ({ tournament, setTournament }) => {
                         <div>
                           <button
                             onClick={() => setShowDeleteConfirmation(team.id)}
-                            className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+                            className="bg-red-600 hover:bg-red-700 text-white px-5 py-1 rounded"
                           >
                             Kick
                           </button>
                         </div>
-
                       </div>
                     )}
                   </div>
@@ -193,8 +192,8 @@ const EditTournamentForm = ({ tournament, setTournament }) => {
 
             <div className="flex space-x-3 sm:space-x-6">
 
-              <div className="flex-1">
-                <label className="block mb-1 font-semibold text-[0.75rem] sm:text-lg">
+              <div className="flex-1 text-lg">
+                <label className="block mb-1 font-semibold">
                   Start Date:
                 </label>
                 <input
@@ -202,12 +201,12 @@ const EditTournamentForm = ({ tournament, setTournament }) => {
                   name="startDate"
                   value={editTournamentFormData.startDate || ""}
                   onChange={handleInputChange}
-                  className="w-full text-black p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:p-3 text-xs sm:text-base"
+                  className="w-full text-black p-2 rounded-md border border-gray-300 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:p-3 text-lg"
                 />
               </div>
 
               <div className="flex-1">
-                <label className="block mb-1 font-semibold text-[0.75rem] sm:text-lg">
+                <label className="block mb-1 font-semibold">
                   End Date:
                 </label>
                 <input
@@ -215,7 +214,7 @@ const EditTournamentForm = ({ tournament, setTournament }) => {
                   name="endDate"
                   value={editTournamentFormData.endDate || ""}
                   onChange={handleInputChange}
-                  className="w-full text-black p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:p-3 text-xs sm:text-base"
+                  className="w-full text-black p-2 rounded-md border border-gray-300 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:p-3 text-lg"
                 />
               </div>
 
@@ -238,7 +237,7 @@ const EditTournamentForm = ({ tournament, setTournament }) => {
             
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 transition-colors duration-200 rounded-md py-2 text-sm font-semibold text-white sm:py-3 sm:text-base"
+              className="w-[159px] bg-blue-600 hover:bg-blue-700 transition-colors duration-200 rounded-md py-4 text-xl font-semibold text-white"
             >
               Save
             </button>  

@@ -76,7 +76,9 @@ const ShowMatchesByDateModal = ({ matches, setMatches, setClickedDateMatches, cl
             </div>
 
             <div>
-              <span className="text-gray-600 font-semibold ">Stadion</span>
+              <span className="text-gray-600 font-semibold ">
+                {match.stadium.stadiumName}
+              </span>
             </div>
 
             <div className="space-x-4">

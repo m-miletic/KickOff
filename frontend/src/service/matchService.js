@@ -1,7 +1,6 @@
 import apiClient from "./apis/apiClient";
 
 export const createMatch = async (formData) => {
-  console.log("formData service -> ", formData);
   const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.post(`/matches`, formData,

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { getStadiums } from "../../../../service/stadiumService";
 import { createMatch } from "../../../../service/matchService";
+import { toast } from "react-toastify";
 
-const CreateMatchModal = ({ closeModal, teams, tournamentId, clickedDate, matches, setMatches }) => {
+const CreateMatchModal = ({ closeModal, teams, tournamentId, clickedDate, setMatches }) => {
   const [formData, setFormData] = useState({
     homeTeam: "",
     awayTeam: "",
@@ -18,12 +19,18 @@ const CreateMatchModal = ({ closeModal, teams, tournamentId, clickedDate, matche
     e.preventDefault();
     try {
       const response = await createMatch(formData);
-      setMatches((prevValues) => [
-        ...prevValues,
-        response.data
-      ]);
+      if (response.success) {
+        setMatches((prevValues) => [
+          ...prevValues,
+          response.data
+        ]);
+        closeModal();
+        toast.success("Match Created!", {
+          autoClose: 2500
+        });
+      }
     } catch (error) {
-      console.error("Error: ", error);
+      setValidationErrors(error.data.message);
     }
   };
 
@@ -50,10 +57,9 @@ const CreateMatchModal = ({ closeModal, teams, tournamentId, clickedDate, matche
 
   useEffect(() => {
     const handleErrors = () => {
-      console.log(formData)
-      let errors = {};
-      if(formData.homeTeam && formData.awayTeam && formData.homeTeam === formData.awayTeam) errors.awayTeam = "Home team and away team must be different";
-      setValidationErrors(errors);
+      let error = "";
+      if(formData.homeTeam && formData.awayTeam && formData.homeTeam === formData.awayTeam) error = "Home team and away team must be different";
+      setValidationErrors(error);
     }
 
     handleErrors();
@@ -104,9 +110,6 @@ const CreateMatchModal = ({ closeModal, teams, tournamentId, clickedDate, matche
                 )
               })}
             </select>
-            {validationErrors.awayTeam && (
-              <p className="text-red-600 text-sm pt-4 text-end mr-12">{validationErrors.awayTeam}</p>
-            )}
           </div>
 
           <div>
@@ -127,15 +130,25 @@ const CreateMatchModal = ({ closeModal, teams, tournamentId, clickedDate, matche
             </select>
           </div>
 
-          <div>
-            <button
-              type="submit"
-              className="bg-blue-600 hover:bg-blue-700 rounded-lg px-3 py-2 text-white mt-8 ml-2 font-bold"
-            >
-            Create
-            </button>
-          </div>
+          <div className="flex justify-between mt-8 ml-2 ">
 
+            <div>
+              <button
+                type="submit"
+                className={`${formData.homeTeam === formData.awayTeam ? "bg-gray-300" : "bg-blue-600 hover:bg-blue-700"}  rounded-lg px-3 py-2 text-white font-bold`}
+                disabled={formData.homeTeam === formData.awayTeam ? true : false}
+              >
+              Create
+              </button>
+            </div>
+            
+            <div>
+              {validationErrors && (
+                <p className="text-red-600 text-base pt-4 text-end mr-12">{validationErrors}</p>
+              )}
+            </div>
+
+          </div>
         </form>
       </div>
       

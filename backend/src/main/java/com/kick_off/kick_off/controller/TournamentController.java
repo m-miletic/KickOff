@@ -120,9 +120,6 @@ public class TournamentController {
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<TournamentDto>> getTournamentByOrganizer(@PathVariable Long userId) {
-
-        System.out.println("Test - orgId: " + userId);
-
         TournamentDto tournament = tournamentService.getTournamentByOrganizer(userId);
         ApiResponse<TournamentDto> response = ApiResponse.<TournamentDto>builder()
                 .message("Successfully retrieved organizers tournament.")

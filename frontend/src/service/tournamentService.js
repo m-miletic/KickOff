@@ -152,7 +152,6 @@ export const fetchOrganizersTournament = async ( userId ) => {
 }
 
 export const updateTournament = async (id, updateTournamentObj) => {
-  console.log("update Tournament obj: ", updateTournamentObj)
   const jwt = localStorage.getItem('token');
 
   try {
@@ -161,8 +160,6 @@ export const updateTournament = async (id, updateTournamentObj) => {
         Authorization: `Bearer ${jwt}`,
       },
     });
-
-    console.log("Update Tournament Service Response:", response);
     return response.data;
   } catch (error) {
     console.log("Update Tournament Error: ", error)
