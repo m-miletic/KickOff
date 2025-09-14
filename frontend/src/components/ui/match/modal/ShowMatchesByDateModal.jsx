@@ -57,7 +57,7 @@ const ShowMatchesByDateModal = ({ matches, setMatches, setClickedDateMatches, cl
       <div className="border p-2 m-4 max-h-[350px] min-w-[600px] overflow-y-auto text-lg">
         {matches.map((match) => (
           (match.id === clickedEditMatch?.id) && showEditForm ? (
-            <EditMatchForm match={match} closeEditForm={() => setShowEditForm(false)} currentDateTime={currentDateTime} />
+            <EditMatchForm match={match} setClickedDateMatches={setClickedDateMatches} closeEditForm={() => setShowEditForm(false)} currentDateTime={currentDateTime} />
           ) : (
           <div id={match.id} className="mb-6 mx-2">
 
@@ -66,7 +66,7 @@ const ShowMatchesByDateModal = ({ matches, setMatches, setClickedDateMatches, cl
               {match.homeTeamGoals === null || match.awayTeamGoals === null ? (
                 <span className="text-gray-400 font-semibold mx-5">No results yet</span>
               ) : (
-                <span>{match.homeTeamGoals}:{match.awayTeamGoals}</span>
+                <span className="ml-6 font-bold">{match.homeTeamGoals}:{match.awayTeamGoals}</span>
               )}
               
             </div>

@@ -57,6 +57,7 @@ public class MatchController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<MatchDto>> editMatch(@PathVariable(name = "id") Long matchId, @RequestBody EditMatchDto updateMatchData) {
+        System.out.println("updateMatchData: " + updateMatchData);
         try {
             MatchDto matchDto = matchService.updateMatch(matchId, updateMatchData);
             ApiResponse<MatchDto> response = ApiResponse.<MatchDto>builder()

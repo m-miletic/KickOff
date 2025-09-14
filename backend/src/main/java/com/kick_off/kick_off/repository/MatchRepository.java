@@ -43,9 +43,12 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     @Query("""
         SELECT COUNT(m) > 0 FROM Match m
         WHERE m.stadium.id = :stadiumId
-        AND m.matchDate BETWEEN :startWindow AND :endWindow
+        AND m.id <> :matchId
+        AND m.matchDate > :startWindow
+        AND m.matchDate < :endWindow
     """)
     boolean existsByStadiumAndMatchDateInWindow(@Param("stadiumId") Long stadiumId,
+                                                @Param("matchId") Long matchId,
                                                 @Param("startWindow") LocalDateTime startWindow,
                                                 @Param("endWindow") LocalDateTime endWindow);
 

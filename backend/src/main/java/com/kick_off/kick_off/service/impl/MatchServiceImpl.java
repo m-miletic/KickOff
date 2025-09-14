@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -116,7 +117,7 @@ public class MatchServiceImpl implements MatchService {
         LocalDateTime startWindow = matchDateTime.minusHours(2);
         LocalDateTime endWindow = matchDateTime.plusHours(2);
 
-        boolean stadiumBusy = matchRepository.existsByStadiumAndMatchDateInWindow(stadiumId, startWindow, endWindow);
+        boolean stadiumBusy = matchRepository.existsByStadiumAndMatchDateInWindow(stadiumId, match.getId(), startWindow, endWindow);
         if(stadiumBusy) {
             throw new EntityExistsException("Stadium busy at that time. Must be a 2 hour gap between matches.");
         }
@@ -182,15 +183,20 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public MatchDto updateMatch(Long matchId, EditMatchDto editMatchDto) {
 
+
         TeamDto homeTeam = editMatchDto.getHomeTeam();
         TeamDto awayTeam = editMatchDto.getAwayTeam();
+
+        Long stadiumId = editMatchDto.getStadiumId();
+        System.out.println("stadiumId: " + stadiumId);
+        Stadium stadiumUpdate = stadiumRepository.findById(stadiumId)
+                .orElseThrow(() ->new EntityNotFoundException("Stadium with id: " + stadiumId + " not found."));
 
         Team updateHomeTeam = teamRepository.findById(homeTeam.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Team with id: " + homeTeam.getId() + " not found."));
 
         Team updateAwayTeam = teamRepository.findById(awayTeam.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Team with id: " + awayTeam.getId() + " not found."));
-
 
         Match match = matchRepository.findById(matchId)
                 .orElseThrow(() -> new EntityNotFoundException("Match with id: " + matchId + " doesn't exist."));
@@ -216,8 +222,9 @@ public class MatchServiceImpl implements MatchService {
                         updateHomeTeam.setPoints(updateHomeTeam.getPoints() + 3);
 
 
-                        int oldHomeGoals = match.getHomeTeamGoals();
-                        int oldAwayGoals = match.getAwayTeamGoals();
+                        Integer oldHomeGoals = match.getHomeTeamGoals() == null ? 0 : match.getHomeTeamGoals();
+                        Integer oldAwayGoals = match.getAwayTeamGoals() == null ? 0 : match.getAwayTeamGoals();
+
 
                         updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
                         updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
@@ -231,8 +238,9 @@ public class MatchServiceImpl implements MatchService {
 
                     } else if (match.getMatchOutcome().equals(MatchOutcome.WIN)) {
 
-                        int oldHomeGoals = match.getHomeTeamGoals();
-                        int oldAwayGoals = match.getAwayTeamGoals();
+                        Integer oldHomeGoals = match.getHomeTeamGoals() == null ? 0 : match.getHomeTeamGoals();
+                        Integer oldAwayGoals = match.getAwayTeamGoals() == null ? 0 : match.getAwayTeamGoals();
+
 
                         updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
                         updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
@@ -254,8 +262,9 @@ public class MatchServiceImpl implements MatchService {
                         updateAwayTeam.setPoints(updateAwayTeam.getPoints() - 3);
                         updateHomeTeam.setPoints(updateHomeTeam.getPoints() + 3);
 
-                        int oldHomeGoals = match.getHomeTeamGoals();
-                        int oldAwayGoals = match.getAwayTeamGoals();
+                        Integer oldHomeGoals = match.getHomeTeamGoals() == null ? 0 : match.getHomeTeamGoals();
+                        Integer oldAwayGoals = match.getAwayTeamGoals() == null ? 0 : match.getAwayTeamGoals();
+
 
                         updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
                         updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
@@ -275,8 +284,9 @@ public class MatchServiceImpl implements MatchService {
 
                     updateHomeTeam.setPoints(updateHomeTeam.getPoints() + 3);
 
-                    int oldHomeGoals = match.getHomeTeamGoals();
-                    int oldAwayGoals = match.getAwayTeamGoals();
+                    Integer oldHomeGoals = match.getHomeTeamGoals() == null ? 0 : match.getHomeTeamGoals();
+                    Integer oldAwayGoals = match.getAwayTeamGoals() == null ? 0 : match.getAwayTeamGoals();
+
 
                     updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
                     updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
@@ -294,8 +304,9 @@ public class MatchServiceImpl implements MatchService {
                 if (match.getMatchOutcome() != null) {
                     if (match.getMatchOutcome().equals(MatchOutcome.DRAW)) {
 
-                        int oldHomeGoals = match.getHomeTeamGoals();
-                        int oldAwayGoals = match.getAwayTeamGoals();
+                        Integer oldHomeGoals = match.getHomeTeamGoals() == null ? 0 : match.getHomeTeamGoals();
+                        Integer oldAwayGoals = match.getAwayTeamGoals() == null ? 0 : match.getAwayTeamGoals();
+
 
                         updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
                         updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
@@ -318,8 +329,9 @@ public class MatchServiceImpl implements MatchService {
                         updateAwayTeam.setPoints(updateAwayTeam.getPoints() + 1);
                         updateHomeTeam.setPoints(updateHomeTeam.getPoints() + 1);
 
-                        int oldHomeGoals = match.getHomeTeamGoals();
-                        int oldAwayGoals = match.getAwayTeamGoals();
+                        Integer oldHomeGoals = match.getHomeTeamGoals() == null ? 0 : match.getHomeTeamGoals();
+                        Integer oldAwayGoals = match.getAwayTeamGoals() == null ? 0 : match.getAwayTeamGoals();
+
 
                         updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
                         updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
@@ -344,8 +356,9 @@ public class MatchServiceImpl implements MatchService {
                         updateAwayTeam.setPoints(updateAwayTeam.getPoints() + 1);
                         updateHomeTeam.setPoints(updateHomeTeam.getPoints() + 1);
 
-                        int oldHomeGoals = match.getHomeTeamGoals();
-                        int oldAwayGoals = match.getAwayTeamGoals();
+                        Integer oldHomeGoals = match.getHomeTeamGoals() == null ? 0 : match.getHomeTeamGoals();
+                        Integer oldAwayGoals = match.getAwayTeamGoals() == null ? 0 : match.getAwayTeamGoals();
+
 
                         updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
                         updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
@@ -366,8 +379,9 @@ public class MatchServiceImpl implements MatchService {
                     updateHomeTeam.setPoints(updateHomeTeam.getPoints() + 1);
                     updateAwayTeam.setPoints(updateAwayTeam.getPoints() + 1);
 
-                    int oldHomeGoals = match.getHomeTeamGoals();
-                    int oldAwayGoals = match.getAwayTeamGoals();
+                    Integer oldHomeGoals = match.getHomeTeamGoals() == null ? 0 : match.getHomeTeamGoals();
+                    Integer oldAwayGoals = match.getAwayTeamGoals() == null ? 0 : match.getAwayTeamGoals();
+
 
                     updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
                     updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
@@ -395,8 +409,9 @@ public class MatchServiceImpl implements MatchService {
 
                         updateAwayTeam.setPoints(updateAwayTeam.getPoints() + 3);
 
-                        int oldHomeGoals = match.getHomeTeamGoals();
-                        int oldAwayGoals = match.getAwayTeamGoals();
+                        Integer oldHomeGoals = match.getHomeTeamGoals() == null ? 0 : match.getHomeTeamGoals();
+                        Integer oldAwayGoals = match.getAwayTeamGoals() == null ? 0 : match.getAwayTeamGoals();
+
 
                         updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
                         updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
@@ -420,8 +435,9 @@ public class MatchServiceImpl implements MatchService {
                         updateHomeTeam.setPoints(updateHomeTeam.getPoints() - 3);
                         updateAwayTeam.setPoints(updateAwayTeam.getPoints() + 3);
 
-                        int oldHomeGoals = match.getHomeTeamGoals();
-                        int oldAwayGoals = match.getAwayTeamGoals();
+                        Integer oldHomeGoals = match.getHomeTeamGoals() == null ? 0 : match.getHomeTeamGoals();
+                        Integer oldAwayGoals = match.getAwayTeamGoals() == null ? 0 : match.getAwayTeamGoals();
+
 
                         updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
                         updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
@@ -436,8 +452,9 @@ public class MatchServiceImpl implements MatchService {
 
                     } else if (match.getMatchOutcome().equals(MatchOutcome.LOSE)) {
 
-                        int oldHomeGoals = match.getHomeTeamGoals();
-                        int oldAwayGoals = match.getAwayTeamGoals();
+                        Integer oldHomeGoals = match.getHomeTeamGoals() == null ? 0 : match.getHomeTeamGoals();
+                        Integer oldAwayGoals = match.getAwayTeamGoals() == null ? 0 : match.getAwayTeamGoals();
+
 
                         updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
                         updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
@@ -451,8 +468,9 @@ public class MatchServiceImpl implements MatchService {
                     }
                 } else {
 
-                    int oldHomeGoals = match.getHomeTeamGoals();
-                    int oldAwayGoals = match.getAwayTeamGoals();
+                    Integer oldHomeGoals = match.getHomeTeamGoals() == null ? 0 : match.getHomeTeamGoals();
+                    Integer oldAwayGoals = match.getAwayTeamGoals() == null ? 0 : match.getAwayTeamGoals();
+
 
                     updateHomeTeam.setGoalsScored(updateHomeTeam.getGoalsScored() - oldHomeGoals + homeTeamGoals);
                     updateAwayTeam.setGoalsScored(updateAwayTeam.getGoalsScored() - oldAwayGoals + awayTeamGoals);
@@ -475,24 +493,44 @@ public class MatchServiceImpl implements MatchService {
             updateAwayTeam.setGoalsScored(awayTeam.getGoalsScored() + awayTeamGoals);
             updateAwayTeam.setGoalsAgainst(awayTeam.getGoalsAgainst() + homeTeamGoals);
 
-
             teamRepository.save(updateHomeTeam);
             teamRepository.save(updateAwayTeam);
-        }
+
+        };
 
 
         LocalDateTime newDate = editMatchDto.getMatchDate();
         LocalDateTime now = LocalDateTime.now();
         if (newDate != null && !newDate.equals(match.getMatchDate())) {
             if (newDate.isBefore(now.plusHours(24))) {
-                throw new ForbiddenActionException("Match date must at least 24 hrs before scheduled start.");
+                throw new ForbiddenActionException("Match date must be at least 24 hrs before scheduled start.");
             }
             match.setMatchDate(newDate);
         }
 
+        LocalDateTime newMatchDateTime = editMatchDto.getMatchDate();
+
+        // ne smije postojat utakmica kojoj je start time unutar range-a(start window - end window) zvog restrikcije od 2 hr gap
+        LocalDateTime startWindow = newMatchDateTime.minusHours(2);
+        LocalDateTime endWindow = newMatchDateTime.plusHours(2);
+
+        boolean stadiumBusy = matchRepository.existsByStadiumAndMatchDateInWindow(stadiumId, matchId, startWindow, endWindow);
+        if (stadiumBusy) {
+            throw new EntityExistsException("Stadium busy at that time. Must be a 2 hour gap between matches.");
+        }
+
         // nadodat odeređene ure za utakmice npr ne moze se kreirat utakmica od 01:00 pa do 08:00
+        LocalTime newMatchTime = newMatchDateTime.toLocalTime(); // kidan da imam samo vrime
+        LocalTime minStartTime = LocalTime.of(12, 0);
+        LocalTime maxStartTime = LocalTime.of(23, 0);
+
+        if (newMatchTime.isBefore(minStartTime) || newMatchTime.isAfter(maxStartTime)) {
+            throw new IllegalArgumentException("Match must be scheduled between 12:00 and 23:00");
+        }
+
 
         match.setMatchDate(editMatchDto.getMatchDate());
+        match.setStadium(stadiumUpdate);
         Match updatedMatch = matchRepository.save(match);
 
         MatchDto matchDto = modelMapper.map(updatedMatch, MatchDto.class);
