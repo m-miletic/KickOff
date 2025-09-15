@@ -1,9 +1,11 @@
 package com.kick_off.kick_off.controller;
 
 import com.kick_off.kick_off.dto.team.*;
-import com.kick_off.kick_off.dto.team.requestParams.TeamFilterParamsDto;
+import com.kick_off.kick_off.request.PaginationRequest;
 import com.kick_off.kick_off.response.ApiResponse;
+import com.kick_off.kick_off.response.PaginatedResponse;
 import com.kick_off.kick_off.service.TeamService;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,24 +23,24 @@ public class TeamController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<TeamListDto>> getAllTeams(
-            @RequestParam(required = false, defaultValue = "teamName") String sortField,
-            @RequestParam(required = false, defaultValue = "ASC") String sortDirection,
-            @RequestParam(required = false, defaultValue = "1") int pageNumber
+    public ResponseEntity<ApiResponse<PaginatedResponse<TeamDto>>> getTeams(
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "3") Integer size,
+            @RequestParam(defaultValue = "false") boolean fetchAll,
+            @RequestParam(defaultValue = "id") String sortField,
+            @RequestParam(defaultValue = "DESC") Sort.Direction direction
     ) {
-            TeamFilterParamsDto filters = new TeamFilterParamsDto();
-            filters.setSortField(sortField);
-            filters.setSortDirection(sortDirection);
-            filters.setPageNumber(pageNumber);
+        PaginationRequest request = new PaginationRequest(page, fetchAll, size, sortField, direction);
+        System.out.println("Request: " + request.toString());
+        final PaginatedResponse<TeamDto> teams = teamService.getTeams(request);
 
-            TeamListDto teams = teamService.getTeams(filters);
-            ApiResponse<TeamListDto> response = ApiResponse.<TeamListDto>builder()
-                    .message("Successfully fetched teams.")
-                    .data(teams)
-                    .success(true)
-                    .build();
+        ApiResponse<PaginatedResponse<TeamDto>> response = ApiResponse.<PaginatedResponse<TeamDto>>builder()
+                .message("Successfully fetched teams.")
+                .data(teams)
+                .success(true)
+                .build();
 
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/tournament/{tournamentId}")

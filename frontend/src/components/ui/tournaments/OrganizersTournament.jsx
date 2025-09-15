@@ -8,12 +8,12 @@ import OrganizersPendingRequests from "../request/OrganizersPendingRequests";
 import { LoggedUserContext } from "../../../context/LoggedUserContext";
 
 const OrganizersTournament = () => {
-
   const [enrollError, setEnrollError] = useState("");
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
 
-  const [tournament, setTournament] = useState()
+  const [tournament, setTournament] = useState();
+  console.log("tournamnet: ", tournament);
   const { decodedJwt } = useContext(LoggedUserContext);
 
 /*   const [recentlyHandledRequest, setRecentlyHandledRequest] = useState(null); */
@@ -34,7 +34,6 @@ const OrganizersTournament = () => {
     getTournament()
   }, [])
 
-
   useEffect(() => {
     const handleResize = () => {
       setIsMobileView(window.innerWidth < 1000);
@@ -43,9 +42,6 @@ const OrganizersTournament = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-
-
 
   useEffect(() => {
     if (enrollError) {

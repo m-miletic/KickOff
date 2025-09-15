@@ -30,7 +30,8 @@ const CreateMatchModal = ({ closeModal, teams, tournamentId, clickedDate, setMat
         });
       }
     } catch (error) {
-      setValidationErrors(error.data.message);
+      console.log("wd")
+      setValidationErrors(error.response.data.message);
     }
   };
 
@@ -39,6 +40,14 @@ const CreateMatchModal = ({ closeModal, teams, tournamentId, clickedDate, setMat
     setFormData((prevValues) => ({
       ...prevValues,
       [name]: value
+    }));
+  };
+
+  const handleSetTime = (e) => {
+    const {name, value} = e.target;
+    setFormData((prevValues) => ({
+      ...prevValues,
+      matchDate: formData.matchDate.slice(0,11) + value
     }));
   };
 
@@ -65,6 +74,8 @@ const CreateMatchModal = ({ closeModal, teams, tournamentId, clickedDate, setMat
     handleErrors();
   }, [formData]);
 
+  console.log("ValidationErrors: ", validationErrors);
+
   return (
     <div className="absolute bg-gray-50 top-[100px] left-[35%] z-10 rounded-md pb-1">
 
@@ -79,7 +90,7 @@ const CreateMatchModal = ({ closeModal, teams, tournamentId, clickedDate, setMat
           <div>
             <label className="inline-block w-[225px] text-left ml-2 py-2">Home Team</label>
             <select 
-              className="border-gray-300 w-[275px] ml-5"
+              className="border-gray-300 w-[275px] ml-5 cursor-pointer"
               name="homeTeam"
               value={formData.homeTeam}
               onChange={handleChange}
@@ -97,7 +108,7 @@ const CreateMatchModal = ({ closeModal, teams, tournamentId, clickedDate, setMat
           <div>
             <label className="inline-block w-[225px] text-left ml-2 py-2">Away Team</label>
             <select 
-              className="border-gray-300 w-[275px] ml-5"
+              className="border-gray-300 w-[275px] ml-5 cursor-pointer"
               name="awayTeam"
               value={formData.awayTeam}
               onChange={handleChange}
@@ -115,7 +126,7 @@ const CreateMatchModal = ({ closeModal, teams, tournamentId, clickedDate, setMat
           <div>
             <label className="inline-block w-[225px] text-left ml-2 py-2">Stadium</label>
             <select 
-              className="border-gray-300 w-[275px] ml-5"
+              className="border-gray-300 w-[275px] ml-5 cursor-pointer"
               name="stadium"
               value={formData.stadium}
               onChange={handleChange}
@@ -128,6 +139,19 @@ const CreateMatchModal = ({ closeModal, teams, tournamentId, clickedDate, setMat
                 )
               })}
             </select>
+          </div>
+
+          <div>
+            <label className="inline-block w-[225px] text-left ml-2 py-2">Time</label>
+            <input
+              className="border-gray-300 w-[100px] ml-5 cursor-pointer"
+              type="time"
+              name="matchDate"
+              placeholder="Enter"
+              value={formData.matchDate.slice(11, 16)}
+              onChange={handleSetTime}
+              required
+            />
           </div>
 
           <div className="flex justify-between mt-8 ml-2 ">

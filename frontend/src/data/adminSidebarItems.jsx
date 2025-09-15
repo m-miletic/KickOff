@@ -8,7 +8,7 @@ export const adminSidebarItems = [
     value: "users",
     path: "/admin/users",
     icon: (
-      <ImUsers className="text-gray-400 w-5 h-5" />
+      <ImUsers className="text-gray-400 w-8 h-8" />
     ),  
   },
   {
@@ -16,14 +16,14 @@ export const adminSidebarItems = [
     value: "teams",
     path: "/admin/teams",
     icon: (
-      <PiMicrosoftTeamsLogo className="text-gray-400 w-5 h-5" />
+      <PiMicrosoftTeamsLogo className="text-gray-400 w-8 h-8" />
     ),  
   },
   {
     label: "Log Out",
     value: "logout",
     icon: (
-      <MdOutlineLogout className="text-gray-400 w-5 h-5" />
+      <MdOutlineLogout className="text-gray-400 w-8 h-8" />
     ),  
   }
 ];

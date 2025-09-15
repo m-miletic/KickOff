@@ -4,10 +4,8 @@ import { Link } from "react-router-dom";
 const PreviewTournamentByOwner = ({ tournament }) => {
   const [showAllMatches, setShowAllMatches] = useState(false);
 
-
   const matches = tournament?.matchesList || [];
   const displayMatches = showAllMatches ? matches : matches.slice(0, 3);
-
 
   return(
     <div className="flex flex-col space-y-4 text-lg">

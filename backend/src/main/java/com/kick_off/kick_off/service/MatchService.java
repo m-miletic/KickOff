@@ -10,7 +10,7 @@ public interface MatchService {
 
     PaginatedResponse<MatchDto> findMatchesByTournament(PaginationRequest request, Long tournamentId);
 
-    MatchDto updateMatch(Long matchId, EditMatchDto editMatchDto);
+    MatchDto updateMatch(EditMatchDto editMatchDto);
 
     void deleteMatch(Long id);
 }

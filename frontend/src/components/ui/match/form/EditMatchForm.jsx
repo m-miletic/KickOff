@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 
  const EditMatchForm = ({ match, setClickedDateMatches, closeEditForm, currentDateTime }) => {
   const [formData, setFormData] = useState({
+    matchId: match.id,
     matchDate: match.matchDate,
     stadiumId: match.stadium.id || "",
     homeTeamGoals: match.homeTeamGoals ?? "",
@@ -20,7 +21,7 @@ import { toast } from "react-toastify";
   const handleSubmitForm = async (event) => {
     event.preventDefault();
     try {
-      const response = await editMatch(match.id, formData);
+      const response = await editMatch(formData);
       setClickedDateMatches((prevValues) => 
         prevValues.map((m) => 
           m.id === match.id ? { ...m, ...response.data} : m

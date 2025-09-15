@@ -25,7 +25,7 @@ const CalendarLegend = ({ tournament }) => {
       {isDesktopView ? (
         <div>
           <aside className="w-80 mr-6 p-4 bg-gray-100 rounded shadow-sm text-gray-700 text-base top-6 self-start">
-            <div className="text-xl font-bold pb-6 text-center">
+            <div className="text-xl font-bold pb-6 text-center mx-1">
               <div className="pb-3">{tournament?.tournamentName}</div>
               <div className="text-base flex justify-between">
                 <div>Start Date: </div>
@@ -39,20 +39,22 @@ const CalendarLegend = ({ tournament }) => {
 
             <h3 className="font-semibold mb-1 text-gray-900 text-lg">Calendar Actions</h3>
             <ul className="list-disc list-inside space-y-2">
-              <li>Click on the calendars date field to create a new match.</li>
-              <li className="font-medium text-gray-800">
-                  Two teams can play a max of 2 matches against each other, with each team hosting one match
-              </li>
-              <li>Click on the <span className="font-bold">"See Matches"</span> to preview, edit and delete matches on that day. Past matchs can't be deleted.</li>
-              <li>Altering match results is available only after the scheduled match time.</li>
+              <li>Click on the calendars date field to create a new match for that date.</li>
+              <li>Two teams can play a max of 2 matches against each other, with each team hosting one match</li>
+              <li>Click on the <span className="font-bold">"See Matches"</span> button to preview, edit and delete matches for that day.</li>
+              <li> Past matchs can't be deleted.</li>
+              <li> Altering match results is available only after the scheduled match time.</li>
               <li className="italic text-red-600">
                 Note: Matches can't be created in the past or on the day of playing the match.
+              </li>
+              <li className="italic text-red-600">
+                Note: Matches can't be created outside the tournaments start and end dates.
               </li>
               <li className="italic text-red-600">
                 Note: Be advised that match dates may only be modified at least 24 hours before the scheduled start time.
               </li>
               <li className="italic text-red-600">
-                Note: A stadium can host multiple matches, but there can be a 2-hour gap between them
+                Note: A stadium can host multiple matches on the same date, but there must be a 2-hour gap between them.
               </li>
             </ul>
           </aside>

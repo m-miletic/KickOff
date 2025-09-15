@@ -13,6 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import java.util.List;
@@ -53,16 +54,12 @@ public class UserManagementService {
         newUser.setPassword(passwordEncoder.encode(password));
         newUser.setRole(role);
 
-        User savedUser = userRepository.save(newUser);
-
-        /* Ima li razloga za vratit registriranog user-a ? */
-        /*UserDto userDto = modelMapper.map(savedUser, UserDto.class);
-        return userDto;*/
+        userRepository.save(newUser);
     }
 
 
     public LoginResponseDto login(LoginRequestDto loginRequest) {
-        authenticationManager.authenticate(
+        Authentication authenticationToken = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
                         loginRequest.getPassword()

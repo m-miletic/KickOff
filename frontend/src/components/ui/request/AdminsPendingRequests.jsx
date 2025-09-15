@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import Pagination from "../../common/navigation/Pagination";
 
 const AdminsPendingRequests = () => {
+  console.log("AdminsPendingRequests")
 
   const [pendingRequests, setPendingRequests] = useState([])
   const { decodedJwt } = useContext(LoggedUserContext)
@@ -12,7 +13,7 @@ const AdminsPendingRequests = () => {
     status: "PENDING",
     pageNumber: 1
   });
-  const [totalPages, setTotalPages] = useState()
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     if (!decodedJwt) return;
@@ -62,7 +63,7 @@ const AdminsPendingRequests = () => {
 
   return(
     <div className="fixed top-2 bottom-2 right-2 w-96 rounded-xl bg-[#1F2937] px-4 text-white">
-      <div className="text-2xl p-4 border-b border-gray-300">Requests</div>
+      <div className="text-3xl p-4 border-b border-gray-300">Requests</div>
       <div className="py-6">
         {pendingRequests?.length > 0 ? (
           pendingRequests.map((request) => (
@@ -77,12 +78,15 @@ const AdminsPendingRequests = () => {
             </div>
           ))
         ) : (
-          <div className="">No Pending Requests</div>
+          <div className="text-lg ml-2">No Pending Requests</div>
         )}
 
-        <div className='text-center bottom-1'>
-          <Pagination totalPages={totalPages} selectedFilters={filters} handleSelectFilter={handleSetSelectedFilter} navButtonStyle={'text-white w-5 h-5 px-4 '} />
-       </div>
+        {totalPages > 0 && (
+          <div className='text-center bottom-1'>
+            <Pagination totalPages={totalPages} selectedFilters={filters} handleSelectFilter={handleSetSelectedFilter} navButtonStyle={'text-white w-5 h-5 px-4 '} />
+          </div>
+        )}
+
       </div>
     </div>
   );

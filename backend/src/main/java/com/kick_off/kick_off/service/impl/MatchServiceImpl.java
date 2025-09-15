@@ -122,6 +122,14 @@ public class MatchServiceImpl implements MatchService {
             throw new EntityExistsException("Stadium busy at that time. Must be a 2 hour gap between matches.");
         }
 
+        LocalTime matchTime = matchDateTime.toLocalTime(); // kidan da imam samo vrime
+        LocalTime minStartTime = LocalTime.of(12, 0);
+        LocalTime maxStartTime = LocalTime.of(23, 0);
+
+        if (matchTime.isBefore(minStartTime) || matchTime.isAfter(maxStartTime)) {
+            throw new IllegalArgumentException("Match must be scheduled between 12:00 and 23:00");
+        }
+
 
         match.setMatchDate(parsedDate);
         match.setHomeTeam(homeTeam);
@@ -175,20 +183,16 @@ public class MatchServiceImpl implements MatchService {
                     entitiesDto
             );
         }
-
-
     }
 
-
     @Override
-    public MatchDto updateMatch(Long matchId, EditMatchDto editMatchDto) {
-
-
+    public MatchDto updateMatch(EditMatchDto editMatchDto) {
+        Long matchId = editMatchDto.getMatchId();
         TeamDto homeTeam = editMatchDto.getHomeTeam();
         TeamDto awayTeam = editMatchDto.getAwayTeam();
 
         Long stadiumId = editMatchDto.getStadiumId();
-        System.out.println("stadiumId: " + stadiumId);
+
         Stadium stadiumUpdate = stadiumRepository.findById(stadiumId)
                 .orElseThrow(() ->new EntityNotFoundException("Stadium with id: " + stadiumId + " not found."));
 
@@ -207,7 +211,6 @@ public class MatchServiceImpl implements MatchService {
         if (homeTeamGoals != null && awayTeamGoals != null) {
 
             if (homeTeamGoals > awayTeamGoals) {
-                /*provjerit null jer san u dummy data inserta null-ove*/
                 if (match.getMatchOutcome() != null) {
                     if (match.getMatchOutcome().equals(MatchOutcome.DRAW)) {
                         updateHomeTeam.setDraws(updateHomeTeam.getDraws() - 1);
@@ -501,9 +504,9 @@ public class MatchServiceImpl implements MatchService {
 
         LocalDateTime newDate = editMatchDto.getMatchDate();
         LocalDateTime now = LocalDateTime.now();
-        if (newDate != null && !newDate.equals(match.getMatchDate())) {
+        if ( ( (newDate != null) && (!newDate.equals(match.getMatchDate())) ) || (match.getStadium().getId() != editMatchDto.getStadiumId()) ) {
             if (newDate.isBefore(now.plusHours(24))) {
-                throw new ForbiddenActionException("Match date must be at least 24 hrs before scheduled start.");
+                throw new ForbiddenActionException("Matches can be edited minimum 24 hours before the start time.");
             }
             match.setMatchDate(newDate);
         }

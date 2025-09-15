@@ -19,8 +19,6 @@ const UserList = () => {
 
   const { users, setUsers, error } = useFetchUsers(filter);
 
-  console.log("Users: ", users)
-
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };

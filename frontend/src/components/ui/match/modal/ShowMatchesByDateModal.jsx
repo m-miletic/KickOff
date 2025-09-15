@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { deleteMatch } from "../../../../service/matchService";
 import EditMatchForm from "../form/EditMatchForm";
+import { toast } from "react-toastify";
 
 const ShowMatchesByDateModal = ({ matches, setMatches, setClickedDateMatches, closeModal }) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -33,15 +34,21 @@ const ShowMatchesByDateModal = ({ matches, setMatches, setClickedDateMatches, cl
     updateTime();
   }, []); 
 
-  // dovršit implementaciju za slučaj kada triba obrisat - prilikom brisanja osvjezit trenutne grupirane meceve (u roditeljskoj komponenti?) kako bi dobio na real-time dojmu uklanjanja
   const handleDelete = async (action) => {
     if (!action) {
       setShowDeleteDialog(!showDeleteDialog);
     } else {
-      const response = await deleteMatch(clickedDeleteMatch.id);
-      if (response.success) {
-        setClickedDateMatches(prevValues => prevValues.filter(match => match.id !== clickedDeleteMatch.id)); // za uklanjanje iz liste (modal)
-        setMatches(prevValues => prevValues.filter(match => match.id !== clickedDeleteMatch.id)); // za uklanjanje iz kalendara
+      try {
+        const response = await deleteMatch(clickedDeleteMatch.id);
+        if (response.success) {
+          setClickedDateMatches(prevValues => prevValues.filter(match => match.id !== clickedDeleteMatch.id)); // za uklanjanje iz liste (modal)
+          setMatches(prevValues => prevValues.filter(match => match.id !== clickedDeleteMatch.id)); // za uklanjanje iz kalendara
+          toast.success("Match deleted!", {
+            autoClose: 2500,
+          });
+        }
+      } catch (error) {
+        console.error(error);
       }
     }
   };

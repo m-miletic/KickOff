@@ -1,6 +1,6 @@
 import apiClient from "./apis/apiClient";
 
-export const fetchAllTeams = async (filters) => {
+export const fetchTeams = async ( filters ) => {
   const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.get("/teams", {
@@ -11,10 +11,8 @@ export const fetchAllTeams = async (filters) => {
         Authorization: `Bearer ${jwt}`
       }
     });
-    console.log("Fetch All Teams Service response: ", response)
     return response.data;
   } catch (error) {
-    console.log("Fetch All Teams Service error: ", error)
     throw error;
   } 
 };
@@ -29,10 +27,8 @@ export const getMyTeam = async (representativeId) => {
         }
       }
     );
-    console.log("SERVICE ***** Get My Team Data Response: ", response)
     return response.data;
   } catch (error) {
-    console.log("SERVICE ***** Error while trying to retrieve my team data: ", error)
     throw error.response.data
     
   }
@@ -65,17 +61,13 @@ export const deleteTeamById = async ( id ) => {
         Authorization: `Bearer ${jwt}`
       }
     });
-    console.log("Delete Team Service response: ", response)
     return response.data;
   } catch (error) {
-    console.log("Delete Team Service Error: ", error)
     throw error.response.data;
   }
 }
 
 export const createTeam = async (formData) => {
-  console.log("FormData: ", formData)
-
   const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.post(`/teams`, 
@@ -86,7 +78,6 @@ export const createTeam = async (formData) => {
         }
       }
     );
-    console.log("Create Team Service Response: ", response)
     return response.data;
   } catch (error) {
     console.log("Error while creating team: ", error)
@@ -95,8 +86,6 @@ export const createTeam = async (formData) => {
 };
 
 export const getTeamByTeamRepresentative = async (userId) => {
-  console.log("I'm in getTeamByTeamRepresentative")
-  console.log("Check UserID - ", userId)
   const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.get(`/teams/user/${userId}`, 
@@ -106,7 +95,6 @@ export const getTeamByTeamRepresentative = async (userId) => {
         }
       }
     );
-    console.log("Service response: ", response.data)
     return response.data;
   } catch (error) {
     console.log("Service Error while trying to fetch team by representative error - ", error)

@@ -4,7 +4,6 @@ import CreateTeamForm from '../../team/form/CreateTeamForm';
 import CreateTournamentForm from '../../tournaments/form/CreateTournamentForm';
 import { updateRequest } from '../../../../service/requestService';
 import { enrollTeam } from '../../../../service/tournamentService';
-import { changeUserRole } from '../../../../service/usersService';
 import { LoggedUserContext } from '../../../../context/LoggedUserContext';
 import { RequestContext } from '../../../../context/RequestContext';
 import { toast } from 'react-toastify';

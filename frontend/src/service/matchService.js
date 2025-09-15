@@ -12,7 +12,8 @@ export const createMatch = async (formData) => {
     );
     return response.data
   } catch (error) {
-    throw error.response.data;
+    console.error("Create match error:", error);
+    throw error;
   }
 }
 
@@ -34,7 +35,8 @@ export const fetchMatchesByTournament = async (tournamentId, filters) => {
   }
 ;}
 
-export const editMatch = async (id, updatedData) => {
+export const editMatch = async (updatedData) => {
+  const id = updatedData.matchId;
   const jwt = localStorage.getItem('token');
   try {
     const response = await apiClient.patch(`/matches/${id}`, updatedData, {

@@ -5,8 +5,10 @@ import { useSidebarVisibilityOnResize } from "../../../hooks/useSidebarVisibilit
 import { RxHamburgerMenu } from "react-icons/rx";
 import { IoMdClose } from "react-icons/io";
 import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
+  const nav = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   const [error, setError] = useState('');
@@ -14,6 +16,11 @@ const Sidebar = () => {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    nav("/login")
   };
 
   return (
@@ -24,21 +31,33 @@ const Sidebar = () => {
 
       <aside id="logo-sidebar" className={`h-screen sticky w-52 ${!isSidebarOpen && 'hidden'} md:w-56 xl:w-[270px]`} aria-label="Sidebar">
         <div className="h-full px-3 py-4 overflow-y-auto bg-[#001E28] text-white">
-          <ul className="space-y-2 text-2xs md:text-xs xl:text-base">
-            <li>
+          <ul className="space-y-2 text-xl">
+            <li key="close-sidebar-button">
               <button onClick={toggleSidebar} type="button" className={`m-1 ml-3 pt-1 ${(isSidebarOpen && window.innerWidth > BREAKPOINTS.SM) ? 'hidden' : ''}`}>
                 <IoMdClose className="h-5 w-5" />
               </button>
             </li>
-            <li className="pb-2.5"></li>
+            <li className="pb-2.5" key="spacer"></li>
             {adminSidebarItems.map((item, key) => (
-              <NavLink
-                to={item.path}
-                className="flex items-center hover:bg-[#005571] rounded-lg py-2 px-4 xl:py-2.5 w-full"
-              >
-                <span>{item.icon}</span>
-                <span className="ms-3">{item.label}</span>
-              </NavLink>
+              <li key={key}>
+                {item.path ? (
+                  <NavLink
+                  to={item.path}
+                  className="flex items-center hover:bg-[#005571] rounded-lg py-2 px-4 xl:py-2.5 w-full"
+                >
+                  <span>{item.icon}</span>
+                  <span className="ms-3">{item.label}</span>
+                </NavLink>
+                ) : (
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center hover:bg-[#005571] rounded-lg py-2 px-4 xl:py-2.5 w-full"
+                  >
+                    <span>{item.icon}</span>
+                    <span className="ms-3">{item.label}</span>
+                  </button>
+                )}
+              </li>
             ))}
           </ul>
         </div>

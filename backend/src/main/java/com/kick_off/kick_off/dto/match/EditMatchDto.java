@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @ToString
 public class EditMatchDto {
 
+    private Long matchId;
     private LocalDateTime matchDate;
     private Long stadiumId;
     private Integer homeTeamGoals;

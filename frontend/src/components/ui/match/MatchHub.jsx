@@ -78,7 +78,13 @@ const MatchHub = ({ selectedTournament }) => {
 
       {selectedTournament && (
         <div className='text-center mt-8 ml-64'>
-          <Pagination totalPages={matches.totalPages} initialPage={initialPage} handleSelectFilter={handleSelectFilter} navButtonStyle="text-black w-5 h-5 px-4" totalPagesStyle="text-black"/>
+          <Pagination
+            totalPages={matches.totalPages}
+            initialPage={initialPage}
+            handleSelectFilter={handleSelectFilter}
+            navButtonStyle="text-black w-5 h-5 px-4"
+            totalPagesStyle="text-black"
+          />
         </div>
       )}
     </>

@@ -11,7 +11,7 @@ const apiClient = axios.create({
 export default apiClient;
 
 export const apiAuthClient = axios.create({
-  baseURL: 'http://localhost:8080/',
+  baseURL: 'http://localhost:8080/api/auth',
   headers: {
     'Content-Type': 'application/json',
   },

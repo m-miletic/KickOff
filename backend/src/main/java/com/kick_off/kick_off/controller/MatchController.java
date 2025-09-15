@@ -24,14 +24,25 @@ public class MatchController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<MatchDto>> createMatch(@RequestBody CreateMatchDto match) {
-        MatchDto matchDto = matchService.createMatch(match);
-        ApiResponse<MatchDto> response = ApiResponse.<MatchDto>builder()
-                .message("Successfully created a match.")
-                .data(matchDto)
-                .success(true)
-                .build();
+        try {
+            MatchDto matchDto = matchService.createMatch(match);
+            ApiResponse<MatchDto> response = ApiResponse.<MatchDto>builder()
+                    .message("Successfully created a match.")
+                    .data(matchDto)
+                    .success(true)
+                    .build();
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            ApiResponse<MatchDto> errorResponse = ApiResponse.<MatchDto>builder()
+                    .message(e.getMessage())
+                    .data(null)
+                    .success(false)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+
     }
 
     @GetMapping("/tournament/{tournamentId}")
@@ -56,10 +67,9 @@ public class MatchController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ApiResponse<MatchDto>> editMatch(@PathVariable(name = "id") Long matchId, @RequestBody EditMatchDto updateMatchData) {
-        System.out.println("updateMatchData: " + updateMatchData);
+    public ResponseEntity<ApiResponse<MatchDto>> editMatch(@RequestBody EditMatchDto updateMatchData) {
         try {
-            MatchDto matchDto = matchService.updateMatch(matchId, updateMatchData);
+            MatchDto matchDto = matchService.updateMatch(updateMatchData);
             ApiResponse<MatchDto> response = ApiResponse.<MatchDto>builder()
                     .message("Match successfully updated")
                     .data(matchDto)
@@ -76,7 +86,6 @@ public class MatchController {
                     .build();
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-
         }
     }
 

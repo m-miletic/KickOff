@@ -4,22 +4,26 @@ import com.kick_off.kick_off.dto.PlayerDto;
 import com.kick_off.kick_off.dto.match.LightMatchDto;
 import com.kick_off.kick_off.dto.match.MatchDto;
 import com.kick_off.kick_off.dto.team.*;
-import com.kick_off.kick_off.dto.team.requestParams.TeamFilterParamsDto;
 import com.kick_off.kick_off.dto.tournament.MyTeamTournamentDto;
-import com.kick_off.kick_off.dto.tournament.TournamentDto;
 import com.kick_off.kick_off.exception.ForbiddenActionException;
 import com.kick_off.kick_off.model.*;
 import com.kick_off.kick_off.model.authentication.User;
 import com.kick_off.kick_off.repository.*;
 import com.kick_off.kick_off.repository.authentication.UserRepository;
+import com.kick_off.kick_off.request.PaginationRequest;
+import com.kick_off.kick_off.response.PaginatedResponse;
 import com.kick_off.kick_off.service.TeamService;
+import com.kick_off.kick_off.util.PaginationUtils;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,36 +61,33 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public TeamListDto getTeams(TeamFilterParamsDto filters) {
+    public PaginatedResponse<TeamDto> getTeams(PaginationRequest request) {
+        final Pageable pageable = PaginationUtils.getPageable(request);
+        final Page<Team> entities;
 
-        Sort.Direction direction = filters.getSortDirection().equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        PageRequest pageRequest = PageRequest.of(filters.getPageNumber() - 1, filters.getPageSize(), Sort.by(direction, filters.getSortField()));
-
-        Page<Team> pageTeams = teamRepository.findAll(pageRequest);
-        long totalTeams = pageTeams.getTotalElements();
-        long totalPages = calculateTotalPages(totalTeams, filters.getPageSize());
-
-        List<TeamDto> teams = new ArrayList<>();
-        teams = pageTeams
-                .stream()
-                .map(t ->
-                        modelMapper.map(t, TeamDto.class)).toList();
-
-        // nadodat samo za slucaj kada dohvacam meceve timova ...
-/*        for (TeamDto teamDto : teams) {
-            List<MatchDto> teamsHomeMatches = teamDto.getHomeMatches();
-            List<MatchDto> teamsAwayMatches = teamDto.getAwayMatches();
-            List<MatchDto> allMatches = new ArrayList<>();
-            allMatches.addAll(teamsHomeMatches);
-            allMatches.addAll(teamsAwayMatches);
-            teamDto.setAllMatches(allMatches);
-
-        }*/
-
-        return TeamListDto.builder()
-                .teamsList(teams)
-                .totalPages(totalPages)
-                .build();
+        if (!request.isFetchAll()) {
+            entities = teamRepository.findAll(pageable);
+            final List<TeamDto> entitiesDto = entities.stream().map(team -> modelMapper.map(team, TeamDto.class)).toList();
+            return new PaginatedResponse<>(
+                    entities.getTotalPages(),
+                    entities.getTotalElements(),
+                    entities.getSize(),
+                    entities.getTotalPages(),
+                    entities.isEmpty(),
+                    entitiesDto
+            );
+        } else {
+            entities = teamRepository.findAll(Pageable.unpaged());
+            final List<TeamDto> entitiesDto = entities.stream().map(team -> modelMapper.map(team, TeamDto.class)).toList();
+            return new PaginatedResponse<>(
+                    entities.getTotalPages(),
+                    entities.getTotalElements(),
+                    entities.getSize(),
+                    1,
+                    entities.isEmpty(),
+                    entitiesDto
+            );
+        }
 
     }
 

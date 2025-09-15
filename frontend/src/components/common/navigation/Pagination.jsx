@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 const Pagination = ({ 
   totalPages,
-  initialPage,
+  initialPage = 1,
   handleSelectFilter,
   navButtonStyle = 'text-white',
   totalPagesStyle = 'text-white',
@@ -22,6 +22,24 @@ const Pagination = ({
   }, [initialPage]);
 
   const handleSetInitialPagionationNumbers = () => {
+    switch(totalPages) {
+      case 0:
+        setPaginationNumbers([]);
+        return;
+      case 1:
+        setPaginationNumbers([1]);
+        return;
+      case 2:
+        setPaginationNumbers([1,2]);
+        return;
+      case 3:
+        setPaginationNumbers([1,2,3]);
+        return;
+      case 4:
+        setPaginationNumbers([1,2,3,4]);
+        return;
+    }
+
     const arrayRange = (start, stop, step) =>
       Array.from(
         { length: (stop - start) / step + 1 },
@@ -29,6 +47,7 @@ const Pagination = ({
       );
 
     let temp = [];
+
     if (initialPage <= 3 && totalPages <=3) {
       temp = arrayRange(1, totalPages, 1);
     } else if (initialPage < 3 && totalPages > 3) {
@@ -51,16 +70,34 @@ const Pagination = ({
 
   useEffect(() => {
     handleChangePaginationNumbers();
-  }, [currentPage])
+  }, [currentPage, totalPages])
 
   const handleChangePaginationNumbers = () => {
+    switch(totalPages) {
+      case 0:
+        setPaginationNumbers([]);
+        return;
+      case 1:
+        setPaginationNumbers([1]);
+        return;
+      case 2:
+        setPaginationNumbers([1,2]);
+        return;
+      case 3:
+        setPaginationNumbers([1,2,3]);
+        return;
+      case 4:
+        setPaginationNumbers([1,2,3,4]);
+        return;
+    }
+
     if (currentPage === totalPages) {
       let temp = [1, currentPage-3, currentPage-2, currentPage-1, currentPage];
       setPaginationNumbers(temp);
     } else if (currentPage === 1) {
       let temp = [currentPage, currentPage+1, currentPage+2, currentPage+3, totalPages];
       setPaginationNumbers(temp);
-    } else if (currentPage === 2 && totalPages >= 3) {
+    } else if (currentPage === 1 && totalPages > 4) {
       let temp = [1,2,3,4,totalPages];
       setPaginationNumbers(temp); 
     }
@@ -89,7 +126,7 @@ const Pagination = ({
     <nav>
       <ul className="inline-flex text-2xs sm:text-xs xl:text-lg mt-2 bg-[#2b536c2c] w-96 py-5 px-12 rounded-3xl justify-between">
         <li>
-          <button disabled={currentPage === 1} onClick={() => handleClickNextprevButtons('prev') } className={`${navButtonStyle} cursor-pointer flex items-center justify-center hover:text-xl 
+          <button disabled={currentPage === 1} onClick={() => handleClickNextprevButtons('prev') } className={`${navButtonStyle} cursor-pointer flex items-center justify-center hover:text-2xl 
           ${totalPages === 0 && 'hidden'}`}>
             Prev
           </button>
@@ -107,13 +144,13 @@ const Pagination = ({
         })}
 
         <li>
-          <button disabled={currentPage === totalPages} onClick={() => handleClickNextprevButtons('next')} className={`${navButtonStyle} cursor-pointer flex items-center justify-center hover:text-xl 
+          <button disabled={currentPage === totalPages} onClick={() => handleClickNextprevButtons('next')} className={`${navButtonStyle} cursor-pointer flex items-center justify-center hover:text-2xl 
            ${totalPages === 0 && 'hidden'}`}>
             Next
           </button>
         </li>
       </ul>
-      <div className={`text-base ml-1 mt-2`}>
+      <div className={`text-base ml-9 mt-2`}>
         {totalPages > 0 && <span className={`${totalPagesStyle}`}>{currentPage}/{totalPages}</span>}
       </div>
     </nav>

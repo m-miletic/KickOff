@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react"
-import { deleteTeamById, fetchAllTeams, fetchTeamsByTournament, getTeamByTeamRepresentative } from "../../service/teamService"
+/* import { useEffect, useState } from "react"
 
 export const useFetchTeams = ( filters ) => {
   const [teams, setTeams] = useState({
@@ -14,11 +13,9 @@ export const useFetchTeams = ( filters ) => {
       setLoading(true); // zbog mogućnosti promjene filtera, s obzirom da u finally bloku setam na false pa ako opet krene fetcha-at neće mi prikazivat "loading...""
       try {
         const response = await fetchAllTeams(filters);
-        console.log("In Hook - response.data.teamsList - ", response.data)
         setTeams(response.data);
         setError(null);
       } catch (error) {
-        console.error("useFetchTeamsHook Error -> Couldn't fetch teams");
         setError(error.response.data);
       } finally {
         setLoading(false);
@@ -31,7 +28,6 @@ export const useFetchTeams = ( filters ) => {
 };
 
 export const useFetchTeamsByTournament = (tournamentId, page) => {
-  console.log("CHECK: ", tournamentId)
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -56,7 +52,6 @@ export const useFetchTeamsByTournament = (tournamentId, page) => {
 };
 
 export const useFetchTeamByTeamRepresentative = (representativeId) => {
-  console.log("I'm in useFetchTeamByTeamRepresentative")
   const [team, setTeam] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
 
@@ -69,7 +64,6 @@ export const useFetchTeamByTeamRepresentative = (representativeId) => {
         const response = await getTeamByTeamRepresentative(representativeId)
         setTeam(response.data)
       } catch (error) {
-        console.log("Testing out - ", error.data.message)
         setErrorMessage(error.data.message)
       } 
     }
@@ -108,4 +102,4 @@ export const useFetchTeamByTeamRepresentative = (representativeId) => {
       createTeam();
     }, []);
   } 
-  
+   */
